@@ -414,10 +414,24 @@ export const wmsApi: any = {
 
   registerReceivingDocument(materialLotId: number | string, body: {
     documentType: "QUALITY_CERTIFICATE" | "INSPECTION_REPORT" | "RECEIVING_PHOTO" | "PACKING_PHOTO" | "OTHER";
-    documentQr?: string; documentUrl?: string; fileName?: string; checksum?: string;
+    documentQr?: string; documentUrl?: string; storageKey?: string; fileName?: string; checksum?: string;
     capturedBy: string; notes?: string; metadata?: Record<string, unknown>;
   }) {
     return apiClient.post<{ item: Record<string, unknown> }>("/wms/material-lots/" + materialLotId + "/receiving-documents", body);
+  },
+  /** Register an image already written to managed object storage. */
+  registerReceivingImage(materialLotId: number | string, body: {
+    storageKey: string; fileName: string; mimeType: "image/jpeg" | "image/png" | "image/webp";
+    sizeBytes: number; checksum: string; capturedBy: string; notes?: string;
+  }) {
+    return apiClient.post<{ item: Record<string, unknown> }>(
+      "/wms/material-lots/" + materialLotId + "/receiving-images", body,
+    );
+  },
+  getReceivingImages(materialLotId: number | string) {
+    return apiClient.get<{ items: Array<Record<string, unknown>>; total: number }>(
+      "/wms/material-lots/" + materialLotId + "/receiving-images",
+    );
   },
   registerReceivingQrs(materialLotId: number, body: { materialQr: string; palletQr: string; preReceiptQr?: string; workOrderCode?: string; locationCode?: string; registeredBy: string }) {
     return apiClient.post<{ ok: boolean; materialLotId: number; materialQr: string; palletQr: string }>(`/wms/material-lots/${materialLotId}/qr-registration`, body);

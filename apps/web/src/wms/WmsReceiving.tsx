@@ -18,6 +18,10 @@ export function WmsReceiving({ locale }: { locale: Locale }) {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [imageStorageKey, setImageStorageKey] = useState("");
+  const [imageFileName, setImageFileName] = useState("");
+  const [imageChecksum, setImageChecksum] = useState("");
+  const [imageSizeBytes, setImageSizeBytes] = useState("");
   const scanRef = useRef<HTMLInputElement>(null);
 
   const refreshQueue = async () => {
@@ -35,13 +39,30 @@ export function WmsReceiving({ locale }: { locale: Locale }) {
     const [lotNo, inboundOrderNo, materialCode, qtyText, supplierCode] = parts;
     const qty = Number(qtyText);
     if (!Number.isFinite(qty) || qty <= 0) { setFeedback({ ok: false, msg: copy.qty }); return; }
+    const hasImage = Boolean(imageStorageKey.trim());
+    const imageSize = Number(imageSizeBytes);
+    if (hasImage && (!imageFileName.trim() || !/^[a-f0-9]{64}$/i.test(imageChecksum.trim()) ||
+        !Number.isInteger(imageSize) || imageSize < 1 || imageSize > 10 * 1024 * 1024)) {
+      setFeedback({ ok: false, msg: "Image name, SHA-256 checksum and size (1-10 MB) are required" }); return;
+    }
     setBusy(true); setFeedback(null);
     try {
-      await wmsApi.postReceive({ lot_no: lotNo, inbound_order_no: inboundOrderNo, material_code: materialCode,
+      const receipt = await wmsApi.postReceive({ lot_no: lotNo, inbound_order_no: inboundOrderNo, material_code: materialCode,
         supplier_code: supplierCode, received_qty: qty, received_at: new Date().toISOString() });
+      // Images are uploaded by the managed storage service first. Only the
+      // resulting opaque key and verified metadata are linked to the lot here.
+      const lotId = Number(receipt?.data?.id ?? receipt?.id);
+      if (hasImage && lotId) {
+        await wmsApi.registerReceivingImage(lotId, {
+          storageKey: imageStorageKey.trim(), fileName: imageFileName.trim(),
+          mimeType: "image/jpeg", sizeBytes: imageSize, checksum: imageChecksum.trim(),
+          capturedBy: "MATERIAL_RECEIVER",
+        });
+      }
       await refreshQueue();
       setFeedback({ ok: true, msg: `${lotNo} — ${copy.received}` });
       setScanInput("");
+      setImageStorageKey(""); setImageFileName(""); setImageChecksum(""); setImageSizeBytes("");
     } catch (error) { setFeedback({ ok: false, msg: error instanceof Error ? error.message : String(error) }); }
     finally { setBusy(false); scanRef.current?.focus(); }
   };
@@ -56,6 +77,19 @@ export function WmsReceiving({ locale }: { locale: Locale }) {
         placeholder={copy.format} title={t("ui.scanInput", locale)} disabled={busy}/>
         <button className="action-button" type="button" disabled={busy || !scanInput.trim()} onClick={() => void handleReceive()}>
           <Truck size={16}/>{t("wms.confirmReceive", locale)}</button></div>
+      <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr 1fr 0.7fr", gap: 8, marginTop: 10 }}>
+        <input value={imageStorageKey} onChange={(e) => setImageStorageKey(e.target.value)}
+          placeholder="Supplier inspection image storage key (optional)" aria-label="Image storage key" />
+        <input value={imageFileName} onChange={(e) => setImageFileName(e.target.value)}
+          placeholder="File name" aria-label="Image file name" />
+        <input value={imageChecksum} onChange={(e) => setImageChecksum(e.target.value)}
+          placeholder="SHA-256 checksum" aria-label="Image checksum" />
+        <input value={imageSizeBytes} onChange={(e) => setImageSizeBytes(e.target.value)}
+          placeholder="Bytes" inputMode="numeric" aria-label="Image size in bytes" />
+      </div>
+      <small style={{ display: "block", marginTop: 4, opacity: .7 }}>
+        Upload the photo through managed storage, then paste its key and SHA-256 here; data URLs and local paths are not accepted.
+      </small>
       {feedback && <div style={{ marginTop:8,padding:"6px 12px",borderRadius:6,background:feedback.ok?"var(--ok-bg)":"var(--danger-bg)",color:feedback.ok?"var(--ok)":"var(--danger)",display:"flex",gap:6,alignItems:"center" }}>
         {feedback.ok?<CheckCircle size={14}/>:<AlertCircle size={14}/>} {feedback.msg}</div>}
     </section>
