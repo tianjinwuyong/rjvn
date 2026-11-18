@@ -1,0 +1,100 @@
+﻿[
+    {
+        "ip":  "192.168.6.56",
+        "station":  "AUTO_SUPERSONIC",
+        "status":  "FAILED",
+        "phase":  "remote_preflight",
+        "localHash":  "55D5D5AAE7C5539B94CE8CCBF15D520162856528FD7BFCE04B8A7586285555C5",
+        "remoteHash":  null,
+        "taskState":  null,
+        "processPath":  null,
+        "backup":  null,
+        "error":  "连接到远程服务器 192.168.6.56 失败，并显示以下错误消息: 客户端无法连接到请求中指定的目标。 请验证该目标上的服务是否正在运行以及是否正在接受请求。 有关目标(通常是 IIS 或 WinRM)上运行的 WS 管理服务，请查阅日志和文档。 如果目标是 WinRM 服务，则在目标上运行以下命令来分析和配置 WinRM 服务: \"winrm quickconfig\"。 有关详细信息，请参阅 about_Remote_Troubleshooting 帮助主题。",
+        "checkedAt":  "2026-07-29T07:46:58.8460000Z"
+    },
+    {
+        "ip":  "192.168.6.57",
+        "station":  "AUTO_AGING",
+        "status":  "DEPLOYED",
+        "phase":  "verified",
+        "localHash":  "2472ABC4E09C364317F1960777D0AD0DF2B474199F31C0F466203C7AA26C345B",
+        "remoteHash":  "2472ABC4E09C364317F1960777D0AD0DF2B474199F31C0F466203C7AA26C345B",
+        "taskState":  "Running",
+        "processPath":  "D:\\stations\\Auto_Aging_Cab_Agent.exe",
+        "backup":  {
+                       "value":  "D:\\stations\\Auto_Aging_Cab_Agent.exe.20260729T074743Z.bak",
+                       "PSComputerName":  "192.168.6.57",
+                       "RunspaceId":  "05fc9f89-797c-4135-b000-548705dff2e0",
+                       "PSShowComputerName":  true
+                   },
+        "error":  null,
+        "checkedAt":  "2026-07-29T07:47:36.9382933Z"
+    },
+    {
+        "ip":  "192.168.6.58",
+        "station":  "AUTO_HIGHVOLT",
+        "status":  "DEPLOYED",
+        "phase":  "verified",
+        "localHash":  "42438739A7493E0006538D6021E16A380194FCE07B40A829EA26F14459E84AD7",
+        "remoteHash":  "42438739A7493E0006538D6021E16A380194FCE07B40A829EA26F14459E84AD7",
+        "taskState":  "Running",
+        "processPath":  "D:\\stations\\Auto_HighVolt_ATE_Agent.exe",
+        "backup":  {
+                       "value":  "D:\\stations\\Auto_HighVolt_ATE_Agent.exe.20260729T075142Z.bak",
+                       "PSComputerName":  "192.168.6.58",
+                       "RunspaceId":  "b097fdb2-cbba-4b30-9e95-698746bb78e6",
+                       "PSShowComputerName":  true
+                   },
+        "error":  null,
+        "checkedAt":  "2026-07-29T07:51:36.3583095Z"
+    },
+    {
+        "ip":  "192.168.6.59",
+        "station":  "AUTO_PACK_LEFT",
+        "status":  "DEPLOYED",
+        "phase":  "verified",
+        "localHash":  "13ADE98BB097E29D5A52D6B7AA88F0B5C38BD3B701B8736D9E88A217EADF5817",
+        "remoteHash":  "13ADE98BB097E29D5A52D6B7AA88F0B5C38BD3B701B8736D9E88A217EADF5817",
+        "taskState":  "Running",
+        "processPath":  "D:\\stations\\Auto_Packing_ATE_Left_Agent.exe",
+        "backup":  {
+                       "value":  "D:\\stations\\Auto_Packing_ATE_Left_Agent.exe.20260729T075426Z.bak",
+                       "PSComputerName":  "192.168.6.59",
+                       "RunspaceId":  "cdcaa6ee-16c8-4a17-9667-9b37e23b5c48",
+                       "PSShowComputerName":  true
+                   },
+        "error":  null,
+        "checkedAt":  "2026-07-29T07:54:16.8951743Z"
+    },
+    {
+        "ip":  "192.168.6.60",
+        "station":  "AUTO_PACK_RIGHT",
+        "status":  "DEPLOYED",
+        "phase":  "verified",
+        "localHash":  "44C783265B49C3AD82040962B63B691808A229DE44DD315140AF092F23C0CBE4",
+        "remoteHash":  "44C783265B49C3AD82040962B63B691808A229DE44DD315140AF092F23C0CBE4",
+        "taskState":  "Running",
+        "processPath":  "D:\\stations\\Auto_Packing_ATE_Right_Agent.exe",
+        "backup":  {
+                       "value":  "D:\\stations\\Auto_Packing_ATE_Right_Agent.exe.20260729T075617Z.bak",
+                       "PSComputerName":  "192.168.6.60",
+                       "RunspaceId":  "75940c08-2cbc-4020-a23e-c97aaab8a558",
+                       "PSShowComputerName":  true
+                   },
+        "error":  null,
+        "checkedAt":  "2026-07-29T07:56:12.2122466Z"
+    },
+    {
+        "ip":  "192.168.6.61",
+        "station":  "AUTO_OUTERBOX",
+        "status":  "DEPLOYED",
+        "phase":  "verified",
+        "localHash":  "CFD8EE0EE897BC673B7197A9DF13941912E37F736C1B06A0E564286FEA8EE996",
+        "remoteHash":  "CFD8EE0EE897BC673B7197A9DF13941912E37F736C1B06A0E564286FEA8EE996",
+        "taskState":  "Running",
+        "processPath":  "D:\\stations\\Auto_QRBinding_Agent.exe",
+        "backup":  null,
+        "error":  null,
+        "checkedAt":  "2026-07-29T07:57:33.2787514Z"
+    }
+]

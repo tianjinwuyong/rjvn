@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ruijing.station.arrival.v1",
+  "title": "Product Attendance Check-in V1",
+  "type": "object",
+  "required": ["eventId", "idempotencyKey", "sn", "lineCode", "stationCode", "stationInstance", "occurredAt", "sourceType"],
+  "properties": {
+    "eventId": {"type": "string", "minLength": 1},
+    "idempotencyKey": {"type": "string", "minLength": 1},
+    "sn": {"type": "string", "minLength": 1},
+    "lineCode": {"enum": ["MANUAL", "AUTO", "SHARED_SERVICE"]},
+    "stationCode": {"type": "string", "minLength": 1},
+    "stationInstance": {"type": "string", "minLength": 1},
+    "occurredAt": {"type": "string", "format": "date-time"},
+    "sourceType": {"enum": ["SCANNER", "EQUIPMENT", "FILE", "DATABASE", "PDA", "AUTHORIZED_MANUAL"]},
+    "sourceRecordId": {"type": "string"},
+    "operatorId": {"type": "string"},
+    "expectationId": {"type": "string"},
+    "routeRevision": {"type": "string"},
+    "cycleNo": {"type": "integer", "minimum": 1}
+  }
+}

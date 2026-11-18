@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "1.0",
+  "graphId": "auto-line-ng-routing",
+  "lineCode": "AUTO_LINE",
+  "authority": "MES",
+  "representation": "typed-task-graph",
+  "configuration": {
+    "mode": "MES_PUBLISHED_SNAPSHOT",
+    "stateAuthority": "MES",
+  "domainCode": "AUTO_LINE",
+    "baselineStandard": "MANUAL_LINE_BASIC_FUNCTIONALITY",
+    "baselineRule": "Auto stations inherit all Manual-line basic functionality; only equipment/process domain differs.",
+    "changePropagationRule": "Any Manual baseline change must be mirrored here before build or deployment.",
+    "domainBindingRequired": true,
+    "localDataRule": {
+      "sqliteEvidenceRequired": true,
+      "pushNewDataToMes": true,
+      "mesMayQueryLocalHistory": true,
+      "readOnlyApi": true,
+      "apiContract": "local-info-api-contract.json"
+    },
+    "publishRequired": true,
+    "effectiveVersion": "1.0.0",
+    "normalRoute": [
+      "auto_pda", "auto_aoi", "auto_ict", "auto_fct", "auto_depanel",
+      "auto_case_binding", "auto_assembly_ate", "auto_supersonic", "auto_aging",
+      "auto_hivolt_ate", "auto_packing_ate", "auto_outer_box", "auto_pallet", "warehouse"
+    ],
+    "ngEntryNodes": ["auto_ict", "auto_fct", "auto_depanel"],
+    "retestPolicy": {
+      "defaultMaxRetestCount": 2,
+      "byStation": {"auto_ict": 2, "auto_fct": 2, "auto_depanel": 2, "auto_aging": 1},
+      "overrideRequires": ["MES_ROUTE_ADMIN", "QC"],
+      "countingRule": "one approved RETEST_REQUEST consumes one count; PASS never erases NG history"
+    },
+    "defaultNgRouting": {
+      "version": "1.0.0",
+      "publishedBy": "MES_ROUTE_ADMIN",
+      "routes": {
+        "auto_ict": {
+          "onConfirmedNg": "mes_gate",
+          "defaultDestination": "auto_depanel",
+          "repairRequired": true,
+          "returnRetestStation": "auto_ict",
+          "maxRetestCount": 2,
+          "requiresMesAuthorization": true
+        },
+        "auto_fct": {
+          "onConfirmedNg": "mes_gate",
+          "defaultDestination": "auto_depanel",
+          "repairRequired": true,
+          "returnRetestStation": "auto_fct",
+          "maxRetestCount": 2,
+          "requiresMesAuthorization": true
+        },
+        "auto_depanel": {
+          "onConfirmedNg": "repair_order",
+          "defaultDestination": "auto_rework",
+          "repairRequired": true,
+          "returnRetestStation": "auto_depanel",
+          "maxRetestCount": 2,
+          "requiresMesAuthorization": true
+        },
+        "other": {
+          "onConfirmedNg": "mes_gate",
+          "defaultDestination": "auto_rework",
+          "repairRequired": true,
+          "returnRetestStation": "source_station",
+          "maxRetestCount": 2,
+          "requiresMesAuthorization": true
+        }
+      },
+      "fallback": "BLOCK_AND_ESCALATE_TO_MES",
+      "historyRule": "append_only"
+    }
+  },
+  "nodes": [
+    {"id": "auto_pda", "type": "station", "stationCode": "auto_pda"},
+    {"id": "auto_aoi", "type": "station", "stationCode": "auto_aoi"},
+    {"id": "auto_ict", "type": "station", "stationCode": "auto_ict"},
+    {"id": "auto_fct", "type": "station", "stationCode": "auto_fct"},
+    {"id": "auto_depanel", "type": "station", "stationCode": "auto_depanel"},
+    {"id": "auto_case_binding", "type": "station", "stationCode": "auto_case_binding"},
+    {"id": "auto_assembly_ate", "type": "station", "stationCode": "auto_assembly_ate"},
+    {"id": "auto_supersonic", "type": "station", "stationCode": "auto_supersonic"},
+    {"id": "auto_aging", "type": "station", "stationCode": "auto_agingcab"},
+    {"id": "auto_hivolt_ate", "type": "station", "stationCode": "auto_hivolt_ate"},
+    {"id": "auto_packing_ate", "type": "station", "stationCode": "auto_packing_ate"},
+    {"id": "auto_outer_box", "type": "station", "stationCode": "auto_outer_box_binding"},
+    {"id": "auto_pallet", "type": "station", "stationCode": "auto_pallet_binding"},
+    {"id": "mes_gate", "type": "decision", "owner": "MES", "decision": "route_and_permission"},
+    {"id": "repair_order", "type": "work_order", "owner": "MES", "requires": "confirmed_ng"},
+    {"id": "repair_handover", "type": "handover", "owner": "MES", "carrier": "QR_BUCKET"},
+    {"id": "auto_rework", "type": "repair_station", "owner": "MES", "requires": "repair_order_receipt"},
+    {"id": "retest", "type": "decision", "owner": "MES", "decision": "retest_count_and_route"},
+    {"id": "source_retest", "type": "station_action", "owner": "SOURCE_STATION", "requires": "retest_authorization"},
+    {"id": "warehouse", "type": "terminal", "owner": "MES", "requires": "final_pass"}
+  ],
+  "edges": [
+    {"from": "auto_pda", "to": "auto_aoi", "when": "PASS"},
+    {"from": "auto_aoi", "to": "auto_ict", "when": "PASS_OR_MARK_ONLY"},
+    {"from": "auto_ict", "to": "auto_fct", "when": "PASS"},
+    {"from": "auto_fct", "to": "auto_depanel", "when": "PASS"},
+    {"from": "auto_depanel", "to": "auto_case_binding", "when": "PASS"},
+    {"from": "auto_case_binding", "to": "auto_assembly_ate", "when": "PASS"},
+    {"from": "auto_assembly_ate", "to": "auto_supersonic", "when": "PASS"},
+    {"from": "auto_supersonic", "to": "auto_aging", "when": "PASS"},
+    {"from": "auto_aging", "to": "auto_hivolt_ate", "when": "PASS"},
+    {"from": "auto_hivolt_ate", "to": "auto_packing_ate", "when": "PASS"},
+    {"from": "auto_packing_ate", "to": "auto_outer_box", "when": "PASS"},
+    {"from": "auto_outer_box", "to": "auto_pallet", "when": "PASS"},
+    {"from": "auto_pallet", "to": "warehouse", "when": "PASS"},
+    {"from": "auto_ict", "to": "mes_gate", "when": "CONFIRMED_NG"},
+    {"from": "auto_fct", "to": "mes_gate", "when": "CONFIRMED_NG"},
+    {"from": "auto_depanel", "to": "mes_gate", "when": "CONFIRMED_NG"},
+    {"from": "auto_aging", "to": "mes_gate", "when": "CONFIRMED_NG"},
+    {"from": "auto_hivolt_ate", "to": "mes_gate", "when": "CONFIRMED_NG"},
+    {"from": "mes_gate", "to": "repair_order", "when": "MES_AUTHORIZED_REPAIR"},
+    {"from": "repair_order", "to": "repair_handover", "when": "WORK_ORDER_ISSUED"},
+    {"from": "repair_handover", "to": "auto_rework", "when": "RECEIPT_ACCEPTED"},
+    {"from": "auto_rework", "to": "retest", "when": "REPAIR_CONCLUSION"},
+    {"from": "retest", "to": "source_retest", "when": "RETURN_ROUTE_AUTHORIZED"},
+    {"from": "source_retest", "to": "repair_order", "when": "RETEST_NG"}
+  ]
+}

@@ -1,0 +1,25 @@
+=============================================================================
+ Run this ONE LINE in PowerShell (Run as Administrator) on each station:
+=============================================================================
+
+netsh advfirewall firewall add rule name="SSH Port 22" dir=in action=allow protocol=TCP localport=22; Add-WindowsCapability -Online -Name "OpenSSH.Server~~~~0.0.1.0"; Start-Service sshd; Set-Service sshd -StartupType Automatic; Write-Host "DONE - Port 22 is open" -ForegroundColor Green
+
+
+
+=============================================================================
+ Or copy this to a .ps1 file and run it:
+=============================================================================
+
+Save as: enable_ssh.ps1 → Right-click → "Run with PowerShell" (Run as Administrator)
+
+#Requires -RunAsAdministrator
+$ErrorActionPreference="SilentlyContinue"
+Add-WindowsCapability -Online -Name "OpenSSH.Server~~~~0.0.1.0"
+Start-Service sshd
+Set-Service sshd -StartupType Automatic
+netsh advfirewall firewall add rule name="SSH Port 22" dir=in action=allow protocol=TCP localport=22
+if ((Get-NetTCPConnection -LocalPort 22 -State Listen -ErrorAction SilentlyContinue)) {
+    Write-Host "✅ Port 22 OPEN - SSH ready!" -ForegroundColor Green
+} else {
+    Write-Host "❌ Failed" -ForegroundColor Red
+}

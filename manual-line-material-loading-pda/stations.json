@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "lineCode": "MANUAL_MODULAR",
+  "mesBaseUrl": "http://192.168.6.155:8080",
+  "stations": [
+    {"sequence":1,"code":"mod_manu_pda_loading","nameZh":"PDA扫码上料","nameEn":"PDA Material Loading","adapter":"pda_material","inputs":["工单","设备","通道","供料器","物料"],"normalNext":"mod_manu_aoi","ngPolicy":"material_loading"},
+    {"sequence":2,"code":"mod_manu_aoi","nameZh":"AOI质量工位","nameEn":"A-O-I Quality","adapter":"aoi_result","inputs":["SN","缺陷位置","图片","初判","复判"],"normalNext":"mod_manu_ict","ngPolicy":"aoi_mark_only"},
+    {"sequence":3,"code":"mod_manu_ict","nameZh":"ICT测试","nameEn":"I-C-T Test","adapter":"ict_result","inputs":["母板SN","子板SN","测试项","设备结果"],"normalNext":"mod_manu_fct","ngPolicy":"test_repair"},
+    {"sequence":4,"code":"mod_manu_fct","nameZh":"FCT测试","nameEn":"F-C-T Test","adapter":"fct_result","inputs":["母板SN","子板SN","测试项","设备结果"],"normalNext":"mod_manu_depanel","ngPolicy":"test_repair"},
+    {"sequence":5,"code":"mod_manu_depanel","nameZh":"PCBA分板","nameEn":"PCBA Depanel","adapter":"depanel","inputs":["母板SN","子板SN","分板结果"],"normalNext":"mod_manu_case_binding","ngPolicy":"remove_immediately"},
+    {"sequence":6,"code":"mod_manu_case_binding","nameZh":"PCBA外壳绑码","nameEn":"PCBA Case Binding","adapter":"case_binding","inputs":["PCBA SN","外壳SN","绑定关系"],"normalNext":"mod_manu_assembly_ate","ngPolicy":"binding_exception"},
+    {"sequence":7,"code":"mod_manu_assembly_ate","nameZh":"组装ATE","nameEn":"Assembly A-T-E","adapter":"ate_8sn","inputs":["8个SN","本周期结果","失败项"],"normalNext":"mod_manu_supersonic","ngPolicy":"test_repair"},
+    {"sequence":8,"code":"mod_manu_supersonic","nameZh":"超声波/外观","nameEn":"Ultrasonic / Visual","adapter":"supersonic","inputs":["SN","外观结果","设备参数"],"normalNext":"mod_manu_aging","ngPolicy":"supersonic_rework"},
+    {"sequence":9,"code":"mod_manu_aging","nameZh":"成品老化","nameEn":"Product Aging","adapter":"aging_7cab","inputs":["7个老化柜","柜号","槽位","当前SN","最后记录"],"normalNext":"mod_manu_hivolt_ate","ngPolicy":"aging_diagnostic"},
+    {"sequence":10,"code":"mod_manu_hivolt_ate","nameZh":"高压ATE","nameEn":"High-voltage A-T-E","adapter":"ate_8sn","inputs":["8个SN","耐压结果","失败项"],"normalNext":"mod_manu_packing_ate","ngPolicy":"rework_reaging"},
+    {"sequence":11,"code":"mod_manu_packing_ate","nameZh":"包装ATE","nameEn":"Packing A-T-E","adapter":"ate_8sn","inputs":["8个SN","包装测试","失败项"],"normalNext":"mod_manu_outer_box_binding","ngPolicy":"packing_replace"},
+    {"sequence":12,"code":"mod_manu_outer_box_binding","nameZh":"外箱绑码","nameEn":"Outer-box Binding","adapter":"outer_box_48sn","inputs":["外箱SN","48个产品SN","工单绑定"],"normalNext":"mod_manu_pallet_binding","ngPolicy":"binding_exception"},
+    {"sequence":13,"code":"mod_manu_pallet_binding","nameZh":"栈板绑码","nameEn":"Pallet Binding","adapter":"pallet_binding","inputs":["栈板SN","外箱SN","位置"],"normalNext":"WAREHOUSE","ngPolicy":"binding_exception"}
+  ],
+  "repairPolicies": {
+    "material_loading":{"actionMode":"STOP_AND_HOLD","retestLimit":0,"repairDestination":"material_control","returnRoute":"MES_CALCULATED"},
+    "aoi_mark_only":{"actionMode":"MARK_ONLY","retestLimit":1,"repairDestination":"quality_review","returnRoute":"CONTINUE_WITH_NG_ATTRIBUTE"},
+    "test_repair":{"actionMode":"SEND_REPAIR","retestLimit":2,"repairDestination":"manual_rework","returnRoute":"ORIGIN"},
+    "remove_immediately":{"actionMode":"REMOVE_IMMEDIATELY","retestLimit":0,"repairDestination":"manual_rework","returnRoute":"MES_CALCULATED"},
+    "binding_exception":{"actionMode":"STOP_AND_HOLD","retestLimit":0,"repairDestination":"binding_review","returnRoute":"ORIGIN"},
+    "supersonic_rework":{"actionMode":"REMOVE_IMMEDIATELY","retestLimit":0,"repairDestination":"case_rework","returnRoute":"ORIGIN"},
+    "aging_diagnostic":{"actionMode":"SEND_REPAIR","retestLimit":1,"repairDestination":"manual_diagnostic","returnRoute":"REPEAT_AGING"},
+    "rework_reaging":{"actionMode":"SEND_REPAIR","retestLimit":1,"repairDestination":"manual_rework","returnRoute":"REPEAT_AGING"},
+    "packing_replace":{"actionMode":"STOP_AND_HOLD","retestLimit":1,"repairDestination":"packing_rework","returnRoute":"ORIGIN"}
+  },
+  "repairDefaults":{"receiptSlaMinutes":30,"repairSlaMinutes":120,"escalationMinutes":[30,60,120,180],"maxRepairAttempts":2,"requireReceipt":true,"activateWorkOrderOnReceipt":true,"requireOperator":true,"requireReason":true,"requireEvidence":false,"offlinePolicy":"BLOCK","closureOptions":["RETURN_TO_ROUTE","REPEAT_REPAIR","PRODUCT_REPLACE","SPECIAL_RELEASE","SCRAP"]}
+}

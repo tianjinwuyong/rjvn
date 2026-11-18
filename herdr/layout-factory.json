@@ -1,0 +1,136 @@
+{
+  "id": "root",
+  "type": "column",
+  "titlebar": "none",
+  "background": "canvas",
+  "terminal_padding": [10, 10],
+  "gap": 8,
+  "padding": 8,
+  "children": [
+    {
+      "id": "tabs",
+      "type": "block",
+      "size": { "px": 38 },
+      "window_drag": true,
+      "content": { "mod": "terminals-bar" }
+    },
+    {
+      "id": "grid",
+      "type": "column",
+      "gap": 8,
+      "children": [
+        {
+          "id": "row-agents",
+          "type": "row",
+          "gap": 8,
+          "children": [
+            {
+              "id": "hermes",
+              "type": "block",
+              "size": { "weight": 1 },
+              "content": { "terminal": "hermes" },
+              "pane": {
+                "header": { "content": { "mod": "terminals-pane" }, "height": 28 },
+                "background": "surface",
+                "border": { "width": 1, "color": "border" },
+                "focus": { "width": 1, "color": "accent" },
+                "radius": 8,
+                "gap": 6,
+                "lone": true
+              }
+            },
+            {
+              "id": "opencode",
+              "type": "block",
+              "size": { "weight": 1 },
+              "content": { "terminal": "opencode" },
+              "pane": {
+                "header": { "content": { "mod": "terminals-pane" }, "height": 28 },
+                "background": "surface",
+                "border": { "width": 1, "color": "border" },
+                "focus": { "width": 1, "color": "accent" },
+                "radius": 8,
+                "gap": 6,
+                "lone": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-bus",
+          "type": "row",
+          "gap": 8,
+          "children": [
+            {
+              "id": "redis",
+              "type": "block",
+              "size": { "weight": 1 },
+              "content": { "terminal": "redis" },
+              "pane": {
+                "header": { "content": { "mod": "terminals-pane" }, "height": 28 },
+                "background": "surface",
+                "border": { "width": 1, "color": "border" },
+                "focus": { "width": 1, "color": "accent" },
+                "radius": 8,
+                "gap": 6,
+                "lone": true
+              }
+            },
+            {
+              "id": "mailbox",
+              "type": "block",
+              "size": { "weight": 1 },
+              "content": { "terminal": "mailbox" },
+              "pane": {
+                "header": { "content": { "mod": "terminals-pane" }, "height": 28 },
+                "background": "surface",
+                "border": { "width": 1, "color": "border" },
+                "focus": { "width": 1, "color": "accent" },
+                "radius": 8,
+                "gap": 6,
+                "lone": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "row-data",
+          "type": "row",
+          "gap": 8,
+          "children": [
+            {
+              "id": "psql",
+              "type": "block",
+              "size": { "weight": 1 },
+              "content": { "terminal": "psql" },
+              "pane": {
+                "header": { "content": { "mod": "terminals-pane" }, "height": 28 },
+                "background": "surface",
+                "border": { "width": 1, "color": "border" },
+                "focus": { "width": 1, "color": "accent" },
+                "radius": 8,
+                "gap": 6,
+                "lone": true
+              }
+            },
+            {
+              "id": "logs",
+              "type": "block",
+              "size": { "weight": 1 },
+              "content": { "terminal": "logs" },
+              "pane": {
+                "header": { "content": { "mod": "terminals-pane" }, "height": 28 },
+                "background": "surface",
+                "border": { "width": 1, "color": "border" },
+                "focus": { "width": 1, "color": "accent" },
+                "radius": 8,
+                "gap": 6,
+                "lone": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

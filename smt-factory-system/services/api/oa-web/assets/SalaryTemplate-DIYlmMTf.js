@@ -1,0 +1,22 @@
+/* ==========================================================================
+   旧「职类模板」页（/salary/template）已被 v2「工资结构」页替代 — 重定向存根
+   --------------------------------------------------------------------------
+   为什么整页替换而不是打补丁：
+     旧页的数据模型是「基本工资 + 岗位津贴 + 3 个加班费率 + 计入班次津贴开关」，
+     其中「加班费率」和「班次津贴开关」在新口径下已经是错误概念——倍率只有 14 段
+     时段表一个真值，夜班津贴由各段倍率差额自动产生。补丁改不掉数据模型，
+     只能整页换掉。
+
+   原文件备份：SalaryTemplate-DIYlmMTf.js.bak-salaryv2-20261027
+   回滚：把备份文件复制回本文件名即可。
+   替代页面：/salary-console.html?tab=structures&bind=class
+   ========================================================================== */
+export default {
+  name: 'SalaryTemplateLegacyRedirect',
+  setup() {
+    try {
+      location.replace('/salary-console.html?tab=structures&bind=class');
+    } catch (e) { /* noop */ }
+  },
+  render() { return null; }
+};

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@mlightcad/libredwg-web": "^0.7.9",
+    "dwg2dxf": "^2.0.3",
+    "dwg2dxf-converter": "^1.0.4"
+  }
+}

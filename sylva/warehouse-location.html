@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WMS 3D 库位管理</title>
+  <style>
+    :root { color-scheme: dark; --bg:#071513; --panel:rgba(9,28,25,.9); --line:rgba(167,222,193,.2); --text:#e9fff3; --muted:#9ec1b0; --accent:#a8f3be; --warn:#f7c873; --bad:#ff8989; }
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; background:radial-gradient(circle at 50% 0%,#173c31 0,#071513 55%); color:var(--text); font:14px/1.45 Arial,sans-serif; }
+    body { overflow:hidden; }
+    #app { height:100vh; position:relative; }
+    #scene { position:absolute; inset:0; }
+    .topbar { position:absolute; z-index:2; top:18px; left:24px; right:24px; display:flex; align-items:center; justify-content:space-between; pointer-events:none; }
+    .brand,.status { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px 16px; backdrop-filter:blur(12px); box-shadow:0 12px 35px #0005; pointer-events:auto; }
+    .brand strong { display:block; font-size:18px; letter-spacing:.04em; }
+    .brand span,.status { color:var(--muted); font-size:12px; }
+    .status b { color:var(--accent); }
+    .panel { position:absolute; z-index:2; top:94px; width:310px; bottom:24px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; backdrop-filter:blur(12px); box-shadow:0 12px 35px #0005; }
+    .left { left:24px; } .right { right:24px; }
+    h2 { margin:0 0 4px; font-size:17px; } h3 { margin:20px 0 8px; font-size:12px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); }
+    .sub { color:var(--muted); font-size:12px; margin-bottom:14px; }
+    input,button { font:inherit; color:var(--text); border:1px solid var(--line); border-radius:9px; background:#102a25; padding:10px 11px; }
+    input { width:100%; outline:none; } input:focus { border-color:var(--accent); }
+    button { cursor:pointer; } button:hover,button.active { background:#205241; border-color:var(--accent); }
+    .search { display:flex; gap:7px; } .search button { white-space:nowrap; }
+    .legend { display:grid; gap:9px; margin-top:9px; }
+    .legend-row { display:flex; align-items:center; gap:8px; color:var(--muted); cursor:pointer; }
+    .dot { width:10px; height:10px; border-radius:50%; display:inline-block; box-shadow:0 0 10px currentColor; }
+    .green { color:#65e69a; background:#65e69a; } .yellow { color:#f7c873; background:#f7c873; } .red { color:#ff8989; background:#ff8989; } .blue { color:#70baff; background:#70baff; }
+    .hint { position:absolute; left:50%; bottom:22px; transform:translateX(-50%); color:var(--muted); background:#071513bb; border:1px solid var(--line); padding:8px 13px; border-radius:999px; z-index:1; }
+    .empty { color:var(--muted); padding:18px 0; }
+    .detail { border-top:1px solid var(--line); margin-top:15px; padding-top:15px; }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 14px; }
+    .field label { display:block; color:var(--muted); font-size:11px; margin-bottom:2px; } .field strong { font-size:13px; }
+    .badge { display:inline-block; border-radius:999px; padding:3px 8px; font-size:11px; border:1px solid currentColor; }
+    .route { margin-top:16px; padding:12px; background:#102a25; border-radius:10px; color:var(--muted); } .route b { color:var(--accent); }
+    @media(max-width:900px) { .panel { width:260px; } .right { display:none; } .left { left:12px; top:82px; bottom:12px; } .topbar { left:12px; right:12px; } }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="scene" aria-label="WMS 3D warehouse location map"></div>
+    <div class="topbar"><div class="brand"><strong>WMS 3D 库位管理</strong><span>实时库位 · 托盘 · 物料追踪</span></div><div class="status">● 数据连接 <b>正常</b>　最后同步 <span id="syncTime">刚刚</span></div></div>
+    <aside class="panel left"><h2>库位地图</h2><div class="sub">点击货架或托盘查看物料和下一步流程</div><div class="search"><input id="materialSearch" placeholder="输入物料 ID / 批次 / 托盘 QR" /><button id="locateBtn">定位</button></div><h3>状态筛选</h3><div class="legend"><label class="legend-row"><input type="checkbox" data-filter="available" checked /> <i class="dot green"></i> 可用库存</label><label class="legend-row"><input type="checkbox" data-filter="iqc" checked /> <i class="dot yellow"></i> IQC 待检</label><label class="legend-row"><input type="checkbox" data-filter="hold" checked /> <i class="dot red"></i> 隔离 / 不良</label><label class="legend-row"><input type="checkbox" data-filter="empty" checked /> <i class="dot blue"></i> 空库位</label></div><div class="route">流程入口<br><b id="nextProcess">选择一个库位开始</b></div></aside>
+    <aside class="panel right"><h2 id="detailTitle">未选择库位</h2><div class="sub" id="detailSub">在 3D 场景中点击货架、库位或托盘</div><div id="detailBody" class="empty">库位详情将在这里显示。</div></aside>
+    <div class="hint">拖动旋转 · 滚轮缩放 · 点击定位</div>
+  </div>
+  <script src="sylva-assets/three.min.js"></script>
+  <script>
+    const materials = [
+      { id:'MAT-260722-01', batch:'260722', pallet:'PLT-VN-0001', location:'A-01-02', status:'iqc', qty:2200, msd:'MS-3', next:'IQC 检验' },
+      { id:'MAT-260722-02', batch:'260722', pallet:'PLT-VN-0002', location:'A-02-01', status:'available', qty:5000, msd:'MS-2a', next:'可绑定工单 / FIFO 出料' },
+      { id:'MAT-260821-03', batch:'260821', pallet:'PLT-VN-0003', location:'B-01-03', status:'hold', qty:1200, msd:'MS-5', next:'MRB 物料评审' },
+      { id:'MAT-260823-04', batch:'260823', pallet:'PLT-VN-0004', location:'B-02-02', status:'available', qty:3800, msd:'MS-1', next:'可绑定工单 / FIFO 出料' },
+      { id:'MAT-260824-05', batch:'260824', pallet:'PLT-VN-0005', location:'C-01-01', status:'iqc', qty:900, msd:'MS-4', next:'IQC 检验' }
+    ];
+    const palette = { available:0x65e69a, iqc:0xf7c873, hold:0xff8989, empty:0x70baff };
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x071513); scene.fog = new THREE.Fog(0x071513, 22, 48);
+    const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, .1, 100); camera.position.set(16,14,19);
+    const renderer = new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(innerWidth,innerHeight); renderer.shadowMap.enabled=true; document.getElementById('scene').appendChild(renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xc6ffe1,0x071513,2.4)); const sun=new THREE.DirectionalLight(0xa8f3be,3); sun.position.set(8,18,10); sun.castShadow=true; scene.add(sun);
+    const floor=new THREE.Mesh(new THREE.PlaneGeometry(48,48),new THREE.MeshStandardMaterial({color:0x0d2822,roughness:.88})); floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; scene.add(floor);
+    const group=new THREE.Group(); scene.add(group); const clickable=[]; const locationObjects={};
+    function box(w,h,d,color,x,y,z,opacity=1){ const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color,roughness:.6,transparent:opacity<1,opacity})); m.position.set(x,y,z); m.castShadow=true;m.receiveShadow=true;group.add(m);return m; }
+    function label(text,x,y,z){ const c=document.createElement('canvas'); c.width=300;c.height=64; const ctx=c.getContext('2d');ctx.fillStyle='#b5f3ce';ctx.font='bold 30px Arial';ctx.fillText(text,8,40);const t=new THREE.CanvasTexture(c);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true}));s.scale.set(2.4,.52,1);s.position.set(x,y,z);group.add(s); }
+    const zones=[['A',-5],['B',0],['C',5]]; zones.forEach(([zone,x])=>{ label('ZONE '+zone,x,5.2,-2.9); for(let row=0;row<2;row++){ const z=row*5-1.8; box(3.8,5.5,.18,0x397465,x,2.75,z-2.05); box(3.8,5.5,.18,0x397465,x,2.75,z+2.05); for(let level=0;level<3;level++){ const y=1+level*1.7; box(3.95,.13,4.25,0x5b9b80,x,y,z); } } });
+    for(let i=0;i<materials.length;i++){ const m=materials[i], zone=m.location[0], x=zones.find(z=>z[0]===zone)[1], row=+m.location[2]-1, level=+m.location[4]-1, z=row*5-1.8; const col=palette[m.status]; const obj=box(1.25,.85,1.35,col,x-1.15+((i%2)*1.35),1.45+level*1.7,z); obj.userData=m; clickable.push(obj); locationObjects[m.location]=obj; label(m.location,x,6.1,z); }
+    // empty visual positions
+    [['A-01-01',-5,-1.8,0],['A-02-02',-5,3.2,1],['B-01-01',0,-1.8,0],['B-02-01',0,3.2,0],['C-01-02',5,-1.8,1]].forEach(([id,x,z,level])=>{ const obj=box(1.25,.85,1.35,palette.empty,x+1.15,1.45+level*1.7,z,.55);obj.userData={location:id,status:'empty',next:'可用库位'};clickable.push(obj);locationObjects[id]=obj; });
+    let selected; const ray=new THREE.Raycaster(), pointer=new THREE.Vector2(); function show(item){ selected=item; document.getElementById('detailTitle').textContent=item.location; document.getElementById('detailSub').textContent=item.status==='empty'?'空库位':'托盘 '+item.pallet; document.getElementById('nextProcess').textContent=item.next; document.getElementById('detailBody').innerHTML=item.status==='empty'?'<div class="empty">该库位目前为空，可用于收料绑定。</div>':`<div class="detail-grid"><div class="field"><label>物料 ID</label><strong>${item.id}</strong></div><div class="field"><label>状态</label><strong class="badge" style="color:${item.status==='hold'?'var(--bad)':item.status==='iqc'?'var(--warn)':'var(--accent)'}">${item.status==='hold'?'隔离 / 不良':item.status==='iqc'?'IQC 待检':'可用库存'}</strong></div><div class="field"><label>批次</label><strong>${item.batch}</strong></div><div class="field"><label>数量</label><strong>${item.qty} PCS</strong></div><div class="field"><label>MSD</label><strong>${item.msd}</strong></div><div class="field"><label>托盘 QR</label><strong>${item.pallet}</strong></div></div><div class="route">下一步：<b>${item.next}</b></div>`; clickable.forEach(o=>o.scale.setScalar(o.userData===item?1.12:1)); }
+    renderer.domElement.addEventListener('pointerdown',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);const hit=ray.intersectObjects(clickable)[0];if(hit)show(hit.object.userData);});
+    document.getElementById('locateBtn').onclick=()=>{const q=document.getElementById('materialSearch').value.trim().toLowerCase();const item=materials.find(m=>[m.id,m.batch,m.pallet,m.location].some(v=>v.toLowerCase()===q||v.toLowerCase().includes(q)));if(item){show(item);camera.position.set(locationObjects[item.location].position.x+9,9,locationObjects[item.location].position.z+10);}else{document.getElementById('detailTitle').textContent='未找到';document.getElementById('detailSub').textContent='请检查物料 ID、批次、托盘 QR 或库位';}};
+    document.querySelectorAll('[data-filter]').forEach(input=>input.onchange=()=>{const visible=[...document.querySelectorAll('[data-filter]:checked')].map(i=>i.dataset.filter);clickable.forEach(o=>{o.visible=visible.includes(o.userData.status);});});
+    let drag=false,last={x:0,y:0};renderer.domElement.addEventListener('pointermove',e=>{if(!drag)return;group.rotation.y+=(e.clientX-last.x)*.006;group.rotation.x=Math.max(-.18,Math.min(.35,group.rotation.x+(e.clientY-last.y)*.003));last={x:e.clientX,y:e.clientY};});renderer.domElement.addEventListener('pointerdown',e=>{drag=true;last={x:e.clientX,y:e.clientY}});window.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('wheel',e=>{camera.position.multiplyScalar(e.deltaY>0?1.05:.95);camera.position.clampLength(10,35);});
+    function animate(){requestAnimationFrame(animate);renderer.render(scene,camera);} animate(); addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);}); setInterval(()=>document.getElementById('syncTime').textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'}),1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "mes_url": "http://192.168.6.155:8080/api/pda/events",
+  "watch_dir": "D:\\电源自动测试系统\\数据库",
+  "scanner_tcp_port": 1003,
+  "enable_simulator": false
+}

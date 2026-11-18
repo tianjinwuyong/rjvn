@@ -1,0 +1,38 @@
+{
+  "sn_rules": {
+    "_note": "empty patterns disable validation; regex patterns enable validation",
+    "pcba": {
+      "patterns": [
+        "^5G[A-Z0-9]{8}$"
+      ],
+      "prefix": "",
+      "min_length": 10,
+      "max_length": 10,
+      "description": "PCBA版规则: 5G+8位字母或数字"
+    },
+    "shell": {
+      "patterns": [
+        "^NV18A[A-Z0-9]{9}$"
+      ],
+      "prefix": "",
+      "min_length": 14,
+      "max_length": 14,
+      "description": "外壳规则: NV18A+9位字母或数字"
+    }
+  },
+  "voice": {
+    "enabled": true,
+    "prompts": {
+      "scan_pcba": "请扫版码",
+      "scan_shell": "请扫壳码",
+      "binding": "绑定",
+      "violation": "违规",
+      "success": "绑定成功"
+    }
+  },
+  "binding_rules": {
+    "prevent_duplicate_pcba": true,
+    "prevent_duplicate_shell": true,
+    "auto_bind": true
+  }
+}

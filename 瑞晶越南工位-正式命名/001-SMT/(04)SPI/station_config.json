@@ -1,0 +1,7 @@
+{
+  "domain": "smt", "lineCode": "L001", "stationCode": "smt_spi",
+  "stationIp": null, "sequence": 4,
+  "nameZh": "SPI锡膏检测", "nameEn": "Solder Paste Inspection", "nameVi": "Kiểm tra kem hàn SPI",
+  "sourceType": "database", "heartbeatSeconds": 10,
+  "source": {"status": "pending", "path": "", "patterns": ["*.csv", "*.json"]}
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "1.0",
+  "profiles": {
+    "mod_manu_pda_loading": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER_AND_PDA","formats":["QR","JSON"]},"motherboardLayout":{"type":"NONE"}},
+    "mod_manu_aoi": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"AOI_RESULT","formats":["CSV","JSON"]},"motherboardLayout":{"type":"SINGLE_BOARD","slots":1}},
+    "mod_manu_ict": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"ICT_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"MOTHERBOARD","slots":12}},
+    "mod_manu_fct": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"FCT_RESULT","formats":["XLSX","CSV","JSON"]},"motherboardLayout":{"type":"MOTHERBOARD","slots":12}},
+    "mod_manu_depanel": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"DEPANEL_RESULT","formats":["CSV","JSON"]},"motherboardLayout":{"type":"MOTHERBOARD_TO_SUBBOARD","slots":12}},
+    "mod_manu_case_binding": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER","formats":["QR","JSON"]},"motherboardLayout":{"type":"PCBA_CASE_BINDING","slots":1}},
+    "mod_manu_assembly_ate": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_manu_supersonic": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"SQL_SERVER","formats":["SQL","JSON"]},"motherboardLayout":{"type":"SINGLE_BOARD","slots":1}},
+    "mod_manu_aging": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"SQL_SERVER","formats":["SQL","CSV","JSON"]},"motherboardLayout":{"type":"AGING_CABINET","cabinets":7}},
+    "mod_manu_hivolt_ate": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_manu_packing_ate": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_manu_outer_box_binding": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER","formats":["QR","JSON"]},"motherboardLayout":{"type":"OUTER_BOX","slots":48}},
+    "mod_manu_pallet_binding": {"lineDomain":"MANUAL_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER","formats":["QR","JSON"]},"motherboardLayout":{"type":"PALLET","slots":0}},
+    "mod_auto_pda": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER_AND_PDA","formats":["QR","JSON"]},"motherboardLayout":{"type":"NONE"}},
+    "mod_auto_aoi": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"AOI_RESULT","formats":["CSV","JSON"]},"motherboardLayout":{"type":"SINGLE_BOARD","slots":1}},
+    "mod_auto_ict": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"ICT_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"MOTHERBOARD","slots":12}},
+    "mod_auto_fct": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"FCT_RESULT","formats":["XLSX","CSV","JSON"]},"motherboardLayout":{"type":"MOTHERBOARD","slots":12}},
+    "mod_auto_depanel": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"DEPANEL_RESULT","formats":["CSV","JSON"]},"motherboardLayout":{"type":"MOTHERBOARD_TO_SUBBOARD","slots":12}},
+    "mod_auto_case_binding": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER","formats":["QR","JSON"]},"motherboardLayout":{"type":"PCBA_CASE_BINDING","slots":1}},
+    "mod_auto_assembly_ate": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_auto_supersonic": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"SQL_SERVER","formats":["SQL","JSON"]},"motherboardLayout":{"type":"SINGLE_BOARD","slots":1}},
+    "mod_auto_aging": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"SQL_SERVER","formats":["SQL","CSV","JSON"]},"motherboardLayout":{"type":"AGING_CABINET","cabinets":7}},
+    "mod_auto_hivolt_ate": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_auto_packing_ate": {"lineDomain":"AUTO_LINE","lineId":"AUTO_LINE_1","stationId":"AUTO_PACKING_ATE","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_auto_packing_ate_left": {"lineDomain":"AUTO_LINE","lineId":"AUTO_LINE_1","stationId":"AUTO_PACKING_ATE_LEFT","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_auto_packing_ate_right": {"lineDomain":"AUTO_LINE","lineId":"AUTO_LINE_1","stationId":"AUTO_PACKING_ATE_RIGHT","mesDomain":"MES","dataSource":{"type":"ATE_RESULT","formats":["CSV","XLSX","JSON"]},"motherboardLayout":{"type":"ATE_GROUP","slots":8}},
+    "mod_auto_outer_box_binding": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER","formats":["QR","JSON"]},"motherboardLayout":{"type":"OUTER_BOX","slots":48}},
+    "mod_auto_pallet_binding": {"lineDomain":"AUTO_LINE","mesDomain":"MES","dataSource":{"type":"SCANNER","formats":["QR","JSON"]},"motherboardLayout":{"type":"PALLET","slots":0}}
+  }
+}

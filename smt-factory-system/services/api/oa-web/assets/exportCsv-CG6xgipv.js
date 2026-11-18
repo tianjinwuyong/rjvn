@@ -1,0 +1,1 @@
+import{u as n,w as h}from"./xlsx-DTAVMkyz.js";function d({columns:e,rows:s,filename:r,sheetName:i="Sheet1"}){const t=s||[];if(!t.length)return 0;const a=n.json_to_sheet(t,e&&e.length?{header:e}:void 0),o=n.book_new();return n.book_append_sheet(o,a,i),h(o,`${r}-${new Date().toISOString().slice(0,10)}.xlsx`),t.length}export{d as e};

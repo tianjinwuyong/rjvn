@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ruijing.local/contracts/andon-event.schema.json",
+  "title": "MES Andon Event",
+  "type": "object",
+  "required": ["andonEventId", "triggerType", "severity", "status", "triggeredAt"],
+  "properties": {
+    "andonEventId": {"type": "string", "minLength": 8},
+    "triggerType": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["L0_INFO", "L1_LINE", "L2_SUPERVISOR", "L3_ENGINEERING", "L4_MANAGEMENT"]},
+    "status": {"enum": ["TRIGGERED", "ACKNOWLEDGED", "ASSIGNED", "ESCALATED", "IN_PROGRESS", "RESOLVED", "VERIFIED", "CLOSED"]},
+    "triggeredAt": {"type": "string", "format": "date-time"},
+    "repairCaseId": {"type": "string"},
+    "workOrderId": {"type": "string"},
+    "stationCode": {"type": "string"},
+    "lineCode": {"type": "string"},
+    "domainCode": {"type": "string"},
+    "blocking": {"type": "boolean"},
+    "policyVersion": {"type": "string"},
+    "nextEscalationAt": {"type": "string", "format": "date-time"},
+    "evidenceEventIds": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

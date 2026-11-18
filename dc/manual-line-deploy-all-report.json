@@ -1,0 +1,118 @@
+[
+  {
+    "ip": "192.168.6.91",
+    "exe": "ict.exe",
+    "task": "RuijingICTSupervisor",
+    "status": "FAILED",
+    "localHash": "97AD277208FB2CD7440E15542EC514486459D74900F30A23E0840AC5B9DD8380",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":false,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "error": "preflight failed"
+  },
+  {
+    "ip": "192.168.6.92",
+    "exe": "fct.exe",
+    "task": "RuijingFCTSupervisor",
+    "status": "FAILED",
+    "localHash": "AAD6D65AB886DD2D7BBF854FF963834F68B4673228680924D39544E16A45284D",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":false,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "error": "preflight failed"
+  },
+  {
+    "ip": "192.168.6.93",
+    "exe": "depanel.exe",
+    "task": "RuijingDepanelSupervisor",
+    "status": "DEPLOYED",
+    "localHash": "FFE916CD958A381F80150DCD9CDD0E49E70514C87174E398367FFA099B545A61",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":true,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "backup": "D:\\stations\\depanel.exe.20260805T090431Z.bak",
+    "verify": {
+      "hash": "FFE916CD958A381F80150DCD9CDD0E49E70514C87174E398367FFA099B545A61",
+      "task": "Running",
+      "pid": 7736,
+      "path": "D:\\stations\\depanel.exe"
+    }
+  },
+  {
+    "ip": "192.168.6.94",
+    "exe": "qrbinding.exe",
+    "task": "RuijingShellBindingSupervisor",
+    "status": "DEPLOYED",
+    "localHash": "DE50605CA919EE81F628318C61934F680505A2AD79B5E2EFFD748BE7AD26E736",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":true,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "backup": "D:\\stations\\qrbinding.exe.20260805T090450Z.bak",
+    "verify": {
+      "hash": "DE50605CA919EE81F628318C61934F680505A2AD79B5E2EFFD748BE7AD26E736",
+      "task": "Running",
+      "pid": 9824,
+      "path": "D:\\stations\\qrbinding.exe"
+    }
+  },
+  {
+    "ip": "192.168.6.95",
+    "exe": "assembly_ate.exe",
+    "task": "RuijingAssemblyATESupervisor",
+    "status": "DEPLOYED",
+    "localHash": "535918924AEFA4A91D83CFDD3B0CB4F4F933164FF82930667B5B456BE9375CEA",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":true,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "backup": "",
+    "verify": {
+      "hash": "535918924AEFA4A91D83CFDD3B0CB4F4F933164FF82930667B5B456BE9375CEA",
+      "task": "Running",
+      "pid": 11140,
+      "path": "D:\\stations\\assembly_ate.exe"
+    }
+  },
+  {
+    "ip": "192.168.6.96",
+    "exe": "supersonic.exe",
+    "task": "RuijingSupersonicSupervisor",
+    "status": "FAILED",
+    "localHash": "16F83DE86BBCA342210E1292351729FFA90270CE6367E2232D5922D81DAF36CE",
+    "error": "The term 'Test-NetConnection' is not recognized as the name of a cmdlet, functi\non, script file, or operable program. Check the spelling of the name, or if a p\nath was included, verify that the path is correct and try again.\nAt line:1 char:147\n+ $ErrorActionPreference='Stop'; [pscustomobject]@{drive=(Test-Path 'D:\\');dir=\n(Test-Path 'D:\\stations');source=$true;sourcePort=(Test-NetConnection <<<<  127\n.0.0.1 -Port 1433 -InformationLevel Quiet);mes8080=(Test-NetConnection 192.168.\n6.155 -Port 8080 -InformationLevel Quiet);mes5178=(Test-NetConnection 192.168.6\n.155 -Port 5178 -InformationLevel Quiet)} | ConvertTo-Json -Compress\n    + CategoryInfo          : ObjectNotFound: (Test-NetConnection:String) [],  \n   ParentContainsErrorRecordException\n    + FullyQualifiedErrorId : CommandNotFoundException"
+  },
+  {
+    "ip": "192.168.6.97",
+    "exe": "aging_cab.exe",
+    "task": "RuijingAgingSupervisor",
+    "status": "DEPLOYED",
+    "localHash": "ED26FEE2A4492B3916D30900A40DF7C0B45B67CE42C9A6562B0D18A93461D0C8",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":true,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "backup": "",
+    "verify": {
+      "hash": "ED26FEE2A4492B3916D30900A40DF7C0B45B67CE42C9A6562B0D18A93461D0C8",
+      "task": "Running",
+      "pid": 7204,
+      "path": "D:\\stations\\aging_cab.exe"
+    }
+  },
+  {
+    "ip": "192.168.6.98",
+    "exe": "hivolt_ate.exe",
+    "task": "RuijingHighVoltATESupervisor",
+    "status": "DEPLOYED",
+    "localHash": "E01B98926FCEFB486735D45A91ABF5BE2D059714D8D3DDE0074F3B93B72AF1D8",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":true,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "backup": "",
+    "verify": {
+      "hash": "E01B98926FCEFB486735D45A91ABF5BE2D059714D8D3DDE0074F3B93B72AF1D8",
+      "task": "Running",
+      "pid": 244,
+      "path": "D:\\stations\\hivolt_ate.exe"
+    }
+  },
+  {
+    "ip": "192.168.6.100",
+    "exe": "outer_box.exe",
+    "task": "RuijingOuterBoxSupervisor",
+    "status": "DEPLOYED",
+    "localHash": "DBC1C6F76A63F37A953C10BE717973A03684B696406BD725F45B3553E24AC74A",
+    "preflight": "{\"drive\":true,\"dir\":true,\"source\":true,\"sourcePort\":true,\"mes8080\":true,\"mes5178\":true}",
+    "backup": "",
+    "verify": {
+      "hash": "DBC1C6F76A63F37A953C10BE717973A03684B696406BD725F45B3553E24AC74A",
+      "task": "Running",
+      "pid": 2444,
+      "path": "D:\\stations\\outer_box.exe"
+    }
+  }
+]

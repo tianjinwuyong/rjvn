@@ -1,0 +1,86 @@
+137 INFO: PyInstaller: 6.21.0, contrib hooks: 2026.6
+141 INFO: Python: 3.8.10
+304 INFO: Platform: Windows-10-10.0.26200-SP0
+308 INFO: Python environment: C:\Users\tianj\AppData\Local\Programs\Python\Python38
+312 INFO: wrote C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\Auto_Supersonic_Agent.spec
+317 INFO: Removing temporary files and cleaning cache in C:\Users\tianj\AppData\Local\pyinstaller
+323 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(08)超声',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\python38.zip',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\DLLs',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38',
+ 'C:\\Users\\tianj\\AppData\\Roaming\\Python\\Python38\\site-packages',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\win32',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\win32\\lib',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\Pythonwin',
+ 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(08)超声',
+ 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线',
+ 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\004-手动线']
+970 INFO: checking Analysis
+972 INFO: Building Analysis because Analysis-00.toc is non existent
+974 INFO: Looking for Python shared library...
+974 INFO: Using Python shared library: C:\Users\tianj\AppData\Local\Programs\Python\Python38\python38.dll
+974 INFO: Running Analysis Analysis-00.toc
+977 INFO: Target bytecode optimization level: 0
+977 INFO: Initializing module dependency graph...
+978 INFO: Initializing module graph hook caches...
+992 INFO: Analyzing modules for base_library.zip ...
+1989 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+2341 INFO: Processing standard module hook 'hook-math.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+2777 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3201 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3393 INFO: Caching module dependency graph...
+3424 INFO: Analyzing C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\supersonic_agent.py
+3429 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+3431 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+3685 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3730 INFO: Processing standard module hook 'hook-sqlite3.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4252 INFO: Processing standard module hook 'hook-platform.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4265 INFO: Processing standard module hook 'hook-_ctypes.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4298 INFO: Processing standard module hook 'hook-pyodbc.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+4400 INFO: Processing standard module hook 'hook-PySide6.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4829 INFO: Processing standard module hook 'hook-shiboken6.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4898 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+7692 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+12462 INFO: Processing standard module hook 'hook-PySide6.QtWidgets.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+17867 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+45171 INFO: Analyzing hidden import 'station_data_sync'
+45174 INFO: Analyzing hidden import 'station_runtime_safety'
+45175 INFO: Processing module hooks (post-graph stage)...
+45344 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+45358 INFO: Performing binary vs. data reclassification (1030 entries)
+45466 INFO: Looking for ctypes DLLs
+45472 INFO: Analyzing run-time hooks ...
+45475 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+45479 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+45480 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+45483 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+45484 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+45515 INFO: Creating base_library.zip...
+45536 INFO: Looking for dynamic libraries
+45771 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\shiboken6', 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\numpy\\.libs']
+45771 INFO: Extra DLL search directories (PATH): ['C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\PySide6']
+47005 INFO: Warnings written to C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\build\Auto_Supersonic_Agent\warn-Auto_Supersonic_Agent.txt
+47025 INFO: Graph cross-reference written to C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\build\Auto_Supersonic_Agent\xref-Auto_Supersonic_Agent.html
+47060 INFO: checking PYZ
+47060 INFO: Building PYZ because PYZ-00.toc is non existent
+47061 INFO: Building PYZ (ZlibArchive) C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\build\Auto_Supersonic_Agent\PYZ-00.pyz
+47173 INFO: Building PYZ (ZlibArchive) C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\build\Auto_Supersonic_Agent\PYZ-00.pyz completed successfully.
+47191 INFO: checking PKG
+47192 INFO: Building PKG because PKG-00.toc is non existent
+47192 INFO: Building PKG (CArchive) Auto_Supersonic_Agent.pkg
+58791 INFO: Building PKG (CArchive) Auto_Supersonic_Agent.pkg completed successfully.
+58811 INFO: Bootloader C:\Users\tianj\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+58813 INFO: checking EXE
+58814 INFO: Building EXE because EXE-00.toc is non existent
+58814 INFO: Building EXE from EXE-00.toc
+58815 INFO: Copying bootloader EXE to C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\dist\Auto_Supersonic_Agent.exe
+58820 INFO: Copying icon to EXE
+58824 INFO: Copying 0 resources to EXE
+58826 INFO: Embedding manifest in EXE
+58829 INFO: Appending PKG archive to EXE
+58870 INFO: Fixing EXE headers
+59141 INFO: Building EXE from EXE-00.toc completed successfully.
+59159 INFO: Build complete! The results are available in: C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(08)超声\dist

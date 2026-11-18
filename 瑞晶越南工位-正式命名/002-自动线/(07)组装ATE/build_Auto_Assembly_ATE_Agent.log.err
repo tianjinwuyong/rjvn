@@ -1,0 +1,128 @@
+121 INFO: PyInstaller: 6.21.0, contrib hooks: 2026.6
+123 INFO: Python: 3.8.10
+173 INFO: Platform: Windows-10-10.0.26200-SP0
+177 INFO: Python environment: C:\Users\tianj\AppData\Local\Programs\Python\Python38
+180 INFO: wrote C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\Auto_Assembly_ATE_Agent.spec
+186 INFO: Removing temporary files and cleaning cache in C:\Users\tianj\AppData\Local\pyinstaller
+191 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(07)组装ATE',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\python38.zip',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\DLLs',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38',
+ 'C:\\Users\\tianj\\AppData\\Roaming\\Python\\Python38\\site-packages',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\win32',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\win32\\lib',
+ 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\Pythonwin',
+ 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(07)组装ATE',
+ 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线',
+ 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\004-手动线']
+1066 INFO: checking Analysis
+1067 INFO: Building Analysis because Analysis-00.toc is non existent
+1069 INFO: Looking for Python shared library...
+1069 INFO: Using Python shared library: C:\Users\tianj\AppData\Local\Programs\Python\Python38\python38.dll
+1071 INFO: Running Analysis Analysis-00.toc
+1073 INFO: Target bytecode optimization level: 0
+1073 INFO: Initializing module dependency graph...
+1074 INFO: Initializing module graph hook caches...
+1090 INFO: Analyzing modules for base_library.zip ...
+2000 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+2050 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+2567 INFO: Processing standard module hook 'hook-math.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3046 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3551 INFO: Caching module dependency graph...
+3584 INFO: Analyzing C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\assembly_ate_agent.py
+3591 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+3593 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+3845 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+3893 INFO: Processing standard module hook 'hook-sqlite3.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4411 INFO: Processing standard module hook 'hook-platform.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4423 INFO: Processing standard module hook 'hook-_ctypes.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+4447 INFO: Processing standard module hook 'hook-openpyxl.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+4651 INFO: Processing standard module hook 'hook-numpy.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+5081 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+5118 INFO: Processing standard module hook 'hook-xml.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+5468 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+5570 INFO: Processing standard module hook 'hook-clr.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+5583 INFO: Processing standard module hook 'hook-clr_loader.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+5680 INFO: Processing standard module hook 'hook-pycparser.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+6047 INFO: Processing standard module hook 'hook-setuptools.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+6048 INFO: SetuptoolsInfo: initializing cached setuptools info...
+6664 INFO: Processing pre-safe-import-module hook 'hook-distutils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+6665 INFO: Processing pre-find-module-path hook 'hook-distutils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+6666 INFO: Processing standard module hook 'hook-distutils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+6695 INFO: Processing standard module hook 'hook-distutils.util.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+6717 INFO: Processing standard module hook 'hook-_osx_support.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+6820 INFO: Processing standard module hook 'hook-pkg_resources.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+8328 INFO: Processing standard module hook 'hook-sysconfig.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+8586 INFO: Processing standard module hook 'hook-webbrowser.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+8628 INFO: Processing pre-safe-import-module hook 'hook-backports.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+8904 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+9391 INFO: Processing standard module hook 'hook-psutil.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+10063 INFO: Processing standard module hook 'hook-lxml.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+10387 INFO: Processing standard module hook 'hook-lxml.etree.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+10658 INFO: Processing standard module hook 'hook-PIL.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+10707 INFO: Processing standard module hook 'hook-PIL.Image.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+11017 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+11356 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+11388 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+11726 INFO: Processing standard module hook 'hook-PySide6.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+12206 INFO: Processing standard module hook 'hook-shiboken6.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+12271 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+17048 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+22679 INFO: Processing standard module hook 'hook-PySide6.QtWidgets.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+28522 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+59038 INFO: Analyzing hidden import 'station_data_sync'
+59041 INFO: Analyzing hidden import 'station_runtime_safety'
+59042 INFO: Processing module hooks (post-graph stage)...
+59171 INFO: Processing standard module hook 'hook-lxml.isoschematron.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+59380 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+59415 INFO: Processing pre-safe-import-module hook 'hook-win32com.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+59715 INFO: Processing standard module hook 'hook-win32com.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+59717 INFO: Processing standard module hook 'hook-pythoncom.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+60046 INFO: Processing standard module hook 'hook-pywintypes.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+60534 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+60534 INFO: Processing standard module hook 'hook-lxml.objectify.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+60685 INFO: Performing binary vs. data reclassification (1045 entries)
+60798 INFO: Looking for ctypes DLLs
+60834 INFO: Analyzing run-time hooks ...
+60840 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60842 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+60843 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks'
+60846 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60848 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60851 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60854 INFO: Including run-time hook 'pyi_rth_setuptools.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60856 INFO: Including run-time hook 'pyi_rth_pkgres.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60860 INFO: Including run-time hook 'pyi_rth_pywintypes.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks'
+60861 INFO: Including run-time hook 'pyi_rth_pythoncom.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks'
+60862 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+60936 INFO: Creating base_library.zip...
+60950 INFO: Looking for dynamic libraries
+C:\Users\tianj\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\building\build_main.py:227: UserWarning: The numpy.array_api submodule is still experimental. See NEP 47.
+  __import__(package)
+62000 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\shiboken6', 'C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\lib\\site-packages\\numpy\\.libs']
+62001 INFO: Extra DLL search directories (PATH): ['C:\\Users\\tianj\\AppData\\Local\\Programs\\Python\\Python38\\Lib\\site-packages\\PySide6']
+63349 INFO: Warnings written to C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\build\Auto_Assembly_ATE_Agent\warn-Auto_Assembly_ATE_Agent.txt
+63467 INFO: Graph cross-reference written to C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\build\Auto_Assembly_ATE_Agent\xref-Auto_Assembly_ATE_Agent.html
+63507 INFO: checking PYZ
+63507 INFO: Building PYZ because PYZ-00.toc is non existent
+63508 INFO: Building PYZ (ZlibArchive) C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\build\Auto_Assembly_ATE_Agent\PYZ-00.pyz
+63963 INFO: Building PYZ (ZlibArchive) C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\build\Auto_Assembly_ATE_Agent\PYZ-00.pyz completed successfully.
+63992 INFO: checking PKG
+63993 INFO: Building PKG because PKG-00.toc is non existent
+63993 INFO: Building PKG (CArchive) Auto_Assembly_ATE_Agent.pkg
+81068 INFO: Building PKG (CArchive) Auto_Assembly_ATE_Agent.pkg completed successfully.
+81087 INFO: Bootloader C:\Users\tianj\AppData\Local\Programs\Python\Python38\lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+81087 INFO: checking EXE
+81088 INFO: Building EXE because EXE-00.toc is non existent
+81088 INFO: Building EXE from EXE-00.toc
+81088 INFO: Copying bootloader EXE to C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\dist\Auto_Assembly_ATE_Agent.exe
+81092 INFO: Copying icon to EXE
+81096 INFO: Copying 0 resources to EXE
+81097 INFO: Embedding manifest in EXE
+81101 INFO: Appending PKG archive to EXE
+81151 INFO: Fixing EXE headers
+81670 INFO: Building EXE from EXE-00.toc completed successfully.
+81687 INFO: Build complete! The results are available in: C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\002-自动线\(07)组装ATE\dist

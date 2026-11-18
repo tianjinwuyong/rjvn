@@ -1,0 +1,64 @@
+# -*- coding: utf-8 -*-
+import socket,threading,time,tkinter as tk,sys
+from pathlib import Path
+from tkinter import messagebox,ttk
+APP_DIR=Path(__file__).resolve().parent
+sys.path.insert(0,str(APP_DIR.parent))
+MANUAL_LINE=APP_DIR.parent.parent/'004-手动线'
+if str(MANUAL_LINE) not in sys.path and MANUAL_LINE.exists():sys.path.insert(1,str(MANUAL_LINE))
+from supersonic_core import SupersonicCore,SupersonicError,MES_URL,STATION_CODE
+from station_heartbeat import StationHeartbeat
+from station_scan_alarm import show_blocking_alarm
+from station_language import install_language_menu
+
+class Supersonic2D:
+ def __init__(self,root):
+        self.root=root;self.core=SupersonicCore();self.running=True;self.heartbeat=StationHeartbeat(STATION_CODE,MES_URL,'supersonic_agent');self.scan=tk.StringVar();self.status=tk.StringVar(value='SQL Server连接中');root.title('超声工站 / SUPERSONIC · 2D');root.geometry('1500x900');root.configure(bg='#07111f');install_language_menu(root);self.build();self.refresh();threading.Thread(target=self.worker,daemon=True).start();threading.Thread(target=self.scanner,daemon=True).start()
+ def build(self):
+  h=tk.Frame(self.root,bg='#10243b');h.pack(fill='x');tk.Label(h,text='超声工站 · 单SN测试',bg='#10243b',fg='white',font=('Microsoft YaHei',22,'bold')).pack(side='left',padx=16,pady=10);tk.Label(h,textvariable=self.status,bg='#10243b',fg='#38bdf8',font=('Microsoft YaHei',12,'bold')).pack(side='right',padx=16)
+  bar=tk.Frame(self.root,bg='#422006');bar.pack(fill='x',padx=12,pady=6);tk.Label(bar,text='扫码只检查NG/重复',bg='#422006',fg='#fde047').pack(side='left',padx=8);e=tk.Entry(bar,textvariable=self.scan,font=('Consolas',15),width=35);e.pack(side='left',pady=8);e.bind('<Return>',lambda _e:self.check());tk.Button(bar,text='检查',command=self.check).pack(side='left',padx=6)
+  self.card=tk.Label(self.root,text='等待 SQL Server 新记录\nWAITING',bg='#334155',fg='white',font=('Consolas',30,'bold'),height=4,relief='ridge');self.card.pack(fill='x',padx=12,pady=6)
+  self.tabs=ttk.Notebook(self.root);self.tabs.pack(fill='both',expand=True,padx=12,pady=6);self.trees={}
+  specs={'测试结果':['时间','SN','结果','频率','振幅','波时','能量','功率','来源'],'NG':['时间','SN','来源'],'报到记录':['到站时间','SN','预发','状态','MES确认'],'报到异常':['时间','SN','原因','说明','维修工单'],'维修工单':['本地工单','MES工单','SN','部门','状态'],'历史封存':['批次','记录数','哈希','时间'],'MES通信':['事件','类型','状态','错误'],'设置':['项目','值'],'修改记录':['编号','版本','原因','内容']}
+  for name,cols in specs.items():
+   f=tk.Frame(self.tabs);self.tabs.add(f,text=name);t=ttk.Treeview(f,columns=cols,show='headings');self.trees[name]=t
+   for c in cols:t.heading(c,text=c);t.column(c,width=145,anchor='center')
+   t.pack(side='left',fill='both',expand=True);ttk.Scrollbar(f,command=t.yview).pack(side='right',fill='y')
+ def fill(self,name,rows):
+  t=self.trees[name];t.delete(*t.get_children())
+  for row in rows:t.insert('','end',values=row)
+ def check(self):
+  try:
+   r=self.core.check_scan(self.scan.get());self.scan.set('');self.status.set(f'{r["status"]}: {r["sn"]}')
+   if r['blocked']:show_blocking_alarm(self.root,r['status'],r['sn'],r['detail'],STATION_CODE,MES_URL)
+  except SupersonicError as e:messagebox.showwarning('扫码',str(e))
+  self.refresh()
+ def worker(self):
+  while self.running:
+   self.heartbeat.tick(sourceConnected=self.core.sql_connected,sourceType='SQL_SERVER')
+   try:r=self.core.poll_sql_once();self.root.after(0,lambda x=r:self.status.set(f'SQL在线 · {x["table"]} · 新增{x["added"]}'))
+   except Exception as e:self.core.sql_connected=False;self.root.after(0,lambda x=str(e):self.status.set('SQL离线重试: '+x[:100]))
+   self.core.sync_once();self.root.after(0,self.refresh);time.sleep(2)
+ def scanner(self):
+  s=socket.socket();s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+  try:
+   s.bind(('0.0.0.0',1008));s.listen(5);s.settimeout(1)
+   while self.running:
+    try:
+     c,_=s.accept();v=c.recv(4096).decode(errors='ignore').strip();c.close()
+     if v:self.root.after(0,lambda x=v:(self.scan.set(x),self.check()))
+    except socket.timeout:pass
+  except OSError as e:self.root.after(0,lambda:self.status.set(f'扫码端口错误: {e}'))
+  finally:s.close()
+ def refresh(self):
+  s=self.core.snapshot();r=s['results'];latest=r[0] if r else None
+  self.card.config(text=f'{latest["sn"]}\n{latest["result"]}' if latest else '等待 SQL Server 新记录\nWAITING',bg='#166534' if latest and latest['result']=='OK' else '#991b1b' if latest else '#334155')
+  self.fill('测试结果',[(x.get('test_time',''),x.get('sn',''),x.get('result',''),x.get('frequency',''),x.get('amplitude',''),x.get('wavetime',''),x.get('energy',''),x.get('power',''),x.get('source_table','')) for x in r]);self.fill('NG',[(x.get('test_time',''),x.get('sn',''),x.get('source_table','')) for x in s['ng']]);a=s['arrival'];self.fill('报到记录',[(x['arrived_at'],x['sn'],'YES' if x['expected'] else 'NO',x['arrival_status'],x['mes_reported_at'] or '') for x in a['arrivals']]);self.fill('报到异常',[(x['created_at'],x['sn'],x['reason_code'],x['reason_detail'],x['maintenance_case_id']) for x in a['exceptions']]);self.fill('维修工单',[(x['local_case_id'],x['mes_work_order_id'] or '',x['sn'],x['department'],x['status']) for x in s['maintenance']['cases']]);self.fill('历史封存',[(x['archive_batch_id'],x['record_count'],x['content_hash'],x['sealed_at']) for x in s['history']['batches']]);self.fill('MES通信',[(x['event_id'],x['event_type'],x['status'],x['last_error']) for x in s['outbox']]);q=s['sql'];self.fill('设置',[('SQL Server',f'{q["host"]}:{q["port"]}'),('Database',q['database']),('Table',q['table']),('Connected',q['connected']),('数据流向','SQL Server → 本地SQLite → MES'),('NG策略','记录/标记；不语音报警')]);self.fill('修改记录',[(x['change_id'],x['version'],x['reason'],x['summary']) for x in s['changes']])
+ def close(self):self.running=False;self.root.destroy()
+if __name__=='__main__':
+ root=tk.Tk();app=Supersonic2D(root)
+ from station_retest import install_station_retest_panel
+ install_station_retest_panel(root,STATION_CODE,MES_URL.replace('/api/pda/events',''))
+ from station_repair_workflow import install_repair_workflow
+ install_repair_workflow(root,STATION_CODE,MES_URL,'超声')
+ root.protocol('WM_DELETE_WINDOW',app.close);root.mainloop()

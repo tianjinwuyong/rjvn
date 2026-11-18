@@ -1,0 +1,61 @@
+{
+  "inclusive": {
+    "station_code": "manual_line_inclusive",
+    "display_name": "Inclusive Manual Station",
+    "scan_types": ["product_sn", "board_sn", "material", "work_order", "box_sn", "pallet_sn", "channel"],
+    "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": true, "ate_tabs": true},
+    "tabs": ["live", "ng_records", "sn_records", "resources", "operator_manual", "maintenance_manual", "sop", "daily_check", "operation_report", "professional_user"]
+  },
+  "pda": {
+    "station_code": "mod_manu_pda",
+    "display_name": "PDA Material Loading",
+    "scan_types": ["work_order", "material", "machine", "channel", "feeder"],
+    "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": false, "repair_loop": true, "kpi": true, "printing": false},
+    "tabs": ["live", "material_binding", "material_loading", "loading_status", "resources", "operator_manual", "daily_check", "operation_report", "professional_user"]
+  },
+  "aoi": {
+    "station_code": "mod_manu_aoi",
+    "display_name": "AOI Quality",
+    "scan_types": ["product_sn", "board_sn"],
+    "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": false},
+    "tabs": ["live", "ng_records", "sn_records", "repair_return", "resources", "operator_manual", "maintenance_manual", "sop", "daily_check", "operation_report", "professional_user"]
+  },
+  "ict": {
+    "station_code": "mod_manu_ict",
+    "display_name": "ICT",
+    "scan_types": ["product_sn", "motherboard_sn", "child_board_sn"],
+    "features": {"board_query": true, "motherboard_controls": true, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": false},
+    "panel_visualization": {"enabled": true, "count": 12, "allowed_counts": [6, 8, 12], "columns": 4, "title": "12-PANEL BOARD VISUALIZATION", "default_state": "READY"},
+    "tabs": ["live", "pass_boards", "ng_boards", "sn_records", "ng_records", "repair_return", "resources", "operator_manual", "maintenance_manual", "sop", "daily_check", "operation_report", "professional_user"]
+  },
+  "fct": {
+    "station_code": "mod_manu_fct",
+    "display_name": "FCT",
+    "scan_types": ["product_sn", "motherboard_sn", "child_board_sn"],
+    "features": {"board_query": true, "motherboard_controls": true, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": false},
+    "panel_visualization": {"enabled": true, "count": 12, "allowed_counts": [6, 8, 12], "columns": 4, "title": "12-PANEL BOARD VISUALIZATION", "default_state": "READY"},
+    "tabs": ["live", "pass_boards", "ng_boards", "sn_records", "ng_records", "repair_return", "resources", "operator_manual", "maintenance_manual", "sop", "daily_check", "operation_report", "professional_user"]
+  },
+  "depanel": {
+    "station_code": "mod_manu_depanel",
+    "display_name": "Depanel",
+    "scan_types": ["board_sn", "motherboard_sn", "child_board_sn"],
+    "features": {"board_query": true, "motherboard_controls": true, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": false},
+    "panel_visualization": {"enabled": true, "count": 12, "allowed_counts": [6, 8, 12], "columns": 4, "title": "12-PANEL BOARD VISUALIZATION", "default_state": "READY"},
+    "tabs": ["live", "pass_boards", "ng_boards", "sn_records", "ng_records", "repair_return", "resources", "operator_manual", "maintenance_manual", "sop", "daily_check", "operation_report", "professional_user"]
+  },
+  "case_binding": {
+    "station_code": "mod_manu_case_binding",
+    "display_name": "PCBA Shell Binding",
+    "scan_types": ["board_sn", "shell_sn"],
+    "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": true},
+    "tabs": ["live", "binding_records", "sn_records", "ng_records", "repair_return", "resources", "sop", "daily_check", "operation_report", "professional_user"]
+  },
+  "assembly_ate": {"station_code": "mod_manu_assembly_ate", "display_name": "Assembly ATE", "scan_types": ["product_sn", "channel"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": false, "repair_loop": true, "kpi": true, "printing": false, "ate_tabs": true}, "panel_visualization": {"enabled": true, "count": 8, "allowed_counts": [6, 8, 12], "columns": 4, "title": "ATE CHANNEL VISUALIZATION", "item_label": "CHANNEL", "default_state": "READY"}},
+  "supersonic": {"station_code": "mod_manu_supersonic", "display_name": "Supersonic", "scan_types": ["product_sn"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": false, "repair_loop": true, "kpi": true, "printing": false}},
+  "aging": {"station_code": "mod_manu_aging", "display_name": "Aging", "scan_types": ["product_sn", "cabinet_slot"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": false, "repair_loop": true, "kpi": true, "printing": false}},
+  "hivolt_ate": {"station_code": "mod_manu_hivolt_ate", "display_name": "High-Voltage ATE", "scan_types": ["product_sn", "channel"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": false, "repair_loop": true, "kpi": true, "printing": false, "ate_tabs": true}, "panel_visualization": {"enabled": true, "count": 8, "allowed_counts": [6, 8, 12], "columns": 4, "title": "ATE CHANNEL VISUALIZATION", "item_label": "CHANNEL", "default_state": "READY"}},
+  "packing_ate": {"station_code": "mod_manu_packing_ate", "display_name": "Packaging ATE", "scan_types": ["product_sn", "channel"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": false, "repair_loop": true, "kpi": true, "printing": true, "ate_tabs": true}, "panel_visualization": {"enabled": true, "count": 8, "allowed_counts": [6, 8, 12], "columns": 4, "title": "ATE CHANNEL VISUALIZATION", "item_label": "CHANNEL", "default_state": "READY"}},
+  "outer_box_binding": {"station_code": "mod_manu_outer_box_binding", "display_name": "Outer-Box Binding", "scan_types": ["product_sn", "box_sn"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": true}},
+  "pallet_binding": {"station_code": "mod_manu_pallet_binding", "display_name": "Pallet Binding", "scan_types": ["carton_sn", "pallet_sn"], "features": {"board_query": false, "motherboard_controls": false, "duplicate_alarm": true, "repair_loop": true, "kpi": true, "printing": true}}
+}

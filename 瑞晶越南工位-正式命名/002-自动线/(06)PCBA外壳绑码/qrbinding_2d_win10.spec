@@ -1,0 +1,4 @@
+# -*- mode: python ; coding: utf-8 -*-
+a = Analysis(['qrbinding.py'], pathex=['C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线', 'C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\004-手动线'], binaries=[], datas=[], hiddenimports=['station_scrap_workflow','station_data_sync','station_alarm','station_i18n','station_retest','station_runtime_safety','station_domain'], hookspath=[], hooksconfig={}, runtime_hooks=[], excludes=[], noarchive=False, optimize=0)
+pyz = PYZ(a.pure)
+exe = EXE(pyz, a.scripts, a.binaries, a.datas, [], name='qrbinding_2d_win10', debug=False, bootloader_ignore_signals=False, strip=False, upx=True, upx_exclude=[], runtime_tmpdir=None, console=False, disable_windowed_traceback=False, argv_emulation=False, target_arch=None, codesign_identity=None, entitlements_file=None)

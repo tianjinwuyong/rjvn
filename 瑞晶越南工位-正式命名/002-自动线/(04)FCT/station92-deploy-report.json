@@ -1,0 +1,34 @@
+﻿{
+    "Computer":  "PC-20260103VBHI",
+    "LoggedOnUser":  "PC-20260103VBHI\\Administrator",
+    "Target":  "D:\\stations\\Auto_FCT_Agent.exe",
+    "Hash":  "7C969F0325455EAE44B7F16C788EF8DC1E4221E1D32F474F0DA046627E4ABAAA",
+    "HashMatch":  true,
+    "ProcessCount":  2,
+    "Processes":  [
+                      {
+                          "ProcessId":  11424,
+                          "Name":  "Auto_FCT_Agent.exe",
+                          "ExecutablePath":  "D:\\stations\\Auto_FCT_Agent.exe"
+                      },
+                      {
+                          "ProcessId":  10108,
+                          "Name":  "Auto_FCT_Agent.exe",
+                          "ExecutablePath":  "D:\\stations\\Auto_FCT_Agent.exe"
+                      }
+                  ],
+    "Task":  {
+                 "TaskName":  "RuijingAutoFCT",
+                 "State":  {
+                               "value":  4,
+                               "Value":  "Running"
+                           }
+             },
+    "OldTaskDisabled":  {
+                            "value":  1,
+                            "Value":  "Disabled"
+                        },
+    "PSComputerName":  "192.168.6.92",
+    "RunspaceId":  "2b809e4b-4c0e-4084-a92a-14060a941495",
+    "PSShowComputerName":  true
+}

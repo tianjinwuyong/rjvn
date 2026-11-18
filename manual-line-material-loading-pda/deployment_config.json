@@ -1,0 +1,186 @@
+{
+  "schemaVersion": "1.0",
+  "supportedLineDomains": ["MANUAL_LINE", "AUTO_LINE"],
+  "defaultLineDomain": "MANUAL_LINE",
+  "defaultMode": "MIXED",
+  "legacyUiBridge": {
+    "enabled": true,
+    "mode": "HOST_IP_TO_LEGACY_UI",
+    "uiMode": "2D",
+    "root": "../瑞晶越南工位-正式命名/004-手动线 - 副本",
+    "manifest": "legacy_ui_manifest.json",
+    "launchOnlyWhenExplicit": true,
+    "environment": {"STATION_AGENT_MODE": "UNIFIED", "MES_AUTHORITY": "1"}
+  },
+  "mesDomains": {
+    "MES": {"baseUrl": "http://192.168.6.155:8080", "apiVersion": "v1", "writePolicy": "MES_AUTHORIZED"}
+  },
+  "mesAccess": {
+    "enabled": true,
+    "mode": "READ_ONLY_LOCAL_INFO",
+    "bindAddress": "0.0.0.0",
+    "allowedSubnets": ["192.168.6.0/24"],
+    "manualLinePortRange": [12001, 12013],
+    "autoLinePortRange": [12101, 12113],
+    "requiresMesToken": true,
+    "directSqliteNetworkSharing": false,
+    "endpoints": ["/health", "/api/station/local-info", "/api/station/scans", "/api/station/ng", "/api/station/test-results", "/api/station/resources", "/api/station/outbox", "/api/station/agent-messages", "/api/station/reports"]
+  },
+  "mesCommunication": {
+    "mode": "BIDIRECTIONAL",
+    "mesAuthoritative": true,
+    "upstream": {
+      "enabled": true,
+      "transport": "HTTPS_OR_LOCAL_MES_API",
+      "source": "LOCAL_SQLITE_OUTBOX",
+      "delivery": "EVENT_ID_IDEMPOTENT",
+      "retry": {"maxAttempts": 12, "backoffSeconds": [1, 2, 5, 10, 30, 60]},
+      "ackRequired": true
+    },
+    "downstream": {
+      "enabled": true,
+      "transport": "MES_COMMAND_POLL",
+      "queue": "mes_agent_commands",
+      "pollSeconds": 2,
+      "commands": ["QUERY_LOCAL_INFO", "REFRESH_CONFIG", "SYNC_OUTBOX", "PAUSE_STATION", "RESUME_STATION"],
+      "routeChangesRequireMesDecision": true,
+      "finalReleaseRequiresMesDecision": true
+    }
+  },
+  "stationProfilesFile": "station_profiles.json",
+  "sqlite": {
+    "enabled": true,
+    "root": "data",
+    "filePattern": "{stationCode}.sqlite",
+    "journalMode": "WAL",
+    "foreignKeys": true,
+    "retention": "IMMUTABLE_HISTORY",
+    "outboxTable": "mes_outbox"
+  },
+  "scanner": {
+    "default": {
+      "protocol": "TCP_SERVER",
+      "bindAddress": "0.0.0.0",
+      "port": 1003,
+      "encoding": "UTF-8",
+      "terminator": "AUTO",
+      "enabled": true
+    },
+    "byStation": {}
+  },
+  "resourceViewer": {
+    "enabled": true,
+    "recursive": true,
+    "readMode": "changed",
+    "pollSeconds": 2,
+    "maxFileBytes": 52428800,
+    "allowedFormats": ["CSV", "XLSX", "JSON", "HTML", "TXT", "SQL", "LOG"],
+    "rootsByStation": {}
+  },
+  "kpiViewer": {
+    "enabled": true,
+    "refreshSeconds": 5,
+    "historyWindowMinutes": 60,
+    "source": "LOCAL_SQLITE_AND_MES",
+    "metrics": [
+      {"key":"throughput","unit":"boards/hour","target":0,"direction":"higher_is_better"},
+      {"key":"cycle_time","unit":"seconds","target":0,"direction":"lower_is_better"},
+      {"key":"pass_rate","unit":"percent","target":98,"direction":"higher_is_better"},
+      {"key":"ng_rate","unit":"percent","target":2,"direction":"lower_is_better"},
+      {"key":"queue_depth","unit":"items","target":0,"direction":"lower_is_better"},
+      {"key":"mes_sync_lag","unit":"seconds","target":30,"direction":"lower_is_better"},
+      {"key":"outbox_depth","unit":"events","target":0,"direction":"lower_is_better"}
+    ],
+    "overridesByStation": {}
+  },
+  "qualityGates": {
+    "duplicateScan": {
+      "enabled": true,
+      "windowMs": 1500,
+      "scope": "STATION",
+      "checkMesHistory": true,
+      "blockOnDuplicate": true
+    },
+    "ngCheck": {
+      "enabled": true,
+      "requireSourceStation": true,
+      "requireDefectCode": true,
+      "requireRawEvidence": true,
+      "preserveHistory": true,
+      "mesAuthoritative": true,
+      "blockUnknownSn": true
+    }
+  },
+  "unknownHostAction": "OPEN_SELECTOR",
+  "autoDetection": {
+    "enabled": true,
+    "matchIp": true,
+    "matchHostname": true
+  },
+  "ipToStation": {
+    "192.168.6.89": "manu_pda",
+    "192.168.6.90": "manu_aoi",
+    "192.168.6.91": "manu_ict",
+    "192.168.6.92": "manu_fct",
+    "192.168.6.93": "manu_depanel",
+    "192.168.6.94": "manu_case_binding",
+    "192.168.6.95": "manu_assembly_ate",
+    "192.168.6.96": "manu_supersonic",
+    "192.168.6.97": "manu_aging",
+    "192.168.6.98": "manu_hivolt_ate",
+    "192.168.6.99": "manu_packing_ate",
+    "192.168.6.100": "manu_outer_box_binding",
+    "192.168.6.101": "manu_pallet_binding",
+    "192.168.6.161": "manu_outer_box_binding",
+    "192.168.6.49": "auto_pda",
+    "192.168.6.50": "auto_aoi",
+    "192.168.6.51": "auto_ict",
+    "192.168.6.52": "auto_fct",
+    "192.168.6.53": "auto_depanel",
+    "192.168.6.54": "auto_case_binding",
+    "192.168.6.55": "auto_assembly_ate",
+    "192.168.6.56": "auto_supersonic",
+    "192.168.6.57": "auto_aging",
+    "192.168.6.58": "auto_hivolt_ate",
+    "192.168.6.59": "auto_packing_ate_left",
+    "192.168.6.60": "auto_packing_ate_right",
+    "192.168.6.61": "auto_outer_box_binding",
+    "192.168.6.62": "auto_pallet_binding"
+  },
+  "hostnameToStation": {},
+  "stationAliases": {
+    "manu_pda": "mod_manu_pda_loading",
+    "manu_aoi": "mod_manu_aoi",
+    "manu_ict": "mod_manu_ict",
+    "manu_fct": "mod_manu_fct",
+    "manu_depanel": "mod_manu_depanel",
+    "manu_case_binding": "mod_manu_case_binding",
+    "manu_assembly_ate": "mod_manu_assembly_ate",
+    "manu_supersonic": "mod_manu_supersonic",
+    "manu_aging": "mod_manu_aging",
+    "manu_hivolt_ate": "mod_manu_hivolt_ate",
+    "manu_packing_ate": "mod_manu_packing_ate",
+    "manu_outer_box_binding": "mod_manu_outer_box_binding",
+    "manu_pallet_binding": "mod_manu_pallet_binding",
+    "auto_pda": "mod_auto_pda",
+    "auto_aoi": "mod_auto_aoi",
+    "auto_ict": "mod_auto_ict",
+    "auto_fct": "mod_auto_fct",
+    "auto_depanel": "mod_auto_depanel",
+    "auto_case_binding": "mod_auto_case_binding",
+    "auto_assembly_ate": "mod_auto_assembly_ate",
+    "auto_supersonic": "mod_auto_supersonic",
+    "auto_aging": "mod_auto_aging",
+    "auto_hivolt_ate": "mod_auto_hivolt_ate",
+    "auto_packing_ate": "mod_auto_packing_ate",
+    "auto_packing_ate_left": "mod_auto_packing_ate_left",
+    "auto_packing_ate_right": "mod_auto_packing_ate_right",
+    "auto_outer_box_binding": "mod_auto_outer_box_binding",
+    "auto_pallet_binding": "mod_auto_pallet_binding"
+  },
+  "stationOverrides": {},
+  "domainOverrides": {
+    "MANUAL_LINE": {},
+    "AUTO_LINE": {}
+  }
+}

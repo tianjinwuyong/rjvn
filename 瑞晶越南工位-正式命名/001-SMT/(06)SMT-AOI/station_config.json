@@ -1,0 +1,7 @@
+{
+  "domain": "smt", "lineCode": "L001", "stationCode": "smt_aoi",
+  "stationIp": null, "sequence": 6,
+  "nameZh": "SMT-AOI", "nameEn": "SMT AOI", "nameVi": "Kiểm tra SMT-AOI",
+  "sourceType": "database", "heartbeatSeconds": 10,
+  "source": {"status": "pending", "path": "", "patterns": ["*.csv", "*.json"]}
+}

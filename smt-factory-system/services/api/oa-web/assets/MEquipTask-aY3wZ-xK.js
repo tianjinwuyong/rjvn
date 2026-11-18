@@ -1,0 +1,1 @@
+import{y as s,u as o,o as a,c as r,d as c}from"./index-Rjm2WAZr.js";import{_ as u}from"./_plugin-vue_export-helper-DlAUqK2U.js";const p={class:"m-wrap"},n={__name:"MEquipTask",setup(_){const e=s(),t=o();return a(()=>{t.replace({path:"/equipment/inspect-fill",query:{...e.query}})}),(i,m)=>(r(),c("div",p))}},f=u(n,[["__scopeId","data-v-60e8cd64"]]);export{f as default};

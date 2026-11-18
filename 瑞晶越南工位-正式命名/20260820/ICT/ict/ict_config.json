@@ -1,0 +1,8 @@
+{
+  "mes_url": "http://127.0.0.1:8765/api/pda/events",
+  "watch_dir": "D:\\SRC",
+  "scanner_tcp_port": 1003,
+  "enable_simulator": false,
+  "confirm_after_fail_count": 3,
+  "test_mode_enabled": true
+}

@@ -1,0 +1,15 @@
+flowchart LR
+    SRC[ICT / FCT / 分板 / 其他来源工站] -->|NG事件和证据| MES[MES：NG登记与路径决策]
+    MES -->|版本化维修工单| RS[维修站 Agent]
+    RS -->|扫描和交接| BUCKET[QR桶 / 交接单]
+    BUCKET --> PDA[组长/线长 PDA]
+    RS -->|物料领用/退料| WMS[WMS]
+    RS -->|质量证据| QMS[QMS / QC]
+    RS -->|心跳、事实、复测申请| MES
+    RS -->|领取通知| KANBAN[MES 看板 / Andon]
+    PDA -->|确认领取和接收| MES
+    RS -->|授权返回交接| RETURN[目标来源工站]
+    RETURN -->|复测结果| MES
+    MES -->|关闭、重复、升级、报废或替换| CASE[维修案例生命周期]
+    RS -. MES断线追加 .-> OUTBOX[本地 SQLite Outbox]
+    OUTBOX -. 幂等回放 .-> MES

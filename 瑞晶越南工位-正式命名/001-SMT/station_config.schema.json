@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ruijing SMT L001 station configuration",
+  "type": "object",
+  "required": ["domain", "lineCode", "stationCode", "sequence", "nameZh", "nameEn", "sourceType"],
+  "properties": {
+    "domain": {"const": "smt"},
+    "lineCode": {"const": "L001"},
+    "stationCode": {"pattern": "^smt_"},
+    "localInfoApi": {
+      "type": "object",
+      "properties": {
+        "enabled": {"const": true},
+        "readOnly": {"const": true},
+        "apiVersion": {"const": "v1"}
+      }
+    },
+    "sequence": {"type": "integer", "minimum": 0, "maximum": 6}
+  }
+}

@@ -1,0 +1,102 @@
+all:
+  vars:
+    ansible_shell_type: powershell
+    ansible_become: false
+    mes_host: 192.168.6.155
+    station_dir: 'D:\stations'
+  children:
+    auto_line:
+      hosts:
+        auto_ict:
+          ansible_host: 192.168.6.51
+          ansible_user: Admin
+          ansible_connection: ssh
+          ansible_password: "{{ lookup('env', 'AUTO_51_PASSWORD') }}"
+          artifact: Auto_ICT_Agent.exe
+          task_name: RuijingAutoICT
+        auto_fct:
+          ansible_host: 192.168.6.52
+          ansible_user: Administrator
+          ansible_connection: ssh
+          ansible_password: "{{ lookup('env', 'AUTO_52_PASSWORD') }}"
+          artifact: Auto_FCT_Agent.exe
+          task_name: RuijingAutoFCT
+        auto_depanel:
+          ansible_host: 192.168.6.53
+          ansible_user: Administrator
+          ansible_connection: ssh
+          ansible_password: "{{ lookup('env', 'AUTO_53_PASSWORD') }}"
+          artifact: Auto_Depanel_Agent.exe
+          task_name: RuijingAutoDepanel
+        auto_shell_binding:
+          ansible_host: 192.168.6.54
+          ansible_user: Administrator
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_54_PASSWORD') }}"
+          artifact: qrbinding_2d_win10.exe
+          task_name: RuijingAutoShellBinding
+        auto_assembly_ate:
+          ansible_host: 192.168.6.55
+          ansible_user: Administrator
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_55_PASSWORD') }}"
+          artifact: Auto_Assembly_ATE_Agent.exe
+          task_name: RuijingAutoAssemblyATE
+        auto_supersonic:
+          ansible_host: 192.168.6.56
+          ansible_user: PC
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_56_PASSWORD') }}"
+          artifact: Auto_Supersonic_Agent.exe
+          task_name: RuijingAutoSupersonic
+        auto_aging:
+          ansible_host: 192.168.6.57
+          ansible_user: CH
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_57_PASSWORD') }}"
+          artifact: Auto_Aging_Cab_Agent.exe
+          task_name: RuijingAutoAging
+        auto_high_voltage:
+          ansible_host: 192.168.6.58
+          ansible_user: Administrator
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_58_PASSWORD') }}"
+          artifact: Auto_HighVolt_ATE_Agent.exe
+          task_name: RuijingAutoHighVoltATE
+        auto_packing_left:
+          ansible_host: 192.168.6.59
+          ansible_user: Administrator
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_59_PASSWORD') }}"
+          artifact: Auto_Packing_ATE_Left_Agent.exe
+          task_name: RuijingAutoPackingLeft
+        auto_packing_right:
+          ansible_host: 192.168.6.60
+          ansible_user: Administrator
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_60_PASSWORD') }}"
+          artifact: Auto_Packing_ATE_Right_Agent.exe
+          task_name: RuijingAutoPackingRight
+        auto_outer_box:
+          ansible_host: 192.168.6.61
+          ansible_user: administrator
+          ansible_connection: winrm
+          ansible_port: 5985
+          ansible_winrm_transport: ntlm
+          ansible_password: "{{ lookup('env', 'AUTO_61_PASSWORD') }}"
+          artifact: Auto_QRBinding_Agent.exe
+          task_name: RuijingAutoQRBinding

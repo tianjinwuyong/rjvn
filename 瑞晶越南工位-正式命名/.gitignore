@@ -1,0 +1,44 @@
+# ===== Secrets (never commit) =====
+.env
+*.env
+*.pem
+*.key
+id_rsa
+credentials*
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ===== Build / dist / install / packages / caches =====
+build/
+build*/
+dist/
+dist*/
+legacy*/
+*_install/
+*_install_*/
+*_packages/
+*_packages_*/
+station_packages/
+*_persistent_cache/
+node_modules/
+
+# ===== Binaries / archives / logs / images =====
+*.apk
+*.aab
+*.zip
+*.tar.gz
+*.tgz
+*.log
+*.png
+*.jpg
+*.jpeg
+*.exe
+*.dll
+*.bin
+*.whl
+*.so

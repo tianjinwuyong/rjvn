@@ -1,0 +1,19 @@
+{
+  "schemaVersion":"1.0","lineDomain":"AUTO_LINE","lineCode":"L002","routingAuthority":"MES",
+  "localSuggestion":{"enabled":true,"mayMutateState":false,"mesApprovalRequired":true},
+  "stations":[
+    {"id":"pda","stationCode":"auto_pda","sequence":1,"ngEligible":false},
+    {"id":"aoi","stationCode":"auto_aoi","sequence":2,"ngEligible":false},
+    {"id":"ict","stationCode":"auto_ict","sequence":3,"ngEligible":true,"suggestedRoute":"depanel"},
+    {"id":"fct","stationCode":"auto_fct","sequence":4,"ngEligible":true,"suggestedRoute":"depanel"},
+    {"id":"depanel","stationCode":"auto_depanel","sequence":5,"ngEligible":true,"suggestedRoute":"auto_rework"},
+    {"id":"case_binding","stationCode":"auto_case_binding","sequence":6,"ngEligible":false},
+    {"id":"assembly_ate","stationCode":"auto_assembly_ate","sequence":7,"ngEligible":false},
+    {"id":"supersonic","stationCode":"auto_supersonic","sequence":8,"ngEligible":false},
+    {"id":"aging","stationCode":"auto_agingcab","sequence":9,"ngEligible":false},
+    {"id":"hivolt_ate","stationCode":"auto_hivolt_ate","sequence":10,"ngEligible":false},
+    {"id":"packing_ate","stationCode":"auto_packing_ate","sequence":11,"ngEligible":false},
+    {"id":"outer_box","stationCode":"auto_outer_box_binding","sequence":12,"ngEligible":false},
+    {"id":"pallet","stationCode":"auto_pallet_binding","sequence":13,"ngEligible":false}
+  ]
+}

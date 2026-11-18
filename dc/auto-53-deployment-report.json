@@ -1,0 +1,14 @@
+{
+  "ip": "192.168.6.53",
+  "station": "AUTO_DEPANEL",
+  "status": "FAILED",
+  "phase": "connect",
+  "localHash": "907C4FD5E2CE5BF4F68CB443593C1CDBB1890AD0E81B6FD37EBF498B629DE6C2",
+  "remoteHash": null,
+  "backup": null,
+  "processPath": null,
+  "task": "RuijingAutoDepanel",
+  "tcp1003": false,
+  "error": "Authentication failed.",
+  "checkedAt": "2026-07-28T07:30:20.844155+00:00"
+}

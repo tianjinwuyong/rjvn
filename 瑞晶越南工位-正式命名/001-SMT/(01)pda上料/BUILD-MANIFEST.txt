@@ -1,0 +1,4 @@
+﻿Source: C:\Users\tianj\Desktop\越南工厂瑞晶\SMT-PDA-Material-Loading-v1.0.9-emergency.apk
+Artifact: C:\Users\tianj\Desktop\越南工厂瑞晶\瑞晶越南工位-正式命名\001-SMT\(01)pda上料\SMT-PDA-Material-Loading-new.apk
+Baseline: production SMT PDA v1.0.9
+Package: com.smt.materialloader

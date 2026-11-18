@@ -1,0 +1,15 @@
+flowchart LR
+    SRC[ICT / FCT / Depanel / other source station] -->|NG event + evidence| MES[MES NG registry and route engine]
+    MES -->|versioned work order| RS[Repair station agent]
+    RS -->|scan + custody| BUCKET[QR bucket / handover]
+    BUCKET --> PDA[Team or line leader PDA]
+    RS -->|materials| WMS[WMS]
+    RS -->|quality evidence| QMS[QMS / QC]
+    RS -->|heartbeat, facts, retest request| MES
+    RS -->|pickup announcement| KANBAN[MES Kanban / Andon]
+    PDA -->|acknowledge pickup and receive| MES
+    RS -->|authorized return handover| RETURN[Target source station]
+    RETURN -->|retest result| MES
+    MES -->|close, repeat, escalate, scrap or replace| CASE[Repair case lifecycle]
+    RS -. offline append-only .-> OUTBOX[Local SQLite Outbox]
+    OUTBOX -. idempotent replay .-> MES

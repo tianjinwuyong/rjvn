@@ -1,0 +1,19 @@
+{
+  "sourceRoot": "../瑞晶越南工位-正式命名/004-手动线 - 副本",
+  "baseline": "legacy-full-station-ui",
+  "stations": {
+    "mod_manu_pda_loading": {"folder": "(01)PDA扫码上料", "agent": "pda_heartbeat_agent.py", "core": "pda_core.py"},
+    "mod_manu_aoi": {"folder": "(02)AOI质量工位", "agent": "aoi_heartbeat_agent.py", "core": "aoi_core.py"},
+    "mod_manu_ict": {"folder": "(03)ICT", "agent": "ict_agent.py", "ui": "ict_qt_3d_agent.py"},
+    "mod_manu_fct": {"folder": "(04)FCT", "agent": "fct_agent.py", "ui": "fct_qt_3d_agent.py"},
+    "mod_manu_depanel": {"folder": "(05)PCBA分板工位", "agent": "depanel_heartbeat_agent.py", "ui": "depanel_qt_3d_agent.py"},
+    "mod_manu_case_binding": {"folder": "(06)PCBA外壳绑码", "agent": "shellqrbinder.py", "core": "shellqrbinder_env.py"},
+    "mod_manu_assembly_ate": {"folder": "(07)组装ATE", "agent": "assembly_ate_agent.py", "core": "assembly_ate_core.py", "ui": "assembly_ate_qt_3d_agent.py"},
+    "mod_manu_supersonic": {"folder": "(08)超声", "agent": "supersonic_agent.py", "core": "supersonic_core.py", "ui": "supersonic_qt_3d_agent.py"},
+    "mod_manu_aging": {"folder": "(09)成品老化", "agent": "aging_cab_agent.py", "core": "aging_cab_core.py", "ui": "aging_cab_qt_3d_agent.py"},
+    "mod_manu_hivolt_ate": {"folder": "(10)高压ATE", "agent": "hivolt_ate_agent.py", "core": "hivolt_ate_core.py", "ui": "hivolt_ate_qt_3d_agent.py"},
+    "mod_manu_packing_ate": {"folder": "(11)包装ATE", "agent": "packing_ate_agent.py", "core": "packing_ate_core.py", "ui": "packing_ate_qt_3d_agent.py"},
+    "mod_manu_outer_box_binding": {"folder": "(12)外箱绑码", "agent": "outer_box_binding_agent.py", "core": "case_binding_core.py", "ui": "outer_box_binding_qt_3d_agent.py"},
+    "mod_manu_pallet_binding": {"folder": "(13)栈板绑码", "agent": "pallet_binding_agent.py", "core": "pallet_binding_core.py", "ui": "pallet_binding_qt_3d_agent.py"}
+  }
+}

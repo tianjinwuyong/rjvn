@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "reservoirVersion": "0.1.0",
+  "components": [
+    {"id":"foundation.identity","version":"1.0.0","layer":"foundation","owner":"platform","configurable":false,"mesManaged":true},
+    {"id":"foundation.mes-connection","version":"1.0.0","layer":"foundation","owner":"platform","configurable":true,"mesManaged":true},
+    {"id":"operations.health","version":"1.0.0","layer":"foundation","owner":"platform","configurable":true,"mesManaged":true},
+    {"id":"operations.diagnostics","version":"1.0.0","layer":"foundation","owner":"platform","configurable":true,"mesManaged":true},
+    {"id":"input.scanner","version":"1.0.0","layer":"operator-input","owner":"platform","configurable":true,"mesManaged":true},
+    {"id":"ui.language","version":"1.0.0","layer":"operator-input","owner":"ui","configurable":true,"mesManaged":true},
+    {"id":"security.authorization","version":"1.0.0","layer":"operator-input","owner":"mes-security","configurable":true,"mesManaged":true},
+    {"id":"production.product-gate","version":"1.0.0","layer":"production-control","owner":"mes-product","configurable":true,"mesManaged":true},
+    {"id":"production.result-ingestion","version":"1.0.0","layer":"production-control","owner":"mes-product","configurable":true,"mesManaged":true},
+    {"id":"production.product-attendance","version":"1.0.0","layer":"production-control","owner":"mes-product","configurable":true,"mesManaged":true},
+    {"id":"quality.alarm","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.andon-escalation","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.repair","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.ng-closed-loop","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.pickup-announcement","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.retest","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.policy-compliance","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.scrap","version":"1.0.0","layer":"closed-loop","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"operations.maintenance","version":"1.0.0","layer":"closed-loop","owner":"mes-operations","configurable":true,"mesManaged":true},
+    {"id":"equipment.test-adapter","version":"1.0.0","layer":"station-specific","owner":"equipment","configurable":true,"mesManaged":false},
+    {"id":"equipment.binding-adapter","version":"1.0.0","layer":"station-specific","owner":"equipment","configurable":true,"mesManaged":false},
+    {"id":"equipment.aging-adapter","version":"1.0.0","layer":"station-specific","owner":"equipment","configurable":true,"mesManaged":false},
+    {"id":"quality.repair-workbench","version":"1.0.0","layer":"station-specific","owner":"mes-quality","configurable":true,"mesManaged":true},
+    {"id":"quality.incoming-inspection","version":"1.0.0","layer":"station-specific","owner":"qms-iqc","configurable":true,"mesManaged":true}
+  ]
+}

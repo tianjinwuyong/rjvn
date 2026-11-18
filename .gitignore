@@ -1,0 +1,156 @@
+# RuiJing Vietnam factory — source-only repository
+#
+# This repo tracks source. Build artifacts, dependency trees, model weights
+# and generated files are excluded so that `git ls-files --others` stays
+# small enough for tools (T3 Code, IDEs) to enumerate.
+#
+# Symptom this fixes:
+#   T3 Code hung on every turn with "GitVcsDriver.review.listUntracked:
+#   Git output exceeded 16777216 bytes and was truncated." — the untracked
+#   file list was ~29 MB (172k files), over T3's 16 MB output cap, so every
+#   status poll failed and the agent spun forever.
+
+# ---------------------------------------------------------------------------
+# Dependencies
+# ---------------------------------------------------------------------------
+node_modules/
+**/node_modules/
+bower_components/
+**/bower_components/
+.venv/
+**/.venv/
+venv/
+**/venv/
+__pypcache__/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv-*/
+uv.lock.bak
+
+# ---------------------------------------------------------------------------
+# Build output
+# ---------------------------------------------------------------------------
+build/
+**/build/
+dist/
+**/dist/
+out/
+**/out/
+target/
+**/target/
+.next/
+.nuxt/
+.turbo/
+.cache/
+**/.cache/
+*.tsbuildinfo
+
+# ---------------------------------------------------------------------------
+# Model weights and large binaries
+# ---------------------------------------------------------------------------
+*.gguf
+*.ggml
+*.bin
+*.safetensors
+*.ckpt
+*.pth
+*.onnx
+*.pt
+*.pth.tar
+*.npz
+*.npy
+*.h5
+*.msgpack
+*.pack
+*.model
+models/
+**/models/
+**/Models/
+*.apk
+*.aab
+*.ipa
+*.exe
+*.dll
+*.so
+*.dylib
+*.msi
+*.deb
+*.rpm
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar
+*.iso
+*.img
+
+# ---------------------------------------------------------------------------
+# Runtime state and logs
+# ---------------------------------------------------------------------------
+*.log
+*.pid
+*.lock
+!package-lock.json
+!pnpm-lock.yaml
+!yarn.lock
+logs/
+**/logs/
+runtime-logs/
+tmp/
+temp/
+.tmp/
+*.state.json
+*.timestamp-*.mjs
+
+# ---------------------------------------------------------------------------
+# Local environment and secrets
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# ---------------------------------------------------------------------------
+# Databases and dumps
+# ---------------------------------------------------------------------------
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-*
+*.sql
+*.dump
+*.bak
+**/dump.rdb
+**/redis.log
+
+# ---------------------------------------------------------------------------
+# Editor / OS noise
+# ---------------------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+
+# ---------------------------------------------------------------------------
+# Generated documentation and reports
+# ---------------------------------------------------------------------------
+**/coverage/
+**/playwright-report/
+**/test-results/
+**/.playwright/
+*.lcov

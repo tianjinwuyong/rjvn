@@ -1,0 +1,12 @@
+﻿station,spec,result
+(03)ICT,ICT_Agent.spec,PASS
+(04)FCT,FCT_Agent_onedir.spec,PASS
+(05)PCBA分板工位,depanel_fast_onedir.spec,PASS
+(06)PCBA外壳绑码,pcbshellbinding_slim.spec,PASS
+(07)组装ATE,assembly_ate_agent.spec,PASS
+(08)超声,supersonic_agent_win7.spec,PASS
+(09)成品老化,aging_cab_agent.spec,PASS
+(10)高压ATE,hivolt_ate_agent.spec,PASS
+(11)包装ATE,packing_ate_agent.spec,PASS
+(12)外箱绑码,outer_box_binding_2d_agent.spec,PASS
+(13)栈板绑码,pallet_binding_2d_agent.spec,PASS

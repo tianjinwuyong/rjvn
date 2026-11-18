@@ -1,0 +1,4039 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>(02)AI插件机-质量监控中心</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f172a;--card:#1e293b;--border:#334155;
+  --text:#e2e8f0;--muted:#94a3b8;
+  --green:#22c55e;--red:#ef4444;--yellow:#eab308;
+  --blue:#3b82f6;--cyan:#06b6d4;--orange:#f97316;
+  --pink:#ec4899;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Microsoft JhengHei',sans-serif;background:var(--bg);color:var(--text)}
+
+/* ===== TOPBAR ===== */
+#topbar{
+  background:#1a1a2e;padding:8px 20px;display:flex;align-items:center;gap:12px;
+  border-bottom:2px solid var(--border);flex-shrink:0;
+}
+#topbar h1{font-size:20px;color:#00d4ff;letter-spacing:2px}
+.lang-btns{display:flex;gap:4px;margin-left:auto}
+.lang-btn{
+  padding:4px 12px;border:1px solid var(--border);border-radius:4px;
+  background:var(--card);color:var(--muted);cursor:pointer;font-size:12px;
+}
+.lang-btn.active{background:#0f3460;color:#00d4ff;border-color:#00d4ff}
+.status-dot{
+  width:10px;height:10px;border-radius:50%;background:var(--green);
+  animation:pulse 1.4s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ===== TAB BAR ===== */
+#tabs{
+  display:flex;background:#16213e;border-bottom:1px solid var(--border);
+  flex-shrink:0;overflow-x:auto;
+}
+.tab{
+  padding:10px 18px;cursor:pointer;white-space:nowrap;color:var(--muted);
+  border-bottom:2px solid transparent;font-size:13px;transition:all .15s;
+}
+.tab:hover{color:var(--text);background:#1e293b}
+.tab.active{color:#00d4ff;border-bottom-color:#00d4ff;background:#1e293b}
+
+/* ===== MAIN CONTENT ===== */
+#main{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.tab-content{display:none;flex:1;overflow-y:auto;padding:16px}
+.tab-content.active{display:block}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:14px;margin-bottom:12px;
+}
+.card-title{font-size:12px;color:var(--muted);margin-bottom:10px;letter-spacing:1px}
+
+/* ===== STATS ROW ===== */
+.stats-row{display:flex;gap:12px;flex-wrap:wrap}
+.stat-card{
+  flex:1;min-width:100px;background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:12px;text-align:center;
+}
+.stat-num{font-size:28px;font-weight:bold}
+.stat-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.stat-card.green .stat-num{color:var(--green)}
+.stat-card.red .stat-num{color:var(--red)}
+.stat-card.yellow .stat-num{color:var(--yellow)}
+.stat-card.cyan .stat-num{color:var(--cyan)}
+
+/* ===== STATUS BAR ===== */
+.status-bar{
+  display:flex;gap:16px;align-items:center;padding:8px 16px;
+  background:#16213e;border-radius:6px;margin-bottom:12px;flex-wrap:wrap;
+}
+.status-item{display:flex;align-items:center;gap:6px;font-size:13px}
+.status-badge{
+  padding:2px 10px;border-radius:12px;font-size:11px;font-weight:bold;
+}
+.s-running{background:#16a34a;color:#fff}
+.s-stopped{background:#475569;color:#fff}
+.s-locked{background:#dc2626;color:#fff}
+.s-standby{background:#1d4ed8;color:#fff}
+.s-off{background:#374151;color:#aaa}
+
+/* ===== ALARM OVERLAY ===== */
+#alarm-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);
+  z-index:9999;align-items:center;justify-content:center;flex-direction:column;
+  animation:alarmFlash .4s infinite;
+}
+#alarm-overlay.show{display:flex}
+@keyframes alarmFlash{0%,100%{background:rgba(220,38,38,.9)}50%{background:rgba(0,0,0,.85)}}
+.alarm-box{
+  background:#dc2626;border:4px solid #fff;border-radius:16px;
+  padding:40px 60px;text-align:center;max-width:700px;width:90%;
+}
+.alarm-title{font-size:52px;font-weight:bold;color:#fff;margin-bottom:20px}
+.alarm-sn{font-size:28px;color:#fca5a5;margin:10px 0}
+.alarm-info{font-size:20px;color:#fca5a5;margin:8px 0}
+.alarm-ban{font-size:24px;color:#fee2e2;margin:16px 0;font-weight:bold}
+.alarm-auth{
+  display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap;
+}
+.alarm-auth input{
+  padding:10px 16px;font-size:18px;border-radius:6px;border:none;width:180px;
+  background:#7f1d1d;color:#fff;
+}
+.alarm-auth input::placeholder{color:#fca5a5}
+.alarm-auth button{
+  padding:10px 24px;font-size:18px;border-radius:6px;border:none;cursor:pointer;font-weight:bold;
+}
+.btn-confirm{background:#16a34a;color:#fff}
+.btn-bypass{background:#7f1d1d;color:#fff;border:2px solid #fca5a5!important}
+.btn-close-alarm{
+  display:none;padding:10px 32px;font-size:20px;background:#fff;color:#dc2626;
+  border:none;border-radius:8px;cursor:pointer;margin-top:20px;font-weight:bold;
+}
+
+/* ===== SCAN INPUT ===== */
+.scan-row{
+  display:flex;gap:10px;margin-bottom:12px;align-items:center;flex-wrap:wrap;
+}
+.scan-input{
+  flex:1;min-width:200px;padding:10px 14px;font-size:16px;font-family:'Consolas',monospace;
+  background:#0f172a;color:#38bdf8;border:1px solid #334155;border-radius:6px;
+}
+.scan-input:focus{outline:none;border-color:#38bdf8;box-shadow:0 0 0 2px rgba(56,189,248,.2)}
+.btn{
+  padding:8px 16px;border-radius:6px;border:1px solid var(--border);
+  cursor:pointer;font-size:13px;font-family:inherit;transition:all .1s;
+}
+.btn-primary{background:#0f3460;color:#00d4ff;border-color:#00d4ff}
+.btn-primary:hover{background:#0f3460;box-shadow:0 0 8px rgba(0,212,255,.3)}
+.btn-danger{background:#dc2626;color:#fff;border-color:#dc2626}
+.btn-danger:hover{background:#b91c1c}
+.btn-success{background:#16a34a;color:#fff;border-color:#16a34a}
+.btn-warning{background:#d97706;color:#fff;border-color:#d97706}
+.btn-gray{background:#374151;color:#aaa;border-color:#475569}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* ===== TABLE ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{
+  background:#16213e;color:var(--muted);padding:7px 10px;text-align:left;
+  font-weight:normal;position:sticky;top:0;z-index:2;
+}
+.tbl td{padding:6px 10px;border-bottom:1px solid #1e293b}
+.tbl tr:hover td{background:#1e293b}
+.tbl-wrap{max-height:320px;overflow:auto;border-radius:6px;border:1px solid var(--border)}
+.pass-row td{color:var(--green)}
+.fail-row td{color:var(--red)}
+.dup-row td{color:var(--yellow)}
+
+/* ===== TREE MAP ===== */
+.treemap{display:flex;height:80px;border-radius:6px;overflow:hidden;margin-bottom:10px;gap:2px}
+.treemap-block{display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .3s;position:relative;min-width:30px}
+.treemap-block:hover{opacity:.85;transform:scaleY(1.05)}
+.treemap-num{font-size:18px;font-weight:bold;line-height:1.2;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.treemap-lbl{font-size:10px;opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.treemap-pct{font-size:11px;opacity:.8;margin-top:1px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.treemap-block.t-pass{background:linear-gradient(135deg,#16a34a,#22c55e)}
+.treemap-block.t-ng{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+.treemap-block.t-dup{background:linear-gradient(135deg,#a16207,#eab308)}
+.treemap-block.t-empty{background:#1e293b;color:#475569;flex:1}
+
+/* ===== POOL BADGES ===== */
+.pool-badges{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;margin-bottom:8px}
+.badge{
+  padding:3px 10px;border-radius:12px;font-size:11px;
+}
+.b-sn{background:#0f3460;color:#38bdf8}
+.b-ng{background:#7f1d1d;color:#fca5a5}
+.b-dup{background:#713f12;color:#fde68a}
+
+/* ===== QUICK IP TOOL ===== */
+.quick-ip-wrap{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  margin-bottom:10px;overflow:hidden;
+}
+.quick-ip-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 14px;cursor:pointer;font-size:12px;user-select:none;
+  background:linear-gradient(135deg,#0f3460 0%,#1a1a2e 100%);
+}
+.quick-ip-toggle:hover{filter:brightness(1.2)}
+.quick-ip-arrow{transition:transform .2s;font-size:10px;color:var(--muted)}
+.quick-ip-wrap.expanded .quick-ip-arrow{transform:rotate(90deg)}
+.quick-ip-body{display:none;padding:10px 14px;border-top:1px solid var(--border)}
+.quick-ip-wrap.expanded .quick-ip-body{display:block}
+.quick-ip-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px}
+.quick-ip-grid label{display:block;font-size:10px;color:var(--muted);margin-bottom:2px}
+.quick-ip-grid .qip{min-width:0;width:100%;font-size:11px;padding:4px 6px}
+.quick-ip-actions{display:flex;gap:8px;align-items:center}
+.quick-ip-msg{font-size:11px;color:#22c55e;margin-left:8px}
+@media(max-width:700px){.quick-ip-grid{grid-template-columns:1fr}}
+
+/* ===== IP QUICK BAR (always visible) ===== */
+.ip-quick-bar{
+  display:flex;align-items:center;gap:8px;padding:6px 12px;
+  background:#16213e;border-radius:6px;margin-bottom:8px;flex-wrap:wrap;
+}
+.ip-badge{
+  background:#0f3460;color:#00d4ff;padding:2px 10px;border-radius:10px;
+  font-family:Consolas,monospace;font-size:12px;font-weight:bold;
+}
+.ip-badge.ip-sub{background:#1e293b;color:#94a3b8;font-size:11px}
+.ip-input{
+  background:#0f3460;color:#00d4ff;padding:2px 8px;border-radius:10px;
+  font-family:Consolas,monospace;font-size:12px;font-weight:bold;
+  border:1px solid #00d4ff;outline:none;text-align:center;
+}
+.ip-input:focus{border-color:#38bdf8;box-shadow:0 0 6px rgba(56,189,248,.3)}
+/* Toggle switch */
+.toggle-switch{position:relative;display:inline-block;width:36px;height:18px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#374151;border-radius:18px;transition:.3s}
+.toggle-slider:before{position:absolute;content:'';height:12px;width:12px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
+.toggle-switch input:checked+.toggle-slider{background:#22c55e}
+.toggle-switch input:checked+.toggle-slider:before{transform:translateX(18px)}
+
+/* ===== DATA OVERVIEW ===== */
+.data-stat-row{display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap;font-size:12px}
+.data-stat-item{background:#16213e;padding:3px 12px;border-radius:12px;font-size:11px}
+.data-sqlite-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* ===== LOG AREA ===== */
+.log-area{
+  background:#0f172a;border:1px solid #1e293b;border-radius:6px;
+  padding:8px;font-family:'Consolas',monospace;font-size:11px;
+  color:#94a3b8;max-height:200px;overflow-y:auto;white-space:pre-wrap;
+}
+
+/* ===== TWO COL ===== */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+
+/* ===== RESOURCE ITEMS ===== */
+.res-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid #1e293b;font-size:13px;
+}
+.res-label{color:var(--muted)}
+.res-val{font-weight:bold}
+.res-on{color:var(--green)}
+.res-off{color:var(--red)}
+.res-warn{color:var(--yellow)}
+
+/* ===== INSTRUCTION SECTIONS ===== */
+.inst-sec{margin-bottom:16px}
+.inst-title{
+  background:#16213e;padding:8px 12px;border-radius:6px 6px 0 0;
+  font-weight:bold;color:#38bdf8;font-size:13px;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.inst-body{
+  background:var(--card);border:1px solid #1e293b;border-top:none;
+  border-radius:0 0 6px 6px;padding:12px;font-size:12px;
+  color:#cbd5e1;line-height:1.8;display:none;
+}
+.inst-body.open{display:block}
+.inst-body li{margin-left:16px}
+.inst-body .warn{color:#fca5a5}
+
+/* ===== STARTUP STEPS ===== */
+.step-item{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  padding:14px;margin-bottom:10px;cursor:pointer;transition:all .1s;
+}
+.step-item:hover{border-color:#0f3460}
+.step-item.done{border-color:#16a34a;background:#052e16}
+.step-num{
+  display:inline-block;width:28px;height:28px;border-radius:50%;
+  background:#0f3460;color:#00d4ff;text-align:center;line-height:28px;
+  font-weight:bold;margin-right:10px;
+}
+.step-item.done .step-num{background:#16a34a;color:#fff}
+.step-title{font-size:13px;font-weight:bold;color:var(--text)}
+.step-content{font-size:12px;color:var(--muted);margin-top:6px;margin-left:38px}
+.step-check{float:right;color:#16a34a;font-size:18px}
+
+/* ===== QUERY TAB ===== */
+.q-date-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.q-date-input{
+  padding:6px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #38bdf8;
+  border-radius:4px;font-size:13px;font-family:inherit;min-width:150px;
+  cursor:pointer;color-scheme:dark;
+}
+.q-date-input:focus{outline:none;border-color:#00d4ff;box-shadow:0 0 8px rgba(0,212,255,.2)}
+.q-date-input:hover{border-color:#00d4ff}
+/* Make date picker calendar icon more visible in dark theme */
+.q-date-input::-webkit-calendar-picker-indicator{filter:invert(.7);cursor:pointer}
+.q-date-input::-webkit-calendar-picker-indicator:hover{filter:invert(1)}
+.q-btn-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.q-group-label{
+  font-size:13px;font-weight:bold;min-width:36px;text-align:center;padding:4px 0;
+}
+.q-btn{
+  padding:8px 18px;border-radius:6px;cursor:pointer;font-size:13px;
+  font-family:inherit;transition:all .1s;border:1px solid var(--border);
+}
+.q-btn:hover{filter:brightness(1.2)}
+.q-btn-sn{background:#0f3460;color:#38bdf8;border-color:#38bdf8}
+.q-btn-ng{background:#451a1a;color:#fca5a5;border-color:#fca5a5}
+
+/* ===== REPAIR TAB ===== */
+.repair-item{
+  background:var(--card);border:1px solid #1e293b;border-radius:8px;
+  padding:10px 14px;margin-bottom:8px;
+}
+.repair-sn{font-size:13px;font-weight:bold;color:#fca5a5}
+.repair-meta{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ===== CFG TAB ===== */
+.cfg-row{
+  display:flex;align-items:center;gap:10px;padding:10px 0;
+  border-bottom:1px solid #1e293b;font-size:13px;flex-wrap:wrap;
+}
+.cfg-label{min-width:120px;color:var(--muted)}
+.cfg-input{
+  flex:1;min-width:160px;padding:6px 10px;background:#0f172a;color:var(--text);
+  border:1px solid #334155;border-radius:4px;font-size:13px;
+}
+.cfg-input:focus{outline:none;border-color:#38bdf8}
+
+/* ===== LOGIN OVERLAY ===== */
+#login-overlay{
+  display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0f172a 0%,#1a1a2e 50%,#0f3460 100%);
+  z-index:99999;align-items:center;justify-content:center;
+}
+.login-box{
+  background:var(--card);border:2px solid var(--border);border-radius:20px;
+  padding:40px 50px;max-width:480px;width:92%;text-align:center;box-shadow:0 0 60px rgba(0,212,255,.15);
+}
+.login-header h1{font-size:22px;color:#00d4ff;margin:12px 0 6px;letter-spacing:2px}
+.login-sub{font-size:14px;color:var(--muted);margin-bottom:8px}
+.login-body{margin:24px 0}
+.login-scan-area{padding:8px 0}
+.login-input-wrap{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.login-input{
+  flex:1;padding:14px 18px;font-size:20px;font-family:'Consolas',monospace;
+  background:#0f172a;color:#38bdf8;border:2px solid #334155;border-radius:10px;
+  text-align:center;letter-spacing:4px;transition:all .2s;
+}
+.login-input:focus{outline:none;border-color:#00d4ff;box-shadow:0 0 20px rgba(0,212,255,.25)}
+.login-indicator{
+  width:12px;height:12px;border-radius:50%;background:var(--green);
+  animation:pulse 1.4s infinite;flex-shrink:0;
+}
+.login-hint{font-size:12px;color:#64748b;margin-top:6px}
+.login-result{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.login-avatar{font-size:48px;margin-bottom:8px}
+.login-emp-id{font-size:22px;color:#38bdf8;font-family:Consolas,monospace;font-weight:bold;margin-bottom:4px}
+.login-emp-name{font-size:16px;color:var(--text)}
+.login-footer{font-size:11px;color:#475569;margin-top:16px}
+
+/* ===== HEARTBEAT INDICATOR ===== */
+.hb-ring{
+  width:40px;height:40px;border-radius:50%;border:3px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .3s;
+}
+.hb-ring.alive{border-color:var(--green);color:var(--green);animation:hbPulse 1s infinite}
+.hb-ring.dead{border-color:var(--red);color:var(--red)}
+@keyframes hbPulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 8px rgba(34,197,94,0)}}
+
+/* ===== SN CHECK INDICATORS ===== */
+.check-cell{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:bold;
+}
+.chk-ok{background:#16a34a;color:#fff}
+.chk-fail{background:#dc2626;color:#fff}
+.chk-pending{background:#374151;color:#555}
+.chk-warn{background:#d97706;color:#fff}
+
+/* ===== MODAL ===== */
+.modal-bg{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);
+  z-index:8888;align-items:center;justify-content:center;
+}
+.modal-bg.show{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:24px;min-width:400px;max-width:600px;width:90%;
+}
+.modal-title{font-size:16px;font-weight:bold;color:#38bdf8;margin-bottom:14px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+
+/* ===== SSE STATUS ===== */
+#sse-status{font-size:11px;color:var(--muted);margin-left:8px}
+#sse-status.connected{color:var(--green)}
+#sse-status.disconnected{color:var(--red)}
+
+/* ===== LOADING ===== */
+.loading{color:var(--muted);font-size:12px;padding:8px;text-align:center}
+.spinner{
+  display:inline-block;width:14px;height:14px;border:2px solid #334155;
+  border-top-color:#38bdf8;border-radius:50%;animation:spin .8s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== DATA SOURCE VIEWER ===== */
+.ds-toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.ds-select{
+  padding:8px 12px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;
+  border-radius:6px;font-size:13px;font-family:inherit;min-width:140px;
+}
+.ds-select:focus{outline:none;border-color:#38bdf8}
+.ds-input{
+  padding:7px 10px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;
+  border-radius:4px;font-size:12px;font-family:inherit;
+}
+.ds-input:focus{outline:none;border-color:#38bdf8}
+.ds-input::placeholder{color:#475569}
+.ds-form-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.ds-form-row label{font-size:12px;color:#94a3b8;min-width:50px}
+.ds-tables-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px;margin:8px 0}
+.ds-table-card{
+  background:#1e293b;border:1px solid #334155;border-radius:6px;
+  padding:8px 10px;cursor:pointer;font-size:12px;text-align:center;
+  transition:all .1s;color:#94a3b8;
+}
+.ds-table-card:hover{border-color:#38bdf8;color:#38bdf8;background:#0f3460}
+.ds-table-card.active{border-color:#22c55e;color:#22c55e;background:#052e16}
+.ds-table-card .ds-tbl-icon{font-size:14px;display:block;margin-bottom:2px}
+.ds-info{font-size:11px;color:#64748b;padding:4px 0}
+.ds-data-wrap{max-height:400px;overflow:auto;border:1px solid #1e293b;border-radius:6px;margin-top:8px}
+.ds-data-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.ds-data-tbl th{
+  background:#16213e;color:#94a3b8;padding:6px 8px;text-align:left;
+  font-weight:normal;position:sticky;top:0;z-index:2;white-space:nowrap;
+}
+.ds-data-tbl td{padding:4px 8px;border-bottom:1px solid #1e293b;max-width:300px;overflow:hidden;text-overflow:ellipsis}
+.ds-data-tbl tr:hover td{background:#1e293b}
+.ds-data-tbl tr:nth-child(even) td{background:#0f172a}
+.ds-conn-status{font-size:11px;padding:4px 10px;border-radius:4px}
+.ds-conn-ok{color:#22c55e;background:#052e16}
+.ds-conn-err{color:#f87171;background:#451a1a}
+.ds-conn-off{color:#64748b;background:#1e293b}
+.ds-config-panel{
+  background:#16213e;border:1px solid #334155;border-radius:8px;
+  padding:12px;margin-bottom:12px;
+}
+.ds-config-title{font-size:12px;color:#38bdf8;margin-bottom:8px;font-weight:bold}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:#0f172a}
+::-webkit-scrollbar-thumb{background:#334155;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#475569}
+</style>
+</head>
+<body>
+
+<!-- ==================== TOP BAR ==================== -->
+<div id="topbar">
+  <span style="font-size:22px">📡</span>
+  <h1>质量监控中心</h1>
+  <span style="font-size:12px;color:#64748b" id="sse-status">⚡ 连接中...</span>
+  <div class="lang-btns">
+    <button class="lang-btn active" data-lang="zh">中文</button>
+    <button class="lang-btn" data-lang="vi">Tiếng Việt</button>
+    <button class="lang-btn" data-lang="en">English</button>
+  </div>
+</div>
+
+<!-- ==================== TAB BAR ==================== -->
+<div id="tabs">
+  <div class="tab active" data-tab="monitor">📊 <span data-i18n="tabs.monitor">实时监控</span></div>
+  <div class="tab" data-tab="database">🗄️ <span data-i18n="tabs.database">查询</span></div>
+  <div class="tab" data-tab="resources">🖥️ <span data-i18n="tabs.resources">资源查看</span></div>
+  <div class="tab" data-tab="instructions">📖 <span data-i18n="tabs.instructions">操作说明</span></div>
+  <div class="tab" data-tab="startup">🚀 <span data-i18n="tabs.startup">开机流程</span></div>
+  <div class="tab" data-tab="repair">🔧 <span data-i18n="tabs.repair">维修记录</span></div>
+  <div class="tab" data-tab="config">⚙️ <span data-i18n="tabs.config">系统配置</span></div>
+  <div class="tab" data-tab="resman">📦 <span>资源管理</span></div>
+</div>
+
+<!-- ==================== MAIN ==================== -->
+<div id="main">
+
+  <!-- ===== TAB: MONITOR ===== -->
+  <div class="tab-content active" id="tab-monitor">
+
+    <!-- Station info bar -->
+    <div class="status-bar" style="margin-bottom:8px">
+      <div class="status-item">
+        <span style="color:#64748b">工位</span>:
+        <span id="mon-station" style="color:#38bdf8;font-weight:bold">01</span>
+      </div>
+      <div class="status-item">
+        <span style="color:#64748b">产线</span>:
+        <span id="mon-line" style="color:#38bdf8">AUTO-LINE-1</span>
+      </div>
+      <div class="status-item">
+        <span style="color:#64748b">操作员</span>:
+        <span id="mon-operator" style="color:#38bdf8">—</span>
+      </div>
+      <div class="status-item" style="margin-left:auto;gap:8px">
+        <span id="mon-operator-card" style="display:none;align-items:center;gap:8px">
+          <span style="font-size:20px">👤</span>
+          <span style="background:#0f3460;color:#00d4ff;padding:3px 14px;border-radius:14px;font-weight:bold;font-size:13px" id="mon-operator-name">—</span>
+        </span>
+      </div>
+    </div>
+    <!-- Device name + Startup / Shutdown times -->
+    <div style="display:flex;gap:16px;font-size:12px;color:#94a3b8;margin-bottom:6px;align-items:center">
+      <span style="background:#1e293b;color:#38bdf8;padding:2px 10px;border-radius:10px;font-weight:bold;font-size:13px" id="mon-device-name">—</span>
+      <span>🟢 开机: <span id="mon-startup-time">—</span></span>
+      <span>🔴 关机: <span id="mon-shutdown-time">—</span></span>
+    </div>
+
+    <!-- IP quick-set bar (always visible) -->
+    <div class="ip-quick-bar">
+      <span style="color:#64748b;font-size:11px">🌐 IP:</span>
+      <input id="ip-quick-current" class="ip-badge ip-input" value="—" onkeydown="if(event.key==='Enter')quickSaveFromBar()" style="width:120px">
+      <span style="font-size:10px;color:#475569">prev</span>
+      <span class="ip-badge ip-sub" id="ip-quick-prev">—</span>
+      <span style="font-size:10px;color:#475569">next</span>
+      <span style="color:#475569;font-size:11px;margin-left:4px">|</span>
+      <button class="btn btn-sm" onclick="quickAutoDetect()" style="background:#0f3460;color:#00d4ff;border:1px solid #00d4ff;font-size:10px;padding:2px 8px">📡 检测</button>
+      <button class="btn btn-sm" onclick="quickSaveFromBar()" style="background:#16a34a;color:#fff;border:none;font-size:10px;padding:2px 8px">💾 保存</button>
+      <span style="color:#475569;font-size:11px;margin-left:4px">|</span>
+      <span id="autostart-label" style="color:#64748b;font-size:11px">开机自启:</span>
+      <label class="toggle-switch" style="margin:0 4px">
+        <input type="checkbox" id="autostart-toggle" onchange="toggleAutoStart(this.checked)">
+        <span class="toggle-slider"></span>
+      </label>
+      <span id="autostart-status" style="font-size:10px;color:#64748b"></span>
+      <span id="ip-quick-msg" style="font-size:10px;color:#22c55e;margin-left:4px"></span>
+    </div>
+
+    <!-- Status + Stats -->
+    <div class="status-bar">
+      <div class="status-item">
+        <span data-i18n="status.status">状态</span>:
+        <span class="status-badge s-running" id="ui-mode">运行中</span>
+      </div>
+      <div class="status-item">
+        <span data-i18n="status.device">设备</span>:
+        <span class="status-badge s-running" id="ui-lock" data-i18n="status.unlocked">未锁定</span>
+      </div>
+      <div class="status-item">
+        <div class="hb-ring alive" id="hb-ring">♥</div>
+        <span data-i18n="status.heartbeat">心跳</span>
+      </div>
+      <div class="status-item">
+        <span id="mon-idle" style="color:#22c55e;font-size:12px">● 运行中</span>
+      </div>
+      <div class="status-item" style="margin-left:auto">
+        MES:
+        <button class="btn btn-sm" id="mes-toggle" onclick="toggleMes()">ON</button>
+      </div>
+      <div class="status-item">
+        <span data-i18n="status.file">文件</span>:
+        <span id="ui-file" style="font-size:11px;color:#64748b">—</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card green"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl" data-i18n="stats.total">合计</div></div>
+      <div class="stat-card cyan"><div class="stat-num" id="stat-pass">0</div><div class="stat-lbl" data-i18n="stats.pass">通过</div></div>
+      <div class="stat-card red"><div class="stat-num" id="stat-fail">0</div><div class="stat-lbl" data-i18n="stats.fail">不良</div></div>
+      <div class="stat-card yellow"><div class="stat-num" id="stat-dup">0</div><div class="stat-lbl" data-i18n="stats.dup">重码</div></div>
+    </div>
+
+    <!-- Pool badges -->
+    <div class="pool-badges">
+      <span class="badge b-sn">SN <span id="pool-sn-count">0</span></span>
+      <span class="badge b-ng">NG <span id="pool-ng-count">0</span></span>
+      <span class="badge b-dup">DUP <span id="pool-dup-count">0</span></span>
+    </div>
+
+    <!-- Tree map: pass/ng/dup ratio -->
+    <div class="treemap" id="treemap">
+      <div class="treemap-block t-empty">— 暂无数据 —</div>
+    </div>
+
+    <!-- Quick IP tool (collapsible) -->
+    <div class="quick-ip-wrap">
+      <div class="quick-ip-toggle" onclick="this.parentElement.classList.toggle('expanded')">
+        <span id="quick-ip-label">🌐 IP: <span id="qip-display">—</span></span>
+        <span class="quick-ip-arrow">▶</span>
+      </div>
+      <div class="quick-ip-body">
+        <div class="quick-ip-grid">
+          <div><label>上一工位</label><input class="cfg-input qip" id="qip-prev" placeholder="192.168.1.x"></div>
+          <div><label>本工位</label><input class="cfg-input qip" id="qip-current" placeholder="192.168.1.x"></div>
+          <div><label>下一工位</label><input class="cfg-input qip" id="qip-next" placeholder="192.168.1.x"></div>
+        </div>
+        <div class="quick-ip-actions">
+          <button class="btn btn-sm" onclick="quickAutoDetect()" style="background:#0f3460;color:#00d4ff;border:1px solid #00d4ff">📡 自动获取</button>
+          <button class="btn btn-sm btn-primary" onclick="quickSaveIps()">💾 保存</button>
+          <span class="quick-ip-msg" id="qip-msg"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Overview: pools + SQLite (collapsible) -->
+    <div class="quick-ip-wrap">
+      <div class="quick-ip-toggle" onclick="this.parentElement.classList.toggle('expanded')">
+        <span>📊 <span data-i18n="data.overview">数据总览</span>: <span id="data-summary">SN 0 / NG 0 / DUP 0</span></span>
+        <span class="quick-ip-arrow">▶</span>
+      </div>
+      <div class="quick-ip-body">
+        <div class="data-stat-row">
+          <span class="data-stat-item" style="color:#38bdf8">SN: <strong id="data-sn-count">0</strong></span>
+          <span class="data-stat-item" style="color:#f87171">NG: <strong id="data-ng-count">0</strong></span>
+          <span class="data-stat-item" style="color:#fbbf24">DUP: <strong id="data-dup-count">0</strong></span>
+          <span class="data-stat-item" style="color:#22c55e">今日: <strong id="data-total">0</strong></span>
+          <button class="btn btn-sm" onclick="switchTab('resman')" style="margin-left:auto">📋 <span data-i18n="data.open_resman">资源管理</span></button>
+        </div>
+        <div class="data-sqlite-row">
+          <label style="font-size:11px;color:var(--muted);white-space:nowrap">SQLite:</label>
+          <select id="data-sqlite-table" onchange="dataLoadTable()" style="flex:1;max-width:260px;padding:4px 6px;background:#0f172a;color:var(--text);border:1px solid #334155;border-radius:4px;font-size:11px">
+            <option value="">— <span data-i18n="data.select_table">选择表</span> —</option>
+            <option value="sn_records">sn_records (SN记录)</option>
+            <option value="ng_pool">ng_pool (NG池)</option>
+            <option value="dup_pool">dup_pool (DUP池)</option>
+            <option value="stats">stats (统计)</option>
+            <option value="station_config">station_config (配置)</option>
+          </select>
+          <button class="btn btn-sm" onclick="dataLoadTable()">🔄 <span data-i18n="data.refresh">刷新</span></button>
+          <span class="data-sqlite-msg" id="data-msg"></span>
+        </div>
+        <div id="data-table-wrap" style="max-height:220px;overflow:auto;border:1px solid #1e293b;border-radius:6px;margin-top:6px">
+          <table class="tbl" style="font-size:11px">
+            <thead id="data-table-head"></thead>
+            <tbody id="data-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- API Viewer (collapsible) -->
+    <div class="quick-ip-wrap">
+      <div class="quick-ip-toggle" onclick="this.parentElement.classList.toggle('expanded')">
+        <span>🔌 API 查看器</span>
+        <span class="quick-ip-arrow">▶</span>
+      </div>
+      <div class="quick-ip-body">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+          <select id="api-endpoint" style="flex:1;min-width:160px;padding:4px 6px;background:#0f172a;color:var(--text);border:1px solid #334155;border-radius:4px;font-size:11px">
+            <option value="/api/heartbeat">/api/heartbeat</option>
+            <option value="/pools">/pools</option>
+            <option value="/sn_records?limit=50">/sn_records?limit=50</option>
+            <option value="/ng_pool?limit=50">/ng_pool?limit=50</option>
+            <option value="/dup_pool?limit=50">/dup_pool?limit=50</option>
+            <option value="/stats">/stats</option>
+            <option value="/config/station">/config/station</option>
+            <option value="/api/station/ips">/api/station/ips</option>
+            <option value="/api/device/network">/api/device/network</option>
+          </select>
+          <input id="api-param" placeholder="SN (查单个)" style="width:140px;padding:4px 6px;background:#0f172a;color:var(--text);border:1px solid #334155;border-radius:4px;font-size:11px">
+          <button class="btn btn-sm btn-primary" onclick="apiViewerSend()">📡 发送</button>
+        </div>
+        <pre id="api-response" style="background:#0f172a;border:1px solid #1e293b;border-radius:6px;padding:8px;font-family:Consolas,monospace;font-size:11px;color:#e2e8f0;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all;margin:0">— 点击发送查看响应 —</pre>
+      </div>
+    </div>
+    <div class="scan-row">
+      <input class="scan-input" id="scan-input" data-i18n-placeholder="scan.hint" placeholder="🔍 扫描或输入 SN，按 Enter" autocomplete="off">
+      <span id="scan-indicator" style="font-size:13px;color:#00d4ff;min-width:120px"></span>
+      <button class="btn btn-primary" onclick="simPass()" title="模拟通过">▶ 模拟通过</button>
+      <button class="btn btn-danger" onclick="simNg()" title="模拟NG">🔴 模拟NG</button>
+      <button class="btn btn-warning" onclick="simDup()" title="模拟重码">🔁 模拟重码</button>
+      <button class="btn btn-gray" onclick="clearPools()" title="清空池">🧹 清空池</button>
+    </div>
+
+    <!-- Current SN -->
+    <div class="card">
+      <div class="card-title" data-i18n="monitor.current">当前扫描</div>
+      <div id="ui-current" style="font-size:22px;color:#38bdf8;font-family:Consolas,monospace;padding:6px 0">—</div>
+    </div>
+
+    <!-- SN Table -->
+    <div class="card">
+      <div class="card-title" data-i18n="monitor.recent">最近检测记录</div>
+      <div class="tbl-wrap">
+        <table class="tbl" id="sn-table">
+          <thead>
+            <tr>
+              <th data-i18n="col.sn">SN</th>
+              <th data-i18n="col.result">结果</th>
+              <th data-i18n="col.ch">通道</th>
+              <th data-i18n="col.err">错误码</th>
+              <th data-i18n="col.sp">SN池</th>
+              <th data-i18n="col.sl">SQLite</th>
+              <th data-i18n="col.sm">MES</th>
+              <th data-i18n="col.np">NG池</th>
+              <th data-i18n="col.nl">NG本地</th>
+              <th data-i18n="col.nm">NG_MES</th>
+              <th data-i18n="col.time">时间</th>
+            </tr>
+          </thead>
+          <tbody id="sn-tbody"><tr><td colspan="11" class="loading"><span class="spinner"></span>等待扫描...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between">
+        <span data-i18n="monitor.log">操作日志</span>
+        <button class="btn btn-sm btn-gray" onclick="clearLog()">清空日志</button>
+      </div>
+      <div class="log-area" id="log-area"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: DATABASE (Query) ===== -->
+  <div class="tab-content" id="tab-database">
+    <!-- Time range -->
+    <div class="card">
+      <div class="q-date-row">
+        <span style="color:var(--muted);font-size:13px" data-i18n="q.from">从</span>
+        <input type="date" class="q-date-input" id="q-date-from">
+        <input type="time" class="q-date-input" id="q-time-from" step="3600">
+        <span style="color:var(--muted);font-size:13px" data-i18n="q.to">到</span>
+        <input type="date" class="q-date-input" id="q-date-to">
+        <input type="time" class="q-date-input" id="q-time-to" step="3600">
+        <button class="btn btn-sm btn-primary" onclick="qSetToday8am()">📅 今天8点</button>
+        <button class="btn btn-sm btn-gray" onclick="qClearDateTime()" data-i18n="q.clear_date">清空</button>
+      </div>
+    </div>
+    <!-- SN query buttons -->
+    <div class="q-btn-group">
+      <div class="q-group-label">SN</div>
+      <button class="btn q-btn q-btn-sn" onclick="qSnPool()"><span data-i18n="q.sn_pool">📋 SN 池子</span></button>
+      <button class="btn q-btn q-btn-sn" onclick="qSnLocal()"><span data-i18n="q.sn_local">💾 SN 本地</span></button>
+      <button class="btn q-btn q-btn-sn" onclick="qSnMes()"><span data-i18n="q.sn_mes">☁️ SN_MES</span></button>
+      <button class="btn q-btn q-btn-sn" onclick="qSnBackend()"><span>💻 SN 后端</span></button>
+    </div>
+    <!-- NG query buttons -->
+    <div class="q-btn-group">
+      <div class="q-group-label">NG</div>
+      <button class="btn q-btn q-btn-ng" onclick="qNgPool()"><span data-i18n="q.ng_pool">📋 NG 池子</span></button>
+      <button class="btn q-btn q-btn-ng" onclick="qNgLocal()"><span data-i18n="q.ng_local">💾 NG 本地</span></button>
+      <button class="btn q-btn q-btn-ng" onclick="qNgMes()"><span data-i18n="q.ng_mes">☁️ NG_MES</span></button>
+    </div>
+    <!-- Results -->
+    <div class="card" style="margin-top:12px">
+      <div class="card-title" style="display:flex;justify-content:space-between">
+        <span data-i18n="q.result">查询结果</span>
+        <span style="font-size:12px;color:var(--muted)" id="q-result-info"></span>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <button class="btn btn-sm btn-success" onclick="qExportCsv()"><span data-i18n="q.export">📥 导出CSV</span></button>
+      </div>
+      <div class="tbl-wrap" style="max-height:400px">
+        <table class="tbl" id="q-result-tbl">
+          <thead><tr>
+            <th data-i18n="col.sn">SN</th><th data-i18n="col.result">结果</th><th data-i18n="col.time">时间</th><th>来源</th><th data-i18n="col.station">工位</th><th data-i18n="col.line">产线</th><th data-i18n="col.operator">操作员</th>
+          </tr></thead>
+          <tbody id="q-result-tbody"><tr><td colspan="7" style="color:var(--muted);padding:20px;text-align:center;font-size:13px" data-i18n="q.hint">点击按钮查询</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: RESOURCES ===== -->
+  <div class="tab-content" id="tab-resources">
+    <div class="cols">
+      <div class="card">
+        <div class="card-title" data-i18n="res.mes">MES 连接</div>
+        <div class="res-item"><span class="res-label" data-i18n="res.mes_status">状态</span><span class="res-val res-on" id="res-mes">ON</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.mes_api">API</span><span class="res-val" id="res-mes-api" style="font-size:11px">http://192.168.18.186:8080</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.station">工位</span><span class="res-val">01</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.operator">操作员</span><span class="res-val">OPERATOR</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.bridge_sent">已推送</span><span class="res-val" id="res-bridge-sent">0</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.bridge_failed">失败</span><span class="res-val" style="color:var(--red)" id="res-bridge-failed">0</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.bridge_queue">队列</span><span class="res-val" id="res-bridge-queue">0</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="res.device">设备</div>
+        <div class="res-item"><span class="res-label" data-i18n="res.device_process">进程</span><span class="res-val"></span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.device_lock">锁定状态</span><span class="res-val" id="res-device-lock" data-i18n="res.unlocked">未锁定</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.excel_folder">Excel目录</span><span class="res-val" style="font-size:11px" id="res-excel-folder">D:\ATS\测试报表</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.scanner">USB扫码枪</span><span class="res-val" id="res-scanner">已连接</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.usb_guard">USB Guard</span><span class="res-val" id="res-usb-guard">启用</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.tcp_port">TCP端口</span><span class="res-val">1003</span></div>
+        <div class="res-item"><span class="res-label" data-i18n="res.api_port">API端口</span><span class="res-val">5379</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" data-i18n="res.station_chain">工位链</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:8px 0" id="station-chain-display">
+        <span style="color:var(--muted);font-size:12px">加载中...</span>
+      </div>
+      <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px">🌐 工位 IP 配置</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:11px;color:#94a3b8;min-width:70px">上一工位</span>
+            <input class="cfg-input" id="ip-prev" placeholder="192.168.1.x" style="min-width:130px;font-size:12px">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:11px;color:#94a3b8;min-width:70px">本工位</span>
+            <input class="cfg-input" id="ip-current" placeholder="192.168.1.x" style="min-width:130px;font-size:12px">
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:11px;color:#94a3b8;min-width:70px">下一工位</span>
+            <input class="cfg-input" id="ip-next" placeholder="192.168.1.x" style="min-width:130px;font-size:12px">
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="saveStationIps()">保存 IP</button>
+          <button class="btn btn-sm" onclick="autoDetectStationIp()" style="background:#0f3460;color:#00d4ff;border:1px solid #00d4ff">自动获取</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: INSTRUCTIONS ===== -->
+  <div class="tab-content" id="tab-instructions">
+    <div class="card">
+      <div class="card-title" data-i18n="inst.toc">目录</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px" id="inst-toc"></div>
+    </div>
+    <div id="inst-sections"></div>
+  </div>
+
+  <!-- ===== TAB: STARTUP ===== -->
+  <div class="tab-content" id="tab-startup">
+    <div id="startup-steps"></div>
+    <div class="card" style="text-align:center;margin-top:16px">
+      <div id="startup-msg" style="font-size:16px;color:var(--muted)" data-i18n="startup.not_started">☐ 开机流程尚未开始</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--muted)" data-i18n="startup.note">📌 如任何步骤异常，请立即通知设备管理员或品管主管</div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: REPAIR ===== -->
+  <div class="tab-content" id="tab-repair">
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between">
+        <span data-i18n="repair.history">NG维修历史</span>
+        <button class="btn btn-sm btn-gray" onclick="clearNgHistory()" data-i18n="repair.clear">清空记录</button>
+      </div>
+      <div id="repair-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: CONFIG ===== -->
+  <div class="tab-content" id="tab-config">
+    <div class="card">
+      <div class="card-title" data-i18n="cfg.title">系统配置</div>
+      <div class="cfg-row">
+        <span class="cfg-label">MES API</span>
+        <input class="cfg-input" id="cfg-mes-api" value="http://192.168.18.186:8080/api">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">MES 工位</span>
+        <input class="cfg-input" id="cfg-mes-station" value="01">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">MES 操作员</span>
+        <input class="cfg-input" id="cfg-mes-operator" value="OPERATOR">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">Excel 目录</span>
+        <input class="cfg-input" id="cfg-excel-folder" value="D:\ATS\测试报表">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">进程名</span>
+        <input class="cfg-input" id="cfg-device-process" value="">
+      </div>
+      <div class="cfg-row" style="border-top:1px solid #334155;margin-top:6px;padding-top:10px">
+        <span style="font-size:11px;color:#38bdf8;width:100%;margin-bottom:4px">📍 工位信息（记录到检测日志）</span>
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">工位</span>
+        <input class="cfg-input" id="cfg-station" value="01">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">产线</span>
+        <input class="cfg-input" id="cfg-line" value="AUTO-LINE-1">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">操作员</span>
+        <input class="cfg-input" id="cfg-operator" value="">
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">MES 启用</span>
+        <button class="btn btn-sm" id="cfg-mes-enabled" onclick="toggleCfgMes()">ON</button>
+      </div>
+      <div class="cfg-row">
+        <span class="cfg-label">开机自启</span>
+        <button class="btn btn-sm" id="cfg-autostart" onclick="toggleAutostart()">—</button>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="saveConfig()" data-i18n="cfg.save">保存配置</button>
+        <button class="btn btn-danger" onclick="resetDay()" data-i18n="cfg.reset_day">重置今日统计</button>
+        <button class="btn btn-warning" onclick="logoutOperator()" id="cfg-logout-btn" style="margin-left:auto">👤 退出登录</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" data-i18n="cfg.alarm_test">报警测试</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-danger" onclick="testAlarmNg()">🔴 测试NG报警</button>
+        <button class="btn btn-warning" onclick="testAlarmDup()">🔁 测试重码报警</button>
+        <button class="btn btn-success" onclick="testAlarmPass()">🟢 测试通过提示</button>
+        <button class="btn btn-primary" onclick="testTts()" data-i18n="cfg.test_voice">测试语音</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;padding-top:8px;border-top:1px solid #1e293b">
+        <button class="btn btn-sm" style="background:#451a1a;color:#fca5a5;border:1px solid #7f1d1d" onclick="testNgLocalPool()">🧪 测试NG本地池</button>
+        <button class="btn btn-sm" style="background:#1a1a45;color:#93c5fd;border:1px solid #1e3a5f" onclick="testNgSqlite()">🗄️ 测试NG SQLite</button>
+        <span id="test-ng-result" style="font-size:12px;color:#64748b;line-height:28px"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: DATA SOURCE VIEWER ===== -->
+  <!-- ===== TAB: RESOURCE MANAGEMENT ===== -->
+  <div class="tab-content" id="tab-resman" style="padding:16px;overflow-y:auto">
+
+    <!-- Stats summary -->
+    <div class="stats-row" style="margin-bottom:16px">
+      <div class="stat-card cyan"><div class="stat-num" id="rm-total">0</div><div class="stat-lbl">合计</div></div>
+      <div class="stat-card green"><div class="stat-num" id="rm-pass">0</div><div class="stat-lbl">通过</div></div>
+      <div class="stat-card red"><div class="stat-num" id="rm-fail">0</div><div class="stat-lbl">不良</div></div>
+      <div class="stat-card yellow"><div class="stat-num" id="rm-dup">0</div><div class="stat-lbl">重复</div></div>
+      <div class="stat-card" style="background:#1e293b"><div class="stat-num" id="rm-sn-count" style="color:#38bdf8">0</div><div class="stat-lbl">SN记录</div></div>
+      <div class="stat-card" style="background:#1e293b"><div class="stat-num" id="rm-ng-count" style="color:#f87171">0</div><div class="stat-lbl">NG池</div></div>
+      <div class="stat-card" style="background:#1e293b"><div class="stat-num" id="rm-dup-count" style="color:#fbbf24">0</div><div class="stat-lbl">DUP池</div></div>
+    </div>
+
+    <!-- Pools + Records panels -->
+    <div class="cols">
+
+      <!-- SN Records -->
+      <div class="card" style="flex:2">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>📋 SN 记录</span>
+          <span style="font-size:11px;color:#64748b" id="rm-sn-count-badge">0 条</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <input class="scan-input" id="rm-sn-search" placeholder="搜索 SN..." style="flex:1;font-size:12px;padding:4px 8px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px" oninput="rmFilterSn()">
+          <button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="rmClearSn()">清空</button>
+        </div>
+        <div style="max-height:220px;overflow-y:auto;border:1px solid #1e293b;border-radius:6px">
+          <table class="tbl" style="font-size:11px">
+            <thead><tr>            <th>SN</th><th>结果</th><th>时间</th><th>来源</th><th>工位</th><th>产线</th><th>操作员</th><th></th></tr></thead>
+            <tbody id="rm-sn-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- NG Pool -->
+      <div class="card" style="flex:1">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>🚫 NG 池</span>
+          <span style="font-size:11px;color:#64748b" id="rm-ng-count-badge">0 条</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <input class="scan-input" id="rm-ng-input" placeholder="输入 SN 添加到 NG 池" style="flex:1;font-size:12px;padding:4px 8px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px">
+          <button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="rmAddNg()">添加</button>
+        </div>
+        <div style="max-height:220px;overflow-y:auto;border:1px solid #1e293b;border-radius:6px">
+          <table class="tbl" style="font-size:11px">
+            <thead><tr>            <th>SN</th><th>时间</th><th>工位</th><th>产线</th><th>操作员</th><th></th></tr></thead>
+            <tbody id="rm-ng-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- DUP Pool -->
+      <div class="card" style="flex:1">
+        <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+          <span>🔁 DUP 池</span>
+          <span style="font-size:11px;color:#64748b" id="rm-dup-count-badge">0 条</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <input class="scan-input" id="rm-dup-input" placeholder="输入 SN 添加到 DUP 池" style="flex:1;font-size:12px;padding:4px 8px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px">
+          <button class="btn btn-sm" style="background:#f97316;color:#fff" onclick="rmAddDup()">添加</button>
+        </div>
+        <div style="max-height:220px;overflow-y:auto;border:1px solid #1e293b;border-radius:6px">
+          <table class="tbl" style="font-size:11px">
+            <thead><tr>            <th>SN</th><th>时间</th><th>工位</th><th>产线</th><th>操作员</th><th></th></tr></thead>
+            <tbody id="rm-dup-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Helper controls -->
+    <div class="card" style="margin-top:12px">
+      <div class="card-title">🔧 Helper 控制</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn btn-primary" onclick="rmRefreshAll()">🔄 刷新全部</button>
+        <button class="btn btn-danger" onclick="rmResetAll()">🗑 清空所有池和记录</button>
+        <div style="display:flex;align-items:center;gap:6px;margin-left:8px">
+          <span style="font-size:12px;color:#64748b">批量 SN:</span>
+          <textarea id="rm-batch-sn" rows="1" placeholder="每行一个SN，批量添加" style="width:260px;font-size:11px;padding:4px;background:#0f172a;color:#e2e8f0;border:1px solid #334155;border-radius:4px;resize:none"></textarea>
+          <button class="btn btn-sm" style="background:#dc2626;color:#fff" onclick="rmBatchAddNg()">批量→NG</button>
+          <button class="btn btn-sm" style="background:#f97316;color:#fff" onclick="rmBatchAddDup()">批量→DUP</button>
+        </div>
+      </div>
+      <div id="rm-status" style="margin-top:8px;font-size:12px;color:#64748b"></div>
+    </div>
+
+    <!-- SQLite raw table browser -->
+    <div class="card" style="margin-top:12px">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center">
+        <span>🗄️ SQLite 原始表数据</span>
+        <span style="font-size:11px;color:#64748b">
+          <select id="rm-sqlite-table" onchange="rmLoadSqliteTable()" style="padding:3px 6px;background:#0f172a;color:var(--text);border:1px solid #334155;border-radius:4px;font-size:11px">
+            <option value="">— 选择表 —</option>
+            <option value="sn_records">sn_records (SN记录)</option>
+            <option value="ng_pool">ng_pool (NG池)</option>
+            <option value="dup_pool">dup_pool (DUP池)</option>
+            <option value="stats">stats (统计)</option>
+            <option value="station_config">station_config (配置)</option>
+          </select>
+          <button class="btn btn-sm" onclick="rmLoadSqliteTable()" style="margin-left:4px">🔄</button>
+        </span>
+      </div>
+      <div style="max-height:280px;overflow:auto;border:1px solid #1e293b;border-radius:6px">
+        <table class="tbl" style="font-size:11px">
+          <thead id="rm-sqlite-head"></thead>
+          <tbody id="rm-sqlite-body"></tbody>
+        </table>
+      </div>
+      <div id="rm-sqlite-info" style="margin-top:4px;font-size:11px;color:#64748b"></div>
+    </div>
+
+  </div>
+
+</div><!-- end #main -->
+
+<!-- ==================== ALARM OVERLAY ==================== -->
+<div id="alarm-overlay">
+  <div class="alarm-box">
+    <div class="alarm-title" id="alarm-title-txt">⚠ 不良品检测</div>
+    <div class="alarm-sn" id="alarm-sn-txt">SN: —</div>
+    <div class="alarm-info" id="alarm-channel-txt">通道: —</div>
+    <div class="alarm-info" id="alarm-error-txt">错误码: —</div>
+    <div class="alarm-info" id="alarm-source-txt">来源: [Excel]</div>
+    <div class="alarm-ban" id="alarm-ban-txt">发现不良品，禁止离开本站</div>
+    <div class="alarm-auth" id="alarm-auth">
+      <input type="text" id="alarm-user" placeholder="管理员账号">
+      <input type="password" id="alarm-pw" placeholder="管理员密码">
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn btn-confirm" onclick="alarmConfirm()" id="alarm-confirm-btn">✅ 确认解锁</button>
+      <button class="btn btn-bypass" onclick="alarmBypass()" id="alarm-bypass-btn">⏩ 快速确认</button>
+    </div>
+    <button class="btn-close-alarm" id="alarm-close-btn" onclick="closeAlarm()">关闭告警</button>
+    <div id="alarm-result" style="color:#fee2e2;font-size:16px;margin-top:10px;font-weight:bold"></div>
+  </div>
+</div>
+
+<!-- ==================== LOGIN OVERLAY ==================== -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-header">
+      <span style="font-size:48px">📡</span>
+      <h1 data-i18n="login.title">质量监控系统</h1>
+      <p class="login-sub" data-i18n="login.subtitle">请扫描员工二维码登录</p>
+    </div>
+    <div class="login-body">
+      <div class="login-scan-area" id="login-scan-area">
+        <div class="login-input-wrap">
+          <input class="login-input" id="login-input" data-i18n-placeholder="login.placeholder" placeholder="等待扫码..." autocomplete="off" autofocus>
+          <span class="login-indicator" id="login-indicator"></span>
+        </div>
+        <div class="login-hint" data-i18n="login.hint">将员工二维码对准扫码枪</div>
+        <div style="margin-top:14px;border-top:1px solid #1e293b;padding-top:12px">
+          <button class="btn btn-sm" style="background:#334155;color:#94a3b8;border:none;width:100%;padding:10px;font-size:13px" onclick="loginQuick()" data-i18n="login.quick">⚡ 快速登录</button>
+        </div>
+      </div>
+      <div class="login-result" id="login-result" style="display:none">
+        <div class="login-avatar" id="login-avatar">👤</div>
+        <div class="login-info">
+          <div class="login-emp-id" id="login-emp-id">—</div>
+          <div class="login-emp-name" id="login-emp-name">—</div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:12px;justify-content:center">
+          <button class="btn btn-confirm" onclick="loginConfirm()" data-i18n="login.confirm">✅ 确认登录</button>
+          <button class="btn btn-gray" onclick="loginReset()" data-i18n="login.rescan">🔄 重新扫描</button>
+        </div>
+        <div id="login-error" style="color:#fca5a5;font-size:14px;margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="login-footer">
+      <span data-i18n="login.footer">越南瑞晶 · SMT 工厂</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// I18N DICTIONARY
+// ================================================================
+const I18N = {
+  zh: {
+    "tabs.monitor":"实时监控","tabs.resources":"资源查看","tabs.instructions":"操作说明",
+    "tabs.startup":"开机流程","tabs.database":"查询","tabs.repair":"维修记录","tabs.config":"系统配置",
+    "status.status":"状态","status.device":"设备","status.heartbeat":"心跳","status.file":"文件",
+    "status.unlocked":"未锁定","status.locked":"已锁定",
+    "stats.total":"合计","stats.pass":"通过","stats.fail":"不良","stats.dup":"重码",
+    "monitor.current":"当前扫描","monitor.recent":"最近检测记录","monitor.log":"操作日志",
+    "scan.hint":"🔍 扫描或输入 SN，按 Enter",
+    "col.sn":"SN","col.result":"结果","col.ch":"通道","col.err":"错误码",
+    "col.sp":"SN池","col.sl":"SQLite","col.sm":"MES","col.nm":"NG_MES",
+    "col.np":"NG池","col.nl":"NG本地","col.time":"时间",
+    "res.mes":"MES连接","res.mes_status":"状态","res.mes_api":"API","res.station":"工位",
+    "res.operator":"操作员","res.bridge_sent":"已推送","res.bridge_failed":"失败","res.bridge_queue":"队列",
+    "res.device":"设备","res.device_process":"进程","res.device_lock":"锁定状态","res.excel_folder":"Excel目录",
+    "res.scanner":"USB扫码枪","res.usb_guard":"USB Guard","res.tcp_port":"TCP端口","res.api_port":"API端口",
+    "res.unlocked":"未锁定","res.locked":"已锁定","res.station_chain":"工位链",
+    "db.query":"SQL查询","db.run":"执行查询","db.export":"导出CSV",
+    "repair.history":"NG维修历史","repair.clear":"清空记录",
+    "cfg.title":"系统配置","cfg.save":"保存配置","cfg.reset_day":"重置今日统计",
+    "cfg.alarm_test":"报警测试","cfg.test_voice":"测试语音",
+    "startup.not_started":"☐ 开机流程尚未开始","startup.done":"✅ 全部步骤完成，可以开始生产",
+    "startup.note":"📌 如任何步骤异常，请立即通知设备管理员或品管主管",
+    "inst.toc":"目录","inst.sec1_title":"1. 扫码检测流程","inst.sec2_title":"2. NG(不良品)处理",
+    "inst.sec3_title":"3. 重码(Duplicate)处理",    "inst.sec4_title":"4. 设备操作流程",
+    "inst.sec5_title":"5. 日常点检项目","inst.sec6_title":"6. 每日重置",
+    "inst.sec7_title":"7. 注意事项","inst.sec8_title":"8. 当前配置",
+    "alarm.ng_title":"⚠ 不良品检测","alarm.dup_title":"⚠ 重复码检测",
+    "alarm.ban_ng":"发现不良品，禁止离开本站","alarm.ban_dup":"发现重复码，禁止离开本站",
+    "alarm.user_placeholder":"管理员账号","alarm.pw_placeholder":"管理员密码",
+    "alarm.confirm":"✅ 确认解锁","alarm.bypass":"⏩ 快速确认","alarm.auth_failed":"认证失败","alarm.auth_needed":"请先确认报警",
+    "log.scanned":"扫描","log.pass":"通过","log.ng":"NG","log.dup":"重码","log.unlock":"解锁",
+    "mes.on":"MES: ON","mes.off":"MES: OFF",
+    "pool.sn":"SN池","pool.ng":"NG池","pool.dup":"DUP池",
+    "col.station":"工位","col.line":"产线","col.operator":"操作员",
+    "q.from":"从","q.to":"到","q.clear_date":"清空日期",
+    "q.sn_pool":"📋 SN 池子","q.sn_local":"💾 SN 本地","q.sn_mes":"☁️ SN_MES",
+    "q.ng_pool":"📋 NG 池子","q.ng_local":"💾 NG 本地","q.ng_mes":"☁️ NG_MES",
+    "q.result":"查询结果","q.export":"📥 导出CSV","q.hint":"点击按钮查询",
+    "login.title":"质量监控系统","login.subtitle":"请扫描员工二维码登录",
+    "login.placeholder":"等待扫码...","login.hint":"将员工二维码对准扫码枪",
+    "login.confirm":"✅ 确认登录","login.rescan":"🔄 重新扫描",
+    "login.quick":"⚡ 快速登录","login.quick_op":"操作员",
+    "login.footer":"越南瑞晶 · SMT 工厂",
+    "cfg.logout":"👤 退出登录 (当前: {0})",
+    "data.overview":"数据总览","data.open_resman":"资源管理","data.select_table":"选择表","data.refresh":"刷新",
+  },
+  vi: {
+    "tabs.monitor":"Giám sát","tabs.resources":"Tài nguyên","tabs.instructions":"Hướng dẫn",
+    "tabs.startup":"Khởi động","tabs.database":"Truy vấn","tabs.repair":"Sửa chữa","tabs.config":"Cấu hình",
+    "status.status":"Trạng thái","status.device":"Thiết bị","status.heartbeat":"Nhịp tim","status.file":"Tệp",
+    "status.unlocked":"Chưa khóa","status.locked":"Đã khóa",
+    "stats.total":"Tổng","stats.pass":"Đạt","stats.fail":"Lỗi","stats.dup":"Trùng",
+    "monitor.current":"Quét hiện tại","monitor.recent":"Bản ghi gần đây","monitor.log":"Nhật ký",
+    "scan.hint":"🔍 Quét hoặc nhập SN, nhấn Enter",
+    "col.sn":"SN","col.result":"Kết quả","col.ch":"Kênh","col.err":"Mã lỗi",
+    "col.sp":"Kho SN","col.sl":"SQLite","col.sm":"MES","col.nm":"NG_MES",
+    "col.np":"Kho NG","col.nl":"NG Cục bộ","col.time":"Thời gian",
+    "res.mes":"Kết nối MES","res.mes_status":"Trạng thái","res.mes_api":"API","res.station":"Trạm",
+    "res.operator":"Người vận hành","res.bridge_sent":"Đã gửi","res.bridge_failed":"Thất bại","res.bridge_queue":"Hàng đợi",
+    "res.device":"Thiết bị","res.device_process":"Tiến trình","res.device_lock":"Khóa","res.excel_folder":"Thư mục Excel",
+    "res.scanner":"Máy quét USB","res.usb_guard":"USB Guard","res.tcp_port":"Cổng TCP","res.api_port":"Cổng API",
+    "res.unlocked":"Chưa khóa","res.locked":"Đã khóa","res.station_chain":"Chuỗi trạm",
+    "db.query":"Truy vấn SQL","db.run":"Thực hiện","db.export":"Xuất CSV",
+    "repair.history":"Lịch sử NG","repair.clear":"Xóa bản ghi",
+    "cfg.title":"Cấu hình hệ thống","cfg.save":"Lưu cấu hình","cfg.reset_day":"Đặt lại ngày",
+    "cfg.alarm_test":"Kiểm tra báo động","cfg.test_voice":"Kiểm tra giọng nói",
+    "startup.not_started":"☐ Quy trình khởi động chưa bắt đầu","startup.done":"✅ Tất cả các bước hoàn tất, sẵn sàng sản xuất",
+    "startup.note":"📌 Nếu bất kỳ bước nào bất thường, hãy thông báo ngay cho quản trị viên thiết bị",
+    "inst.toc":"Mục lục","inst.sec1_title":"1. Quy trình quét & kiểm tra","inst.sec2_title":"2. Xử lý NG(Lỗi)",
+    "inst.sec3_title":"3. Xử lý trùng lặp",    "inst.sec4_title":"4. Quy trình vận hành",
+    "inst.sec5_title":"5. Kiểm tra hàng ngày","inst.sec6_title":"6. Đặt lại hàng ngày",
+    "inst.sec7_title":"7. Lưu ý","inst.sec8_title":"8. Cấu hình hiện tại",
+    "alarm.ng_title":"⚠ Phát hiện sản phẩm lỗi","alarm.dup_title":"⚠ Phát hiện mã trùng",
+    "alarm.ban_ng":"Phát hiện sản phẩm lỗi, cấm rời trạm","alarm.ban_dup":"Phát hiện mã trùng, cấm rời trạm",
+    "alarm.user_placeholder":"Tài khoản quản trị","alarm.pw_placeholder":"Mật khẩu",
+    "alarm.confirm":"✅ Xác nhận mở khóa","alarm.bypass":"⏩ Xác nhận nhanh","alarm.auth_failed":"Xác thực thất bại","alarm.auth_needed":"Vui lòng xác nhận báo động trước",
+    "log.scanned":"Quét","log.pass":"Đạt","log.ng":"NG","log.dup":"Trùng","log.unlock":"Mở khóa",
+    "mes.on":"MES: BẬT","mes.off":"MES: TẮT",
+    "pool.sn":"Kho SN","pool.ng":"Kho NG","pool.dup":"Kho DUP",
+    "col.station":"Trạm","col.line":"Dây chuyền","col.operator":"Người vận hành",
+    "q.from":"Từ","q.to":"Đến","q.clear_date":"Xóa ngày",
+    "q.sn_pool":"📋 Kho SN","q.sn_local":"💾 SN Cục bộ","q.sn_mes":"☁️ SN_MES",
+    "q.ng_pool":"📋 Kho NG","q.ng_local":"💾 NG Cục bộ","q.ng_mes":"☁️ NG_MES",
+    "q.result":"Kết quả","q.export":"📥 Xuất CSV","q.hint":"Nhấn nút để truy vấn",
+    "login.title":"Hệ thống giám sát chất lượng","login.subtitle":"Vui lòng quét mã QR nhân viên",
+    "login.placeholder":"Đang chờ quét...","login.hint":"Đưa mã QR nhân viên vào máy quét",
+    "login.confirm":"✅ Xác nhận đăng nhập","login.rescan":"🔄 Quét lại",
+    "login.quick":"⚡ Đăng nhập nhanh","login.quick_op":"Người vận hành",
+    "login.footer":"Ruijing · Nhà máy SMT Việt Nam",
+    "cfg.logout":"👤 Đăng xuất (hiện tại: {0})",
+    "data.overview":"Tổng quan","data.open_resman":"Quản lý","data.select_table":"Chọn bảng","data.refresh":"Làm mới",
+  },
+  en: {
+    "tabs.monitor":"Monitor","tabs.resources":"Resources","tabs.instructions":"Instructions",
+    "tabs.startup":"Startup","tabs.database":"Query","tabs.repair":"Repair","tabs.config":"Config",
+    "status.status":"Status","status.device":"Device","status.heartbeat":"Heartbeat","status.file":"File",
+    "status.unlocked":"Unlocked","status.locked":"Locked",
+    "stats.total":"Total","stats.pass":"Pass","stats.fail":"Fail","stats.dup":"Dup",
+    "monitor.current":"Current Scan","monitor.recent":"Recent Records","monitor.log":"Log",
+    "scan.hint":"🔍 Scan or enter SN, press Enter",
+    "col.sn":"SN","col.result":"Result","col.ch":"Ch","col.err":"Error",
+    "col.sp":"SN Pool","col.sl":"SQLite","col.sm":"MES","col.nm":"NG_MES",
+    "col.np":"NG Pool","col.nl":"NG Local","col.time":"Time",
+    "res.mes":"MES Connection","res.mes_status":"Status","res.mes_api":"API","res.station":"Station",
+    "res.operator":"Operator","res.bridge_sent":"Sent","res.bridge_failed":"Failed","res.bridge_queue":"Queue",
+    "res.device":"Device","res.device_process":"Process","res.device_lock":"Lock","res.excel_folder":"Excel Folder",
+    "res.scanner":"USB Scanner","res.usb_guard":"USB Guard","res.tcp_port":"TCP Port","res.api_port":"API Port",
+    "res.unlocked":"Unlocked","res.locked":"Locked","res.station_chain":"Station Chain",
+    "db.query":"SQL Query","db.run":"Run","db.export":"Export CSV",
+    "repair.history":"NG History","repair.clear":"Clear",
+    "cfg.title":"System Config","cfg.save":"Save","cfg.reset_day":"Reset Day",
+    "cfg.alarm_test":"Alarm Test","cfg.test_voice":"Test Voice",
+    "startup.not_started":"☐ Startup process not started","startup.done":"✅ All steps completed, ready for production",
+    "startup.note":"📌 If any step abnormal, notify equipment admin immediately",
+    "inst.toc":"Table of Contents","inst.sec1_title":"1. Scan & Check Process","inst.sec2_title":"2. NG (Defect) Handling",
+    "inst.sec3_title":"3. Duplicate Handling",    "inst.sec4_title":"4. Device Operation",
+    "inst.sec5_title":"5. Daily Checklist","inst.sec6_title":"6. Daily Reset",
+    "inst.sec7_title":"7. Cautions","inst.sec8_title":"8. Current Config",
+    "alarm.ng_title":"⚠ Defective Product Detected","alarm.dup_title":"⚠ Duplicate Code Detected",
+    "alarm.ban_ng":"Defective product detected, must NOT leave","alarm.ban_dup":"Duplicate code detected, must NOT leave",
+    "alarm.user_placeholder":"Admin username","alarm.pw_placeholder":"Password",
+    "alarm.confirm":"✅ Confirm Unlock","alarm.bypass":"⏩ Quick Confirm","alarm.auth_failed":"Auth failed","alarm.auth_needed":"Please confirm alarm first",
+    "log.scanned":"Scan","log.pass":"PASS","log.ng":"NG","log.dup":"DUP","log.unlock":"Unlock",
+    "mes.on":"MES: ON","mes.off":"MES: OFF",
+    "pool.sn":"SN Pool","pool.ng":"NG Pool","pool.dup":"DUP Pool",
+    "col.station":"Station","col.line":"Line","col.operator":"Operator",
+    "q.from":"From","q.to":"To","q.clear_date":"Clear date",
+    "q.sn_pool":"📋 SN Pool","q.sn_local":"💾 SN Local","q.sn_mes":"☁️ SN_MES",
+    "q.ng_pool":"📋 NG Pool","q.ng_local":"💾 NG Local","q.ng_mes":"☁️ NG_MES",
+    "q.result":"Results","q.export":"📥 Export CSV","q.hint":"Click button to query",
+    "login.title":"Quality Monitor System","login.subtitle":"Please scan employee QR code to login",
+    "login.placeholder":"Waiting for scan...","login.hint":"Point the scanner at the employee QR code",
+    "login.confirm":"✅ Confirm Login","login.rescan":"🔄 Rescan",
+    "login.quick":"⚡ Quick Login","login.quick_op":"Operator",
+    "login.footer":"Ruijing · SMT Factory Vietnam",
+    "cfg.logout":"👤 Logout (current: {0})",
+    "data.overview":"Data Overview","data.open_resman":"Resource Mgmt","data.select_table":"Select table","data.refresh":"Refresh",
+  }
+};
+
+// ================================================================
+// I18N
+// ================================================================
+function t(key) {
+  return I18N[LANG]?.[key] ?? I18N['zh']?.[key] ?? key;
+}
+
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    el.placeholder = t(key);
+  });
+  // Alarm overlay
+  const isDup = document.getElementById('alarm-overlay').dataset.type === 'dup';
+  document.getElementById('alarm-title-txt').textContent = isDup ? t('alarm.dup_title') : t('alarm.ng_title');
+  document.getElementById('alarm-ban-txt').textContent = isDup ? t('alarm.ban_dup') : t('alarm.ban_ng');
+  document.getElementById('alarm-confirm-btn').textContent = t('alarm.confirm');
+  document.getElementById('alarm-bypass-btn').textContent = t('alarm.bypass');
+  document.getElementById('alarm-user').placeholder = t('alarm.user_placeholder');
+  document.getElementById('alarm-pw').placeholder = t('alarm.pw_placeholder');
+}
+
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem('site_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+  applyI18n();
+  renderInstructions();
+  updateLogoutBtn();
+}
+
+// ================================================================
+// TABS
+// ================================================================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    switchTab(tab.dataset.tab);
+  });
+});
+
+/** Programmatic tab switch */
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const tabEl = document.querySelector(`.tab[data-tab="${name}"]`);
+  if (tabEl) tabEl.classList.add('active');
+  const id = 'tab-' + name;
+  document.getElementById(id)?.classList.add('active');
+  // Lazy load
+  if (name === 'database') { qSetDefaultTime(); qLoadDefault(); }
+  if (name === 'repair') renderRepair();
+  if (name === 'resman') rmLoadAll();
+}
+
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.addEventListener('click', () => setLang(b.dataset.lang));
+});
+
+// ================================================================
+// SSE — replaced by local state + BroadcastChannel (no backend)
+// BroadcastChannel mirrors SSE events across tabs for sync
+// ================================================================
+let BC = null;
+function initBroadcastChannel() {
+  try {
+    BC = new BroadcastChannel('station_channel');
+    BC.onmessage = e => {
+      const d = e.data;
+      if (d.type === 'stats') {
+        STATS = d.stats || STATS;
+        POOL_SN = d.pool_sn || POOL_SN;
+        POOL_NG = d.pool_ng || POOL_NG;
+        POOL_DUP = d.pool_dup || POOL_DUP;
+        DEVICE_LOCKED = d.locked || DEVICE_LOCKED;
+        document.getElementById('stat-total').textContent = STATS.total;
+        document.getElementById('stat-pass').textContent = STATS.pass;
+        document.getElementById('stat-fail').textContent = STATS.fail;
+        document.getElementById('stat-dup').textContent = STATS.dup;
+        document.getElementById('pool-sn-count').textContent = POOL_SN.size;
+        document.getElementById('pool-ng-count').textContent = POOL_NG.size;
+        document.getElementById('pool-dup-count').textContent = POOL_DUP.size;
+        const lockEl = document.getElementById('ui-lock');
+      }
+      if (d.type === 'scan') {
+        prependScanRow(d.data);
+        document.getElementById('ui-current').textContent = d.data.sn + ' → ' + d.data.result;
+        CURRENT_SN = d.data.sn;
+        if (d.data.result === 'NG') speak(t('alarm.ban_ng'), 'alert');
+        if (d.data.is_dup) speak(t('alarm.ban_dup'), 'alert');
+        if (d.data.result === 'PASS') speak(t('log.pass'), 'normal');
+      }
+      if (d.type === 'alarm') showAlarm(d.data);
+      if (d.type === 'log') appendLog(d.msg);
+    };
+  } catch(ex) { /* BroadcastChannel not supported */ }
+}
+
+function broadcast(type, data, msg) {
+  if (!BC) return;
+  try { BC.postMessage({ type, data, msg }); } catch(ex) {}
+}
+
+// Called after every state change to sync tabs
+function broadcastState() {
+  broadcast('stats', null, null);
+}
+
+// ================================================================
+// STATE (pure JS — no backend required)
+// ================================================================
+let LANG = 'zh';            // 当前语言
+let POOL_SN = new Set();    // SN池
+let POOL_NG = new Set();    // NG池
+let POOL_DUP = new Set();   // 重码池
+let STATS = { total: 0, pass: 0, fail: 0, dup: 0 };
+let CURRENT_SN = '—';
+let DEVICE_LOCKED = false;
+let LOGIN_EMPLOYEE = null;  // { id, name, raw } after successful login
+let _scanRowCounter = 0;    // monotonic row ID for MES async update targeting
+let STATION_CFG = { station: '01', line_name: 'AUTO-LINE-1', operator: '', device_name: '' };
+let DB = null;              // IndexedDB
+let MES_ON = true;         // MES查询开关
+let ALARM_OPEN = false;     // 报警弹窗是否显示
+let HB_INTERVAL = null;     // 心跳定时器
+let LOG_LINES = [];        // 日志行数组
+let SN_HISTORY = [];       // 扫描历史（内存，仅用于 renderSnTable 恢复）
+const IDLE_THRESHOLD_MS = 120000; // 2分钟无扫描视为设备闲置
+let DEVICE_STATUS_REPORT_INTERVAL = null; // 设备状态上报定时器
+
+/** Build current device status snapshot */
+function getDeviceStatus() {
+  const now = Date.now();
+  const idleMs = now - LAST_SCAN_TIME;
+  const uptime = window.START_TIME ? (now - window.START_TIME.getTime()) : 0;
+  const shutdownTime = localStorage.getItem('site_shutdown_time') || '';
+  const startupTime = window.START_TIME ? formatTime(window.START_TIME) : '';
+  return {
+    device_name: STATION_CFG.device_name || '',
+    station: STATION_CFG.station,
+    line_name: STATION_CFG.line_name,
+    operator: STATION_CFG.operator || LOGIN_EMPLOYEE?.name || LOGIN_EMPLOYEE?.id || '',
+    ip_prev: document.getElementById('ip-prev')?.value || '',
+    ip_current: document.getElementById('ip-current')?.value || '',
+    ip_next: document.getElementById('ip-next')?.value || '',
+    startup_time: startupTime,
+    shutdown_time: shutdownTime,
+    uptime_seconds: Math.floor(uptime / 1000),
+    idle_seconds: Math.floor(idleMs / 1000),
+    is_idle: LAST_SCAN_TIME > 0 && idleMs > IDLE_THRESHOLD_MS,
+    last_scan_time: LAST_SCAN_TIME > 0 ? new Date(LAST_SCAN_TIME).toLocaleTimeString('zh-CN', {hour12:false}) : '',
+    total_scans: STATS.total,
+    pass_count: STATS.pass,
+    fail_count: STATS.fail,
+    dup_count: STATS.dup,
+    sn_pool_size: POOL_SN.size,
+    ng_pool_size: POOL_NG.size,
+    dup_pool_size: POOL_DUP.size,
+    mes_enabled: MES_ON,
+    device_locked: DEVICE_LOCKED,
+    alarm_active: ALARM_OPEN,
+    current_sn: CURRENT_SN,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function formatTime(d) {
+  const pad = n => String(n).padStart(2, '0');
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' +
+    pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+}
+
+/**
+ * Auto-detect device name from running directory.
+ * Path pattern: ...\(002)自动线\1.1.pda扫码上料
+ * Extracts: line="02", station_type="pda扫码上料"
+ * Device name: "02线pda扫码上料工位"
+ */
+function extractDeviceNameFromPath(filepath) {
+  if (!filepath) return null;
+  // Match the last folder with (NNN) pattern, and the following subfolder
+  const match = filepath.match(/\\(\(\d+\)[^\\]+)\\([^\\]+)$/);
+  if (!match) return null;
+  const lineFolder = match[1];  // (002)自动线
+  const stationFolder = match[2]; // 1.1.pda扫码上料
+  const lineNum = lineFolder.match(/\(0*(\d+)\)/);
+  if (!lineNum) return null;
+  const line = lineNum[1]; // "02"
+  // Derive station type: remove leading digits/dots like "1.1."
+  const stationType = stationFolder.replace(/^[\d.]+/, ''); // "pda扫码上料"
+  return {
+    line: line,
+    line_name: line + '线' + (lineFolder.replace(/\(\d+\)/, '').trim() || ''),
+    station_type: stationType,
+    device_name: line + '线' + stationType + '工位',
+    station: line,
+  };
+}
+
+/** Call backend to get running directory and auto-detect device name */
+async function autoDetectDeviceName() {
+  try {
+    const res = await dsLocalFetch('/api/device/path');
+    if (!res || res.error) return null;
+    // Try cwd first, then exe_dir
+    const info = extractDeviceNameFromPath(res.cwd) || extractDeviceNameFromPath(res.exe_dir);
+    return info;
+  } catch(e) {
+    return null;
+  }
+}
+
+/** Call backend to get local machine IP and auto-fill station IP fields */
+async function autoDetectStationIp() {
+  try {
+    const res = await dsLocalFetch('/api/device/network');
+    if (!res || res.error || !res.ips || !res.ips.length) {
+      appendLog('⚠ 无法自动获取本机IP');
+      return null;
+    }
+    const ip = res.primary || res.ips[0];
+    const parts = ip.split('.');
+    // Fill current + auto-calculate prev/next with -1 / +1
+    document.getElementById('ip-current').value = ip;
+    if (parts.length === 4) {
+      const base = parts.slice(0, 3).join('.');
+      const last = parseInt(parts[3], 10);
+      document.getElementById('ip-prev').value = base + '.' + (last - 1);
+      document.getElementById('ip-next').value = base + '.' + (last + 1);
+    }
+    // Auto-save
+    await saveStationIps();
+    appendLog('✅ 本机IP自动设置: ' + ip);
+    return ip;
+  } catch(e) {
+    appendLog('⚠ 自动获取IP失败: ' + e.message);
+    return null;
+  }
+}
+
+// ================================================================
+// INDEXEDDB — SQLite replacement
+// ================================================================
+async function initDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('station_db', 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('sn_records')) {
+        const store = db.createObjectStore('sn_records', { keyPath: 'sn' });
+        store.createIndex('time', 'time');
+      }
+      if (!db.objectStoreNames.contains('ng_pool')) {
+        db.createObjectStore('ng_pool', { keyPath: 'sn' });
+      }
+    };
+    req.onsuccess = e => { DB = e.target.result; resolve(DB); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbPut(storeName, record) {
+  return new Promise((resolve, reject) => {
+    const tx = DB.transaction(storeName, 'readwrite');
+    tx.objectStore(storeName).put(record);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function dbGet(storeName, key) {
+  return new Promise((resolve, reject) => {
+    const tx = DB.transaction(storeName, 'readonly');
+    const req = tx.objectStore(storeName).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function dbHas(storeName, key) {
+  const rec = await dbGet(storeName, key);
+  return !!rec;
+}
+
+async function dbAll(storeName) {
+  return new Promise((resolve, reject) => {
+    const tx = DB.transaction(storeName, 'readonly');
+    const req = tx.objectStore(storeName).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// ================================================================
+// SCANNER INPUT — keyboard global capture + TCP WebSocket port 1003
+// ================================================================
+let SCAN_BUFFER = '';
+let LAST_SCAN_TIME = 0;
+let SCAN_TIMER = null;
+let SCAN_MODE = false;        // true when fast chars detected — accumulating buffer
+let SCAN_INDICATOR_TIMER = null;
+const SCAN_GAP_THRESHOLD = 80; // ms — chars faster than this = scanner
+const SCAN_AUTO_TRIGGER_MS = 600; // ms — auto-submit if no Enter and buffer stalled
+
+function showScanIndicator(sn) {
+  const el = document.getElementById('scan-indicator');
+  if (!el) return;
+  el.textContent = '▶ ' + sn;
+  el.style.color = '#00d4ff';
+  clearTimeout(SCAN_INDICATOR_TIMER);
+  SCAN_INDICATOR_TIMER = setTimeout(() => { el.textContent = ''; }, 3000);
+}
+
+function onScanDetected(sn) {
+  const trimmed = sn.trim().toUpperCase();
+  if (!trimmed) return;
+  if (DEVICE_LOCKED) {
+    appendLog('⚠ 设备已锁定，请先确认报警后再扫描');
+    speak(t('alarm.auth_needed'), 'alert');
+    return;
+  }
+  appendLog('扫描: ' + trimmed);
+  showScanIndicator(trimmed);
+  try {
+    processScan(trimmed);
+  } catch(ex) {
+    appendLog('⚠ 扫描处理异常: ' + ex.message);
+  }
+}
+
+// --- Keyboard global capture (pynput equivalent in browser) ---
+document.addEventListener('keydown', e => {
+  // Never capture inside input/textarea
+  const tag = document.activeElement?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  // Skip browser auto-repeat (key held down)
+  if (e.repeat) return;
+
+  const now = Date.now();
+  const gap = now - LAST_SCAN_TIME;
+
+  if (e.key === 'Enter') {
+    if (SCAN_BUFFER.trim().length >= 3) {
+      onScanDetected(SCAN_BUFFER.trim());
+    }
+    SCAN_BUFFER = '';
+    SCAN_MODE = false;
+    clearTimeout(SCAN_TIMER);
+  } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+    if (gap < SCAN_GAP_THRESHOLD) {
+      // Fast: append to buffer (scanner)
+      SCAN_BUFFER += e.key;
+      SCAN_MODE = true;
+    } else {
+      // Slow: reset buffer (manual keyboard)
+      SCAN_BUFFER = e.key;
+      SCAN_MODE = false;
+    }
+    // Auto-trigger: submit if buffer stalled (no Enter) — e.g. scanner without Enter
+    clearTimeout(SCAN_TIMER);
+    SCAN_TIMER = setTimeout(() => {
+      if (SCAN_MODE && SCAN_BUFFER.trim().length >= 3) {
+        appendLog('[auto] ' + SCAN_BUFFER.trim());
+        onScanDetected(SCAN_BUFFER.trim());
+        SCAN_BUFFER = '';
+        SCAN_MODE = false;
+      }
+    }, SCAN_AUTO_TRIGGER_MS);
+  }
+
+  LAST_SCAN_TIME = now;
+});
+
+// Also capture Enter in scan-input (manual entry fallback)
+document.getElementById('scan-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const sn = e.target.value.trim();
+    if (sn) {
+      showScanIndicator(sn);
+      try { processScan(sn); } catch(ex) { appendLog('⚠ 扫描处理异常: ' + ex.message); }
+      e.target.value = '';
+    }
+  }
+});
+
+// --- TCP WebSocket client — connects to scanner bridge on port 1003 ---
+// Browser can't create raw TCP sockets, but can connect to a WebSocket-to-TCP bridge.
+// For direct TCP scanners, a local proxy (python tcpws.py or node tcpws) is needed.
+let _wsScanner = null;
+let _wsReconnectTimer = null;
+
+function connectTcpScanner() {
+  const WS_URL = 'ws://localhost:1003'; // scanner TCP bridge WebSocket
+
+  function connect() {
+    try {
+      _wsScanner = new WebSocket(WS_URL);
+      _wsScanner.onopen = () => {
+        document.getElementById('res-scanner').textContent = '已连接(WSc)';
+        document.getElementById('res-scanner').style.color = 'var(--green)';
+        appendLog('[tcp] WebSocket扫码枪已连接');
+        if (_wsReconnectTimer) { clearTimeout(_wsReconnectTimer); _wsReconnectTimer = null; }
+      };
+      _wsScanner.onmessage = e => {
+        const lines = e.data.split('\n');
+        lines.forEach(line => {
+          const trimmed = line.trim();
+          if (trimmed) { appendLog('[tcp] >> ' + trimmed); onScanDetected(trimmed); }
+        });
+      };
+      _wsScanner.onerror = () => {
+        document.getElementById('res-scanner').textContent = 'WSc错误';
+        document.getElementById('res-scanner').style.color = 'var(--yellow)';
+      };
+      _wsScanner.onclose = () => {
+        document.getElementById('res-scanner').textContent = 'WSc断开';
+        document.getElementById('res-scanner').style.color = 'var(--red)';
+        _wsReconnectTimer = setTimeout(connect, 3000);
+      };
+    } catch(ex) {
+      _wsReconnectTimer = setTimeout(connect, 5000);
+    }
+  }
+
+  connect();
+}
+
+// ================================================================
+// SCAN PROCESSING
+// ================================================================
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+async function processScan(sn) {
+  updateIdleUI();
+
+  // --- Layer 1: NG pool check (instant, blocks) ---
+  if (POOL_NG.has(sn)) {
+    STATS.total++;
+    STATS.fail++;
+    updateStatsUI();
+    const rec = { sn, result: 'NG', channel: '', errorcode: '', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), checks: {sp:1,sl:1,sm:1,np:1,nl:1,nm:0} };
+    prependScanRow(rec);
+    document.getElementById('ui-current').textContent = sn + ' → NG';
+    CURRENT_SN = sn;
+    showAlarm({ sn, channel: '', errorcode: '', type: 'ng', source: '[NG池]' });
+    speak(t('alarm.ban_ng'), 'alert');
+    await dbPut('ng_pool', { sn, result: 'NG', time: rec.time, date: todayStr(), station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator });
+    // Sync to helper backend
+    apiFetch('/ng_pool', { method: 'POST', body: { sn, station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+    appendLog('⚠ NG池SN: ' + sn);
+    return;
+  }
+  // --- Layer 1b: IndexedDB ng_pool check (persists across page reload) ---
+  const localNg = DB ? await dbHas('ng_pool', sn) : false;
+  if (localNg) {
+    POOL_NG.add(sn);
+    document.getElementById('pool-ng-count').textContent = POOL_NG.size;
+    STATS.total++;
+    STATS.fail++;
+    updateStatsUI();
+    const rec = { sn, result: 'NG', channel: '', errorcode: '', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), checks: {sp:1,sl:1,sm:1,np:0,nl:1,nm:0} };
+    prependScanRow(rec);
+    document.getElementById('ui-current').textContent = sn + ' → NG';
+    CURRENT_SN = sn;
+    showAlarm({ sn, channel: '', errorcode: '', type: 'ng', source: '[NG本地]' });
+    speak(t('alarm.ban_ng'), 'alert');
+    // Sync to helper backend
+    apiFetch('/ng_pool', { method: 'POST', body: { sn, station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+    appendLog('⚠ NG本地SN: ' + sn);
+    return;
+  }
+  // --- Layer 1c: Backend SQLite ng_pool check (cross-session persistence) ---
+  try {
+    const sqliteNg = await apiFetch('/ng_pool/' + encodeURIComponent(sn));
+    if (sqliteNg && !sqliteNg.error && sqliteNg.sn === sn.toUpperCase()) {
+      POOL_NG.add(sn);
+      document.getElementById('pool-ng-count').textContent = POOL_NG.size;
+      STATS.total++;
+      STATS.fail++;
+      updateStatsUI();
+      const rec = { sn, result: 'NG', channel: '', errorcode: '', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), checks: {sp:1,sl:1,sm:1,np:0,nl:0,nm:1} };
+      prependScanRow(rec);
+      document.getElementById('ui-current').textContent = sn + ' → NG';
+      CURRENT_SN = sn;
+      showAlarm({ sn, channel: '', errorcode: '', type: 'ng', source: '[NG SQLite]' });
+      speak(t('alarm.ban_ng'), 'alert');
+      // Also write to IndexedDB for faster checks next time
+      await dbPut('ng_pool', { sn, result: 'NG', time: rec.time, date: todayStr(), station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator });
+      appendLog('⚠ NG SQLite: ' + sn);
+      return;
+    }
+  } catch(e) { /* SQLite check failed, continue */ }
+
+  // --- Layer 2: SN/DUP pool check (instant, blocks) ---
+  if (POOL_SN.has(sn) || POOL_DUP.has(sn)) {
+    STATS.total++;
+    STATS.dup++;
+    POOL_DUP.add(sn);
+    updateStatsUI();
+    const rec = { sn, result: 'PASS', channel: '', errorcode: '', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), is_dup: true, checks: {sp:1,sl:1,sm:1,np:1,nl:1,nm:0} };
+    prependScanRow(rec);
+    document.getElementById('ui-current').textContent = sn + ' → 重码';
+    CURRENT_SN = sn;
+    showAlarm({ sn, channel: '', errorcode: '', type: 'dup', source: '[Pool]' });
+    speak(t('alarm.ban_dup'), 'alert');
+    await dbPut('sn_records', { sn, result: 'PASS', time: rec.time, date: todayStr(), station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator });
+    // Sync to helper backend
+    apiFetch('/dup_pool', { method: 'POST', body: { sn, station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+    apiFetch('/sn_records', { method: 'POST', body: { sn, result: 'PASS', station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+    appendLog('❌ 重码:Pool → ' + sn);
+    return;
+  }
+
+  // --- Layer 3: IndexedDB SN records (local SQLite equivalent) ---
+  const localDup = await dbHas('sn_records', sn);
+  if (localDup) {
+    POOL_DUP.add(sn);
+    STATS.total++;
+    STATS.dup++;
+    updateStatsUI();
+    const rec = { sn, result: 'PASS', channel: '', errorcode: '', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), is_dup: true, checks: {sp:1,sl:1,sm:0,np:1,nl:1,nm:0} };
+    prependScanRow(rec);
+    document.getElementById('ui-current').textContent = sn + ' → 重码(本地)';
+    CURRENT_SN = sn;
+    showAlarm({ sn, channel: '', errorcode: '', type: 'dup', source: '[Local]' });
+    speak(t('alarm.ban_dup'), 'alert');
+    // Sync to helper backend
+    apiFetch('/dup_pool', { method: 'POST', body: { sn, station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+    apiFetch('/sn_records', { method: 'POST', body: { sn, result: 'PASS', station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+    appendLog('❌ 重码:Local → ' + sn);
+    return;
+  }
+
+  // --- PASS: add to pools + IndexedDB + helper + voice ---
+  POOL_SN.add(sn);
+  STATS.total++;
+  STATS.pass++;
+  updateStatsUI();
+  const passRec = { sn, result: 'PASS', channel: '', errorcode: '', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), is_dup: false, checks: {sp:1,sl:1,sm:0,np:0,nl:0,nm:0} };
+  prependScanRow(passRec);
+  document.getElementById('ui-current').textContent = sn + ' → PASS';
+  CURRENT_SN = sn;
+  await dbPut('sn_records', { sn, result: 'PASS', time: passRec.time, date: todayStr(), station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator });
+  // Sync to helper backend
+  apiFetch('/sn_records', { method: 'POST', body: { sn, result: 'PASS', station: STATION_CFG.station, line_name: STATION_CFG.line_name, operator: STATION_CFG.operator } });
+  speak(t('log.pass'), 'normal');
+  appendLog('✅ SN通过: ' + sn);
+
+  // --- Background: MES checks (async, non-blocking) ---
+  // Note: MES API calls require backend; skip gracefully if unreachable
+  backgroundMesCheck(sn);
+}
+
+// Background MES check — fire and forget, update pools if NG found
+async function backgroundMesCheck(sn) {
+  try {
+    const mesApi = qGetMesApi();
+    if (!mesApi) return;
+
+    // Parallel MES queries
+    const [mesNgRes, mesDupRes] = await Promise.allSettled([
+      fetch(`${mesApi}/aging/ng_registry/check?sn=${encodeURIComponent(sn)}`, { signal: AbortSignal.timeout(8000) }),
+      fetch(`${mesApi}/aging/check?sn=${encodeURIComponent(sn)}`, { signal: AbortSignal.timeout(8000) }),
+    ]);
+
+    let mesNg = false, mesDup = false;
+    if (mesNgRes.status === 'fulfilled' && mesNgRes.value.ok) {
+      const j = await mesNgRes.value.json();
+      mesNg = j.code === 1 && j.found === true;
+    }
+    if (mesDupRes.status === 'fulfilled' && mesDupRes.value.ok) {
+      const j = await mesDupRes.value.json();
+      mesDup = j.code === 1 && j.exist === true;
+    }
+
+    if (mesNg) {
+      POOL_NG.add(sn);
+      await dbPut('ng_pool', { sn, result: 'NG', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), date: todayStr() });
+      appendLog('⚠ [后台] MES NG历史: ' + sn);
+    } else if (mesDup) {
+      POOL_DUP.add(sn);
+      appendLog('❌ [后台] MES重复: ' + sn);
+    }
+  } catch(e) {
+    // MES unreachable — silently skip
+  }
+}
+
+// ================================================================
+// STATS + POOL UI
+// ================================================================
+function updateStatsUI() {
+  document.getElementById('stat-total').textContent = STATS.total;
+  document.getElementById('stat-pass').textContent = STATS.pass;
+  document.getElementById('stat-fail').textContent = STATS.fail;
+  document.getElementById('stat-dup').textContent = STATS.dup;
+  document.getElementById('pool-sn-count').textContent = POOL_SN.size;
+  document.getElementById('pool-ng-count').textContent = POOL_NG.size;
+  document.getElementById('pool-dup-count').textContent = POOL_DUP.size;
+  // Data overview summary
+  const s = document.getElementById('data-summary');
+  if (s) s.textContent = 'SN ' + POOL_SN.size + ' / NG ' + POOL_NG.size + ' / DUP ' + POOL_DUP.size;
+  const de = id => document.getElementById('data-' + id);
+  if (de('sn-count')) de('sn-count').textContent = POOL_SN.size;
+  if (de('ng-count')) de('ng-count').textContent = POOL_NG.size;
+  if (de('dup-count')) de('dup-count').textContent = POOL_DUP.size;
+  if (de('total')) de('total').textContent = STATS.total;
+  const lockEl = document.getElementById('ui-lock');
+  renderTreeMap();
+}
+
+function renderTreeMap() {
+  const el = document.getElementById('treemap');
+  if (!el) return;
+  const { total=0, pass=0, fail=0, dup=0 } = STATS;
+  if (total === 0) {
+    el.innerHTML = '<div class="treemap-block t-empty">— 暂无数据 —</div>';
+    return;
+  }
+  const items = [
+    { key: 'pass', label: '通过', count: pass, cls: 't-pass' },
+    { key: 'fail', label: '不良', count: fail, cls: 't-ng' },
+    { key: 'dup',  label: '重码', count: dup,  cls: 't-dup' },
+  ].filter(i => i.count > 0);
+  if (items.length === 0) {
+    el.innerHTML = '<div class="treemap-block t-empty">— 暂无数据 —</div>';
+    return;
+  }
+  // Non-zero items — compute proportional widths
+  const totalVis = items.reduce((s, i) => s + i.count, 0);
+  // Round to avoid sub-pixel gaps: give last item the remainder
+  const pcts = items.map(i => ({ ...i, pct: i.count / totalVis * 100 }));
+  const widths = pcts.map(p => Math.floor(p.pct));
+  const remainder = 100 - widths.reduce((s, w) => s + w, 0);
+  if (remainder > 0 && widths.length > 0) widths[widths.length - 1] += remainder;
+  el.innerHTML = pcts.map((p, idx) => {
+    const w = widths[idx];
+    const pctDisplay = (p.pct >= 1) ? Math.round(p.pct) + '%' : '<1%';
+    return `<div class="treemap-block ${p.cls}" style="flex:${w}" title="${p.label}: ${p.count} 条 (${pctDisplay})">
+      <div class="treemap-num">${p.count}</div>
+      <div class="treemap-lbl">${p.label}</div>
+      <div class="treemap-pct">${pctDisplay}</div>
+    </div>`;
+  }).join('');
+}
+
+// ================================================================
+// SIMULATION BUTTONS
+// ================================================================
+async function simPass() {
+  const sn = generateSn();
+  document.getElementById('scan-input').value = sn;
+  onScanDetected(sn);
+  appendLog('[测试] 模拟通过: ' + sn);
+}
+
+async function simNg() {
+  const sn = generateSn();
+  POOL_NG.add(sn);
+  await dbPut('ng_pool', { sn, result: 'NG', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), date: todayStr() });
+  updateStatsUI();
+  onScanDetected(sn);
+  appendLog('[测试] 模拟NG: ' + sn);
+}
+
+async function simDup() {
+  const sn = generateSn();
+  POOL_SN.add(sn);
+  await dbPut('sn_records', { sn, result: 'PASS', time: new Date().toLocaleTimeString('zh-CN', {hour12:false}), date: todayStr() });
+  updateStatsUI();
+  onScanDetected(sn);
+  appendLog('[测试] 模拟重码: ' + sn);
+}
+
+/** Update startup time display */
+function displayTimes() {
+  const el = document.getElementById('mon-startup-time');
+  if (!el) return;
+  el.textContent = window.START_TIME ? formatTime(window.START_TIME) : '—';
+}
+
+function generateSn() {
+  const ts = Date.now().toString().slice(-6);
+  const rnd = Math.random().toString(36).slice(2,5).toUpperCase();
+  return 'TEST-' + ts + '-' + rnd;
+}
+
+async function clearPools() {
+  if (!confirm('清空所有内存池和本地数据库？')) return;
+  POOL_SN.clear(); POOL_NG.clear(); POOL_DUP.clear();
+  STATS = { total: 0, pass: 0, fail: 0, dup: 0 };
+  if (DB) {
+    const tx1 = DB.transaction(['sn_records', 'ng_pool'], 'readwrite');
+    tx1.objectStore('sn_records').clear();
+    tx1.objectStore('ng_pool').clear();
+  }
+  document.getElementById('sn-tbody').innerHTML = '<tr><td colspan="11" class="loading"><span class="spinner"></span>等待扫描...</td></tr>';
+  updateStatsUI();
+  appendLog('已清空所有池');
+}
+
+// ================================================================
+// SN TABLE
+// ================================================================
+function prependScanRow(d) {
+  d._rowId = ++_scanRowCounter;
+  const checks = d.checks || {sp:0,sl:0,sm:0,np:0,nl:0,nm:0};
+  const rowClass = d.is_dup ? 'dup-row' : (d.result === 'FAIL' || d.result === 'NG' ? 'fail-row' : 'pass-row');
+  const tr = document.createElement('tr');
+  tr.className = rowClass;
+  tr.dataset.rowId = d._rowId;
+  const chk = (v) => {
+    if (v === 1) return '<span class="check-cell chk-ok">✓</span>';
+    if (v === 2) return '<span class="check-cell chk-fail">✗</span>';
+    if (v === 3) return '<span class="check-cell chk-warn">⚠</span>';
+    return '<span class="check-cell chk-pending">—</span>';
+  };
+  tr.innerHTML = `
+    <td style="font-family:Consolas,monospace;font-size:11px">${escHtml(d.sn||'?')}</td>
+    <td><b>${d.result||'?'}</b></td>
+    <td>${escHtml(d.channel||'')}</td>
+    <td>${escHtml(d.errorcode||'')}</td>
+    <td class="c-sp">${chk(checks.sp)}</td>
+    <td class="c-sl">${chk(checks.sl)}</td>
+    <td class="c-sm" data-row-id="${d._rowId}">${chk(checks.sm)}</td>
+    <td class="c-np">${chk(checks.np)}</td>
+    <td class="c-nl">${chk(checks.nl)}</td>
+    <td class="c-nm" data-row-id="${d._rowId}">${chk(checks.nm)}</td>
+    <td style="color:#64748b;font-size:11px">${d.time||'--:--:--'}</td>
+  `;
+  const tbody = document.getElementById('sn-tbody');
+  // Remove loading row
+  const loading = tbody.querySelector('tr td.loading');
+  if (loading) loading.parentElement.remove();
+  tbody.insertBefore(tr, tbody.firstChild);
+  // Keep max 50
+  while (tbody.children.length > 50) tbody.lastChild.remove();
+  // Kick off background MES check for this row
+  if (MES_ON) _mesCheckAsync(d.sn, d._rowId);
+}
+
+/** Background MES check: query MES for SN + NG status, update row cells when done */
+async function _mesCheckAsync(sn, rowId) {
+  const mesApi = qGetMesApi();
+  if (!mesApi) return;
+  // Helper: find a cell in the row by class and update its HTML
+  const setCell = (cls, val) => {
+    const td = document.querySelector(`tr[data-row-id="${rowId}"] .${cls}`);
+    if (!td) return;
+    const chk = (v) => {
+      if (v === 1) return '<span class="check-cell chk-ok">✓</span>';
+      if (v === 2) return '<span class="check-cell chk-fail">✗</span>';
+      if (v === 3) return '<span class="check-cell chk-warn">⚠</span>';
+      return '<span class="check-cell chk-pending">—</span>';
+    };
+    td.innerHTML = chk(val);
+  };
+  // Query MES SN record
+  try {
+    const res = await fetch(`${mesApi}/aging/records?sn=${encodeURIComponent(sn)}`, { signal: AbortSignal.timeout(8000) });
+    if (res.ok) {
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : (data.rows || data.records || data.data || []);
+      const found = items.some(item => (item.sn || item.SN || '').toUpperCase() === sn);
+      setCell('c-sm', found ? 1 : 2);
+    } else {
+      setCell('c-sm', 2);
+    }
+  } catch(e) { setCell('c-sm', 2); }
+  // Query MES NG registry
+  try {
+    const res = await fetch(`${mesApi}/aging/ng_registry?sn=${encodeURIComponent(sn)}`, { signal: AbortSignal.timeout(8000) });
+    if (res.ok) {
+      const data = await res.json();
+      const items = Array.isArray(data) ? data : (data.rows || data.records || data.data || []);
+      const found = items.some(item => (item.sn || item.SN || '').toUpperCase() === sn);
+      setCell('c-nm', found ? 1 : 2);
+    } else {
+      setCell('c-nm', 2);
+    }
+  } catch(e) { setCell('c-nm', 2); }
+}
+
+function renderSnTable() {
+  const tbody = document.getElementById('sn-tbody');
+  if (SN_HISTORY.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" class="loading"><span class="spinner"></span>等待扫描...</td></tr>';
+    return;
+  }
+  tbody.innerHTML = '';
+  SN_HISTORY.slice(0,50).forEach(d => prependScanRow(d));
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ================================================================
+// LOG
+// ================================================================
+function appendLog(msg) {
+  const ts = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+  LOG_LINES.unshift(`[${ts}] ${msg}`);
+  if (LOG_LINES.length > 200) LOG_LINES.pop();
+  const el = document.getElementById('log-area');
+  el.textContent = LOG_LINES.join('\n');
+  el.scrollTop = 0;
+}
+
+function clearLog() { LOG_LINES = []; document.getElementById('log-area').textContent = ''; }
+
+// ================================================================
+// ALARM
+// ================================================================
+function showAlarm(d) {
+  ALARM_OPEN = true;
+  DEVICE_LOCKED = true;
+  const overlay = document.getElementById('alarm-overlay');
+  overlay.dataset.type = d.type || 'ng';
+  overlay.classList.add('show');
+  document.getElementById('alarm-sn-txt').textContent = 'SN: ' + (d.sn || '?');
+  document.getElementById('alarm-channel-txt').textContent = '通道: ' + (d.channel || '—');
+  document.getElementById('alarm-error-txt').textContent = '错误码: ' + (d.errorcode || '—');
+  document.getElementById('alarm-source-txt').textContent = '来源: ' + (d.source || '[Excel]');
+  document.getElementById('alarm-result').textContent = '';
+  document.getElementById('alarm-user').value = '';
+  document.getElementById('alarm-pw').value = '';
+  applyI18n();
+  // Flash page
+  document.body.style.animation = 'alarmFlash .4s infinite';
+  speak(d.type === 'dup' ? t('alarm.ban_dup') : t('alarm.ban_ng'), 'alert');
+}
+
+function closeAlarm() {
+  document.getElementById('alarm-overlay').classList.remove('show');
+  document.body.style.animation = '';
+  ALARM_OPEN = false;
+}
+
+async function alarmConfirm() {
+  const user = document.getElementById('alarm-user').value;
+  const pw = document.getElementById('alarm-pw').value;
+  if (user !== 'admin' || pw !== '123456') {
+    document.getElementById('alarm-result').textContent = t('alarm.auth_failed');
+    return;
+  }
+  // Log unlock locally
+  appendLog(t('log.unlock') + ': ' + CURRENT_SN);
+  DEVICE_LOCKED = false;
+  updateStatsUI();
+  broadcastState();
+  closeAlarm();
+}
+
+async function alarmBypass() {
+  // Bypass: same as confirm but skips lock check
+  appendLog(t('log.unlock') + ' (bypass): ' + CURRENT_SN);
+  DEVICE_LOCKED = false;
+  updateStatsUI();
+  broadcastState();
+  closeAlarm();
+}
+
+// ================================================================
+// TTS — Web Speech API
+// ================================================================
+function speak(text, type='normal') {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = LANG === 'vi' ? 'vi-VN' : LANG === 'en' ? 'en-US' : 'zh-CN';
+  u.rate = type === 'alert' ? 0.9 : 1.0;
+  u.volume = 1.0;
+  if (type === 'alert') {
+    u.onstart = () => {
+      try { document.getElementById('alarm-overlay').classList.add('show'); }
+      catch(e) {}
+    };
+  }
+  window.speechSynthesis.speak(u);
+}
+
+function testTts() {
+  const msgs = {zh:'系统正常，请扫码', vi:'He thong binh thuong, vui long quet ma', en:'System normal, please scan'};
+  speak(msgs[LANG] || msgs.zh, 'normal');
+}
+
+// ================================================================
+// HEARTBEAT
+// ================================================================
+function startHeartbeat() {
+  if (HB_INTERVAL) clearInterval(HB_INTERVAL);
+  HB_INTERVAL = setInterval(async () => {
+    updateIdleUI();
+    try {
+      // Try scanner_helper heartbeat (local API)
+      await fetch(API_LOCAL + '/api/heartbeat', { signal: AbortSignal.timeout(2000) });
+      const ring = document.getElementById('hb-ring');
+      ring.classList.remove('dead');
+      ring.classList.add('alive');
+    } catch(e) {
+      // Backend not running
+      const ring = document.getElementById('hb-ring');
+      ring.classList.remove('alive');
+      ring.classList.add('dead');
+    }
+  }, 3000);
+}
+
+/** Update idle indicator in UI */
+function updateIdleUI() {
+  const el = document.getElementById('mon-idle');
+  if (!el) return;
+  const status = getDeviceStatus();
+  if (DEVICE_LOCKED) {
+    el.textContent = '● 已锁定';
+    el.style.color = '#ef4444';
+  } else if (status.is_idle) {
+    el.textContent = '● 闲置 ' + (status.idle_seconds > 120 ? Math.floor(status.idle_seconds / 60) + 'm' : status.idle_seconds + 's');
+    el.style.color = '#f59e0b';
+  } else {
+    el.textContent = '● 运行中';
+    el.style.color = '#22c55e';
+  }
+}
+
+/** POST current device status to MES */
+async function reportDeviceStatus() {
+  const mesApi = document.getElementById('cfg-mes-api')?.value;
+  if (!mesApi || !MES_ON) return;
+  try {
+    const data = getDeviceStatus();
+    await fetch(mesApi + '/mes/device-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch(e) {
+    // MES unreachable — silently skip
+  }
+}
+
+/** Start periodic device status reporting */
+function startDeviceStatusReport() {
+  if (DEVICE_STATUS_REPORT_INTERVAL) clearInterval(DEVICE_STATUS_REPORT_INTERVAL);
+  // Report every 30 seconds
+  DEVICE_STATUS_REPORT_INTERVAL = setInterval(() => {
+    updateIdleUI();
+    reportDeviceStatus();
+  }, 30000);
+  // Also report immediately on first call
+  setTimeout(() => { updateIdleUI(); reportDeviceStatus(); }, 1000);
+}
+
+// ================================================================
+// MES TOGGLE
+// ================================================================
+async function toggleMes() {
+  MES_ON = !MES_ON;
+  const btn = document.getElementById('mes-toggle');
+  btn.textContent = MES_ON ? 'ON' : 'OFF';
+  btn.style.background = MES_ON ? '#16a34a' : '#dc2626';
+  btn.style.color = '#fff';
+  localStorage.setItem('site_mes_on', MES_ON ? '1' : '0');
+  appendLog('MES ' + (MES_ON ? t('mes.on') : t('mes.off')));
+}
+
+async function toggleCfgMes() {
+  MES_ON = !MES_ON;
+  document.getElementById('cfg-mes-enabled').textContent = MES_ON ? 'ON' : 'OFF';
+  document.getElementById('cfg-mes-enabled').style.background = MES_ON ? '#16a34a' : '#dc2626';
+  localStorage.setItem('site_mes_on', MES_ON ? '1' : '0');
+}
+
+// ================================================================
+// CONFIG
+// ================================================================
+async function saveConfig() {
+  const cfg = {
+    mes_api: document.getElementById('cfg-mes-api').value,
+    mes_station: document.getElementById('cfg-mes-station').value,
+    mes_operator: document.getElementById('cfg-mes-operator').value,
+    excel_folder: document.getElementById('cfg-excel-folder').value,
+    station: document.getElementById('cfg-station').value,
+    line_name: document.getElementById('cfg-line').value,
+    operator: document.getElementById('cfg-operator').value,
+  };
+  localStorage.setItem('site_config', JSON.stringify(cfg));
+  // Also push station config to backend if available
+  await dsLocalFetch('/config/station', {
+    method: 'POST',
+    body: { station: cfg.station, line_name: cfg.line_name, operator: cfg.operator }
+  });
+  // Update display
+  document.getElementById('mon-station').textContent = cfg.station || '01';
+  document.getElementById('mon-line').textContent = cfg.line_name || '—';
+  document.getElementById('mon-operator').textContent = cfg.operator || '—';
+  appendLog('配置已保存');
+}
+
+async function saveStationIps() {
+  const ips = {
+    ip_prev: document.getElementById('ip-prev').value.trim(),
+    ip_current: document.getElementById('ip-current').value.trim(),
+    ip_next: document.getElementById('ip-next').value.trim(),
+  };
+  // Save locally
+  localStorage.setItem('site_station_ips', JSON.stringify(ips));
+  // Push to backend
+  await dsLocalFetch('/api/station/ips', { method: 'POST', body: ips });
+  // Push to MES
+  const mesApi = document.getElementById('cfg-mes-api').value || 'http://192.168.18.186:8080/api';
+  try {
+    await fetch(mesApi + '/mes/station-ips', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ station: STATION_CFG.station, ...ips }),
+      signal: AbortSignal.timeout(3000),
+    });
+  } catch(e) { /* MES unreachable */ }
+  // Refresh station chain display
+  loadStationChain();
+  appendLog('工位IP已保存');
+}
+
+// ================================================================
+// QUICK IP TOOL — 主面板快捷 IP 设置
+// ================================================================
+
+/** 更新快捷 IP 面板的主机名显示 */
+function updateQuickIpLabel(prev, current, next) {
+  const label = document.getElementById('qip-display');
+  if (current) {
+    const last = current.split('.').pop();
+    label.textContent = `...${last}  (⬅${prev ? prev.split('.').pop() : '?'} ➡${next ? next.split('.').pop() : '?'})`;
+  } else {
+    label.textContent = '未设置';
+  }
+  // Also update top IP quick bar
+  const qc = document.getElementById('ip-quick-current');
+  if (qc) qc.value = current || '—';
+  const qp = document.getElementById('ip-quick-prev');
+  if (qp) qp.textContent = prev || '—';
+  const qn = document.getElementById('ip-quick-next');
+  if (qn) qn.textContent = next || '—';
+}
+
+/** 加载 IP 配置到快捷面板 */
+function loadQuickIp() {
+  const savedIps = JSON.parse(localStorage.getItem('site_station_ips') || '{}');
+  if (savedIps.ip_prev) document.getElementById('qip-prev').value = savedIps.ip_prev;
+  if (savedIps.ip_current) document.getElementById('qip-current').value = savedIps.ip_current;
+  if (savedIps.ip_next) document.getElementById('qip-next').value = savedIps.ip_next;
+  updateQuickIpLabel(savedIps.ip_prev, savedIps.ip_current, savedIps.ip_next);
+  // Also sync from config tab fields if they have values
+  const cfgCurr = document.getElementById('ip-current').value;
+  if (cfgCurr && !savedIps.ip_current) {
+    document.getElementById('qip-current').value = cfgCurr;
+    document.getElementById('qip-prev').value = document.getElementById('ip-prev').value || '';
+    document.getElementById('qip-next').value = document.getElementById('ip-next').value || '';
+    updateQuickIpLabel(
+      document.getElementById('qip-prev').value,
+      cfgCurr,
+      document.getElementById('qip-next').value
+    );
+  }
+}
+
+/** 快捷面板：自动获取本机 IP */
+async function quickAutoDetect() {
+  const msg = document.getElementById('qip-msg');
+  const qmsg = document.getElementById('ip-quick-msg');
+  const setMsg = (text) => { msg.textContent = text; if (qmsg) qmsg.textContent = text; };
+  setMsg('⏳ 检测/设置中...');
+  try {
+    // 1. 获取本机当前 IP
+    const res = await dsLocalFetch('/api/device/network', { timeout: 10000 });
+    if (!res || res.error || !res.ips || !res.ips.length) {
+      setMsg('❌ 无法获取本机IP'); return;
+    }
+    const ip = res.primary || res.ips[0];
+    const parts = ip.split('.');
+    let prev = '', next = '';
+    if (parts.length === 4) {
+      const base = parts.slice(0, 3).join('.');
+      const last = parseInt(parts[3], 10);
+      prev = base + '.' + (last - 1);
+      next = base + '.' + (last + 1);
+    }
+    // 2. 保存配置到数据库
+    const ips = { ip_prev: prev, ip_current: ip, ip_next: next };
+    const r1 = await fetch(window.location.origin + '/api/station/ips', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ips), signal: AbortSignal.timeout(5000),
+    });
+    const j1 = await r1.json();
+    if (!j1.ok) { setMsg('❌ 配置保存失败'); return; }
+    localStorage.setItem('site_station_ips', JSON.stringify(ips));
+    // 3. 直接改本机网卡 IP
+    setMsg('⏳ 正在设置 ' + ip + '...');
+    const r2 = await fetch(window.location.origin + '/api/device/network', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ip }), signal: AbortSignal.timeout(30000),
+    });
+    const j2 = await r2.json();
+    if (j2.ok) {
+      document.getElementById('ip-quick-current').value = ip;
+      document.getElementById('qip-current').value = ip;
+      document.getElementById('ip-current').value = ip;
+      if (prev) { document.getElementById('ip-prev').value = prev; }
+      if (next) { document.getElementById('ip-next').value = next; }
+      updateQuickIpLabel(prev, ip, next);
+      setMsg('✅ 已设置为: ' + ip);
+    } else {
+      setMsg('❌ ' + (j2.error || '设置失败'));
+    }
+    setTimeout(() => setMsg(''), 5000);
+  } catch(e) {
+    setMsg('❌ ' + e.message);
+  }
+}
+
+/** 开机自启开关 */
+async function toggleAutoStart(enabled) {
+  const status = document.getElementById('autostart-status');
+  try {
+    const r = await fetch(window.location.origin + '/api/settings/autostart', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ enabled }), signal: AbortSignal.timeout(8000),
+    });
+    const j = await r.json();
+    if (j.ok) {
+      status.textContent = enabled ? '✅ 已开启' : '✅ 已关闭';
+    } else {
+      status.textContent = j.error || '设置失败';
+      document.getElementById('autostart-toggle').checked = !enabled;
+    }
+  } catch(e) {
+    status.textContent = '❌ ' + e.message;
+    document.getElementById('autostart-toggle').checked = !enabled;
+  }
+  setTimeout(() => status.textContent = '', 3000);
+}
+
+/** 加载开机自启状态 */
+async function loadAutoStartStatus() {
+  try {
+    const r = await fetch(window.location.origin + '/api/settings/autostart', { signal: AbortSignal.timeout(5000) });
+    const j = await r.json();
+    if (j.enabled !== undefined) {
+      document.getElementById('autostart-toggle').checked = j.enabled;
+      document.getElementById('autostart-status').textContent = j.enabled ? '开启' : '关闭';
+    }
+  } catch(e) {}
+}
+
+/** 快捷面板：手动保存 IP */
+async function quickSaveIps() {
+  const msg = document.getElementById('qip-msg');
+  const prev = document.getElementById('qip-prev').value.trim();
+  const current = document.getElementById('qip-current').value.trim();
+  const next = document.getElementById('qip-next').value.trim();
+  // Sync to config tab fields
+  document.getElementById('ip-prev').value = prev;
+  document.getElementById('ip-current').value = current;
+  document.getElementById('ip-next').value = next;
+  // Save via existing function
+  await saveStationIps();
+  updateQuickIpLabel(prev, current, next);
+  msg.textContent = '✅ 已保存';
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+}
+
+/** Quick save from top IP bar: read input, auto-calc prev/next, save directly */
+async function quickSaveFromBar() {
+  const input = document.getElementById('ip-quick-current');
+  const ip = input.value.trim();
+  const qmsg = document.getElementById('ip-quick-msg');
+  if (!ip || ip === '—') { qmsg.textContent = '⚠ 请输入IP'; setTimeout(() => qmsg.textContent = '', 2000); return; }
+  const parts = ip.split('.');
+  let prev = '', next = '';
+  if (parts.length === 4) {
+    const base = parts.slice(0, 3).join('.');
+    const last = parseInt(parts[3], 10);
+    prev = base + '.' + (last - 1);
+    next = base + '.' + (last + 1);
+  }
+  const ips = { ip_prev: prev, ip_current: ip, ip_next: next };
+  localStorage.setItem('site_station_ips', JSON.stringify(ips));
+  qmsg.textContent = '⏳ 设置中...';
+  try {
+    // 1. Save config
+    const r1 = await fetch(window.location.origin + '/api/station/ips', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(ips), signal: AbortSignal.timeout(5000),
+    });
+    const j1 = await r1.json();
+    if (!j1.ok) { qmsg.textContent = '❌ 配置保存失败'; setTimeout(() => qmsg.textContent = '', 3000); return; }
+    // 2. Change actual machine IP
+    const r2 = await fetch(window.location.origin + '/api/device/network', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ip }), signal: AbortSignal.timeout(30000),
+    });
+    const j2 = await r2.json();
+    if (j2.ok) {
+      qmsg.textContent = '✅ 已设置 ' + ip;
+    } else {
+      qmsg.textContent = '❌ ' + (j2.error || '设置失败');
+    }
+  } catch(e) {
+    qmsg.textContent = '❌ 错误: ' + e.message;
+  }
+  updateQuickIpLabel(prev, ip, next);
+  setTimeout(() => qmsg.textContent = '', 5000);
+}
+
+// ================================================================
+// DATA OVERVIEW — 数据总览 (pools + SQLite viewer)
+// ================================================================
+
+/** 加载选中 SQLite 表的数据到数据总览面板 */
+async function dataLoadTable() {
+  const sel = document.getElementById('data-sqlite-table');
+  const table = sel.value;
+  const head = document.getElementById('data-table-head');
+  const body = document.getElementById('data-table-body');
+  const msg = document.getElementById('data-msg');
+  const wrap = document.getElementById('data-table-wrap');
+  head.innerHTML = '';
+  body.innerHTML = '';
+  if (!table) { wrap.style.display = 'none'; return; }
+  msg.textContent = '加载中...';
+  wrap.style.display = 'block';
+  try {
+    let data;
+    // Map table name to backend endpoint
+    const endpoints = {
+      sn_records:     { path: '/sn_records?limit=200', single: false },
+      ng_pool:        { path: '/ng_pool?limit=200',    single: false },
+      dup_pool:       { path: '/dup_pool?limit=200',   single: false },
+      stats:          { path: '/stats',                single: true  },
+      station_config: { path: '/config/station',       single: true  },
+    };
+    const ep = endpoints[table];
+    if (!ep) { msg.textContent = '❌ 未知表'; return; }
+    const res = await apiFetch(ep.path);
+    if (!res || res.error) { msg.textContent = '❌ ' + (res?.error || '请求失败'); return; }
+    // Normalize to array
+    if (ep.single) {
+      data = [res];
+    } else if (Array.isArray(res)) {
+      data = res;
+    } else if (res.records && Array.isArray(res.records)) {
+      data = res.records;
+    } else if (typeof res === 'object') {
+      // Try to find an array field
+      const arrKey = Object.keys(res).find(k => Array.isArray(res[k]) && res[k].length > 0);
+      data = arrKey ? res[arrKey] : [res];
+    } else {
+      data = [];
+    }
+    if (data.length === 0) {
+      head.innerHTML = '<tr><th style="color:#64748b;font-weight:normal">— 空表 —</th></tr>';
+      body.innerHTML = '';
+      msg.textContent = '0 条记录';
+      return;
+    }
+    // Render table
+    const cols = Object.keys(data[0]);
+    head.innerHTML = '<tr>' + cols.map(c => '<th>' + escHtml(c) + '</th>').join('') + '</tr>';
+    body.innerHTML = data.map(row =>
+      '<tr>' + cols.map(c => {
+        let v = row[c];
+        if (v === null || v === undefined) v = '—';
+        else v = String(v);
+        return '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(v) + '</td>';
+      }).join('') + '</tr>'
+    ).join('');
+    msg.textContent = data.length + ' 条记录';
+  } catch(e) {
+    msg.textContent = '❌ ' + e.message;
+    head.innerHTML = '';
+    body.innerHTML = '';
+  }
+}
+
+/** API Viewer: send request and show JSON response */
+async function apiViewerSend() {
+  const ep = document.getElementById('api-endpoint').value;
+  const param = document.getElementById('api-param').value.trim();
+  const pre = document.getElementById('api-response');
+  pre.textContent = '加载中...';
+  let path = ep;
+  if (param) {
+    // For ng_pool/dup_pool/sn_records, use /{sn} format
+    if (path.startsWith('/ng_pool') || path.startsWith('/dup_pool') || path.startsWith('/sn_records')) {
+      path = path.split('?')[0] + '/' + encodeURIComponent(param);
+    } else {
+      pre.textContent = '⚠ 此端点不支持 SN 查询';
+      return;
+    }
+  }
+  try {
+    const r = await apiFetch(path);
+    pre.textContent = JSON.stringify(r, null, 2);
+  } catch(e) {
+    pre.textContent = '❌ ' + e.message;
+  }
+}
+
+async function resetDay() {
+  if (!confirm('重置今日统计数据和内存池？')) return;
+  POOL_SN.clear(); POOL_NG.clear(); POOL_DUP.clear();
+  STATS = { total: 0, pass: 0, fail: 0, dup: 0 };
+  SN_HISTORY = [];
+  if (DB) {
+    const tx = DB.transaction(['sn_records', 'ng_pool'], 'readwrite');
+    tx.objectStore('sn_records').clear();
+    tx.objectStore('ng_pool').clear();
+  }
+  document.getElementById('sn-tbody').innerHTML = '<tr><td colspan="11" class="loading"><span class="spinner"></span>等待扫描...</td></tr>';
+  updateStatsUI();
+  broadcastState();
+  appendLog('今日统计已重置');
+}
+
+async function toggleAutostart() {
+  // Pure JS: toggle and save to localStorage
+  const current = localStorage.getItem('site_autostart') === '1';
+  const next = !current;
+  localStorage.setItem('site_autostart', next ? '1' : '0');
+  document.getElementById('cfg-autostart').textContent = next ? 'ON' : 'OFF';
+  document.getElementById('cfg-autostart').style.background = next ? '#16a34a' : '#374151';
+  appendLog('开机自启: ' + (next ? '已开启' : '已关闭'));
+}
+
+// ================================================================
+// ALARM TEST
+// ================================================================
+async function testAlarmNg() {
+  const testSn = 'TEST-NG-' + Date.now();
+  showAlarm({ sn: testSn, channel: '', errorcode: 'NG', type: 'ng', source: '[测试]' });
+  appendLog('[测试] NG报警触发');
+}
+
+async function testAlarmDup() {
+  const testSn = 'TEST-DUP-' + Date.now();
+  showAlarm({ sn: testSn, channel: '', errorcode: 'DUP', type: 'dup', source: '[测试]' });
+  appendLog('[测试] 重码报警触发');
+}
+
+async function testAlarmPass() {
+  speak(LANG === 'vi' ? 'Qua mat kiem tra' : LANG === 'en' ? 'Scan passed' : '通过', 'normal');
+  appendLog('[测试] 通过语音');
+}
+
+// ================================================================
+// NG TEST — local pool & sqlite verification
+// ================================================================
+
+const R = () => document.getElementById('test-ng-result');
+
+/** Ensure IndexedDB is ready before test */
+async function _ensureDb() {
+  if (DB) return true;
+  try { await initDB(); return true; } catch(e) { return false; }
+}
+
+/** testNgLocalPool: write to IndexedDB sn_records + ng_pool (NOT memory pools),
+    then call processScan so BOTH SN本地 and NG本地 columns light up in scan table */
+async function testNgLocalPool() {
+  const el = R();
+  if (!el) return;
+  el.textContent = '⏳ NG本地池测试中...';
+  const testSn = 'TST-NG-POOL-' + Date.now();
+  const now = new Date();
+  const timeStr = now.toTimeString().slice(0,8);
+  const base = { time: timeStr, date: todayStr(), station: STATION_CFG.station || 'FCT-01',
+    line_name: STATION_CFG.line_name || '', operator: STATION_CFG.operator || 'TEST' };
+  // 1) IndexedDB ready
+  if (!await _ensureDb()) { el.textContent = '❌ IndexedDB不可用'; return; }
+  // 2) Write to sn_records (SN本地) so that column lights up
+  try { await dbPut('sn_records', { sn: testSn, result: 'PASS', ...base, source: '[测试]' }); }
+  catch(e) { el.textContent = '❌ sn_records写入失败: ' + e.message; return; }
+  // 3) Write to ng_pool (NG本地) so that column lights up
+  try { await dbPut('ng_pool', { sn: testSn, result: 'NG', ...base, source: '[测试]' }); }
+  catch(e) { el.textContent = '❌ ng_pool写入失败: ' + e.message; return; }
+  // 4) Read back both to confirm
+  try {
+    const snR = await dbGet('sn_records', testSn);
+    const ngR = await dbGet('ng_pool', testSn);
+    if (!snR) { el.textContent = '❌ sn_records回读: 未找到'; return; }
+    if (!ngR) { el.textContent = '❌ ng_pool回读: 未找到'; return; }
+  } catch(e) { el.textContent = '❌ IndexedDB读取异常: ' + e.message; return; }
+  // 5) Simulate scan — processScan hits Layer 1b (ng_pool), shows both SN本地+NG本地 ✓
+  el.textContent = '⏳ 模拟扫码验证...';
+  await processScan(testSn);
+  if (!POOL_NG.has(testSn)) { el.textContent = '❌ processScan未触发NG检测'; return; }
+  el.innerHTML = '✅ SN本地+NG本地 检验通过 — 扫描表可见两列 ✓ <span style="color:#94a3b8;font-size:11px">(' + testSn + ')</span>';
+  appendLog('[测试] SN本地+NG本地检验通过: ' + testSn);
+}
+
+/** testNgSqlite: POST NG to backend /ng_pool, read back, then simulate scan to verify cross-layer */
+async function testNgSqlite() {
+  const el = R();
+  if (!el) return;
+  el.textContent = '⏳ NG SQLite测试中...';
+  const testSn = 'TST-NG-SQLITE-' + Date.now();
+  // 1) Heartbeat check
+  try {
+    const hb = await fetch(API_LOCAL + '/api/heartbeat', { signal: AbortSignal.timeout(3000) });
+    if (!hb.ok) { el.textContent = '❌ 后端无响应'; return; }
+  } catch(e) { el.textContent = '❌ 后端连接失败: ' + e.message; return; }
+  // 2) POST (backend only needs sn/source/station/line_name/operator)
+  const body = { sn: testSn, source: '[测试]',
+    station: STATION_CFG.station || 'FCT-01', line_name: STATION_CFG.line_name || '',
+    operator: STATION_CFG.operator || 'TEST' };
+  const postRes = await dsLocalFetch('/ng_pool', { method: 'POST', body });
+  if (!postRes) { el.textContent = '❌ POST无响应'; return; }
+  if (postRes.error) { el.textContent = '❌ 后端写入失败: ' + postRes.error; return; }
+  // 3) GET and verify it's in the backend
+  const all = await dsLocalFetch('/ng_pool');
+  if (!all || !Array.isArray(all)) { el.textContent = '❌ 后端返回异常'; return; }
+  const found = all.find(r => r.sn === testSn);
+  if (!found) { el.textContent = '❌ 后端验证失败: 未找到记录'; return; }
+  el.innerHTML = '✅ NG SQLite写入正常 <span style="color:#94a3b8;font-size:11px">(' + testSn + ')</span>';
+  appendLog('[测试] NG SQLite写入验证通过: ' + testSn);
+}
+
+// Expose
+window.testNgLocalPool = testNgLocalPool;
+window.testNgSqlite = testNgSqlite;
+window._ensureDb = _ensureDb;
+
+// ================================================================
+// LOGIN FLOW — employee QR code scan overlay
+// ================================================================
+
+function showLogin() {
+  const overlay = document.getElementById('login-overlay');
+  if (!overlay) return;
+  overlay.style.display = 'flex';
+  document.getElementById('login-scan-area').style.display = 'block';
+  document.getElementById('login-result').style.display = 'none';
+  document.getElementById('login-input').value = '';
+  document.getElementById('login-error').textContent = '';
+  document.getElementById('login-indicator').style.background = 'var(--green)';
+  setTimeout(() => document.getElementById('login-input')?.focus(), 100);
+}
+
+function hideLogin() {
+  document.getElementById('login-overlay').style.display = 'none';
+}
+
+function loginReset() {
+  document.getElementById('login-scan-area').style.display = 'block';
+  document.getElementById('login-result').style.display = 'none';
+  document.getElementById('login-input').value = '';
+  document.getElementById('login-error').textContent = '';
+  setTimeout(() => document.getElementById('login-input')?.focus(), 100);
+}
+
+/** Parse employee QR code. Tries JSON first, then treats raw as employee ID. */
+function loginParseScan(raw) {
+  raw = (raw || '').trim().toUpperCase();
+  if (!raw) return null;
+  // Try JSON format: {"id":"EMP001","name":"Nguyen Van A"}
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed.id || parsed.employee_id || parsed.emp_id) {
+      return { id: parsed.id || parsed.employee_id || parsed.emp_id, name: parsed.name || parsed.employee_name || '', raw };
+    }
+  } catch(e) { /* not JSON */ }
+  // Try URL params: ?id=EMP001&name=...
+  if (raw.includes('?')) {
+    try {
+      const params = new URLSearchParams(raw.split('?')[1]);
+      const id = params.get('id') || params.get('employee_id') || params.get('emp') || '';
+      const name = params.get('name') || params.get('employee_name') || '';
+      if (id) return { id, name, raw };
+    } catch(e) { /* not URL */ }
+  }
+  // Fallback: treat the entire scan as employee ID
+  // Strip common prefixes/suffixes
+  const clean = raw.replace(/^EMP/i, '').replace(/^0+/, '');
+  const displayId = raw.startsWith('EMP') ? raw : 'EMP' + raw;
+  return { id: displayId, name: '', raw };
+}
+
+/** Called when the login input detects Enter or scanner submission. */
+function loginHandleScan() {
+  const input = document.getElementById('login-input');
+  const raw = input.value.trim();
+  if (!raw || raw.length < 2) {
+    document.getElementById('login-error').textContent = raw ? '无效的二维码' : '请扫描二维码';
+    return;
+  }
+  const emp = loginParseScan(raw);
+  if (!emp) {
+    document.getElementById('login-error').textContent = '无法识别的员工码';
+    return;
+  }
+  // Show parsed result
+  document.getElementById('login-scan-area').style.display = 'none';
+  document.getElementById('login-result').style.display = 'block';
+  document.getElementById('login-emp-id').textContent = emp.id;
+  document.getElementById('login-emp-name').textContent = emp.name || emp.id;
+  LOGIN_CACHED_EMP = emp;
+  document.getElementById('login-error').textContent = '';
+}
+
+let LOGIN_CACHED_EMP = null;
+
+/** Quick login: bypass scan, use a default operator */
+function loginQuick() {
+  LOGIN_CACHED_EMP = { id: 'OPERATOR', name: t('login.quick_op') || '操作员', raw: 'OPERATOR' };
+  document.getElementById('login-scan-area').style.display = 'none';
+  document.getElementById('login-result').style.display = 'block';
+  document.getElementById('login-emp-id').textContent = LOGIN_CACHED_EMP.id;
+  document.getElementById('login-emp-name').textContent = LOGIN_CACHED_EMP.name;
+  document.getElementById('login-error').textContent = '';
+}
+
+/** Confirm login: save operator to backend + push to MES */
+async function loginConfirm() {
+  const emp = LOGIN_CACHED_EMP;
+  if (!emp) return;
+  LOGIN_EMPLOYEE = emp;
+  const operatorName = emp.name || emp.id;
+  const rawBarcode = emp.raw || '';
+
+  // 1) Save to backend station_config
+  await dsLocalFetch('/config/station', {
+    method: 'POST',
+    body: { operator: operatorName }
+  });
+
+  // 2) Call operator login API (validates barcode + persists)
+  await dsLocalFetch('/api/operator/login', {
+    method: 'POST',
+    body: { barcode: rawBarcode, station: STATION_CFG.station, line_name: STATION_CFG.line_name }
+  });
+
+  // 3) Upload to MES
+  const mesApi = document.getElementById('cfg-mes-api').value || 'http://192.168.18.186:8080/api';
+  try {
+    await fetch(mesApi + '/mes/operator-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        operator: operatorName,
+        operator_id: emp.id,
+        station: STATION_CFG.station,
+        line_name: STATION_CFG.line_name,
+        time: new Date().toISOString(),
+      }),
+      signal: AbortSignal.timeout(3000),
+    });
+  } catch(e) { /* MES unreachable */ }
+
+  // 4) Update local config
+  STATION_CFG.operator = operatorName;
+  document.getElementById('mon-operator').textContent = operatorName;
+  document.getElementById('cfg-operator').value = operatorName;
+  // Save to localStorage
+  try {
+    const savedCfg = JSON.parse(localStorage.getItem('site_config') || '{}');
+    savedCfg.operator = operatorName;
+    localStorage.setItem('site_config', JSON.stringify(savedCfg));
+  } catch(e) {}
+  updateLogoutBtn();
+  updateIdleUI();
+  hideLogin();
+  appendLog('👤 操作员登录: ' + operatorName);
+  // Speak login
+  const msgs = {zh:'登录成功', vi:'Dang nhap thanh cong', en:'Login successful'};
+  speak(msgs[LANG] || msgs.zh, 'normal');
+}
+
+/** Handle Enter key in login input */
+document.addEventListener('DOMContentLoaded', () => {
+  const loginInput = document.getElementById('login-input');
+  if (loginInput) {
+    loginInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        loginHandleScan();
+      }
+    });
+  }
+});
+
+function updateLogoutBtn() {
+  const btn = document.getElementById('cfg-logout-btn');
+  if (!btn) return;
+  const op = STATION_CFG.operator || LOGIN_EMPLOYEE?.name || LOGIN_EMPLOYEE?.id || '';
+  btn.innerHTML = op ? t('cfg.logout').replace('{0}', op) : '👤 退出登录';
+  // Toggle operator card in monitor
+  const card = document.getElementById('mon-operator-card');
+  const nameEl = document.getElementById('mon-operator-name');
+  if (card && nameEl) {
+    if (op) {
+      card.style.display = 'inline-flex';
+      nameEl.textContent = op;
+    } else {
+      card.style.display = 'none';
+      nameEl.textContent = '—';
+    }
+  }
+}
+
+/** Logout: clear operator, show login overlay */
+async function logoutOperator() {
+  LOGIN_EMPLOYEE = null;
+  STATION_CFG.operator = '';
+  document.getElementById('mon-operator').textContent = '—';
+  document.getElementById('cfg-operator').value = '';
+  // Clear backend config
+  await dsLocalFetch('/config/station', {
+    method: 'POST',
+    body: { operator: '' }
+  });
+  updateIdleUI();
+  // Clear localStorage
+  try {
+    const savedCfg = JSON.parse(localStorage.getItem('site_config') || '{}');
+    savedCfg.operator = '';
+    localStorage.setItem('site_config', JSON.stringify(savedCfg));
+  } catch(e) {}
+  updateLogoutBtn();
+  appendLog('👤 操作员已退出');
+  showLogin();
+}
+
+// Expose for inline onclick
+window.loginHandleScan = loginHandleScan;
+window.loginConfirm = loginConfirm;
+window.loginReset = loginReset;
+window.logoutOperator = logoutOperator;
+
+// ================================================================
+// QUERY TAB — 6 data source buttons + date filter
+// ================================================================
+let _qDataCache = [];  // last query results for CSV export
+
+function qClearDateTime() {
+  document.getElementById('q-date-from').value = '';
+  document.getElementById('q-date-to').value = '';
+  document.getElementById('q-time-from').value = '';
+  document.getElementById('q-time-to').value = '';
+}
+
+function qSetToday8am() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const today = now.toISOString().slice(0, 10);
+  document.getElementById('q-date-from').value = today;
+  document.getElementById('q-date-to').value = today;
+  document.getElementById('q-time-from').value = '08:00';
+  document.getElementById('q-time-to').value = hh + ':' + mm;
+}
+
+function qSetDefaultTime() {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const dd = now.toISOString().slice(0, 10);
+  const df = document.getElementById('q-date-from');
+  const dt = document.getElementById('q-date-to');
+  const tf = document.getElementById('q-time-from');
+  const tt = document.getElementById('q-time-to');
+  if (!df.value) df.value = dd;
+  if (!dt.value) dt.value = dd;
+  if (!tf.value) tf.value = '00:00';
+  if (!tt.value) tt.value = hh + ':00';
+}
+
+function qGetDateTimeRange() {
+  const dateFrom = document.getElementById('q-date-from').value;  // YYYY-MM-DD
+  const dateTo   = document.getElementById('q-date-to').value;
+  const timeFrom = document.getElementById('q-time-from').value;  // HH:MM
+  const timeTo   = document.getElementById('q-time-to').value;
+  return {
+    dateFrom: dateFrom || '',
+    dateTo: dateTo || '',
+    timeFrom: timeFrom || '',
+    timeTo: timeTo || '',
+  };
+}
+
+function qMatchesDateTime(dateStr, timeStr, dateFrom, dateTo, timeFrom, timeTo) {
+  // Returns true if record (dateStr YYYY-MM-DD, timeStr HH:MM:SS) falls in range
+  if (!dateFrom && !dateTo && !timeFrom && !timeTo) return true;
+  // Combine into sortable YYYY-MM-DD HH:MM string for comparison
+  const dt = (dateStr || '') + ' ' + (timeStr ? timeStr.slice(0, 5) : '');
+  const fr = (dateFrom || '') + ' ' + (timeFrom || '');
+  const to = (dateTo   || '') + ' ' + (timeTo   || '');
+  if (fr && dt < fr) return false;
+  if (to && dt > to) return false;
+  return true;
+}
+
+async function qLoadDefault() {
+  // Tab auto-load: show last 100 records
+  qSetLoading('加载最近记录...');
+  const records = await apiFetch('/sn_records?limit=100');
+  if (records.error) { qSetError('无法连接: ' + records.error); return; }
+  qRender(records, '最近100条');
+}
+
+function qGetMesApi() {
+  return document.getElementById('cfg-mes-api')?.value || 'http://192.168.18.186:8080/api';
+}
+
+function qRender(rows, label) {
+  const tbody = document.getElementById('q-result-tbody');
+  const info  = document.getElementById('q-result-info');
+  _qDataCache = rows || [];
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="color:var(--muted);padding:20px;text-align:center">— 无匹配记录 —</td></tr>`;
+    info.textContent = '0 条';
+    return;
+  }
+  tbody.innerHTML = rows.map(r => {
+    const sn  = escHtml(r.sn || '');
+    const rs  = escHtml(r.result || '');
+    const tm  = (r.date ? escHtml(r.date) + ' ' : '') + escHtml(r.time || '');
+    const sr  = escHtml(r.source || '');
+    const st  = escHtml(r.station || '');
+    const ln  = escHtml(r.line_name || '');
+    const op  = escHtml(r.operator || '');
+    const rsColor = rs === 'PASS' ? '#4ade80' : rs === 'NG' ? '#f87171' : rs === 'DUP' ? '#fbbf24' : '#94a3b8';
+    return `<tr><td style="font-family:Consolas;color:#38bdf8;font-size:12px">${sn}</td><td style="color:${rsColor};font-size:12px;font-weight:bold">${rs}</td><td style="font-size:12px;color:#64748b">${tm}</td><td style="font-size:12px;color:#64748b">${sr}</td><td style="font-size:12px;color:#64748b">${st}</td><td style="font-size:12px;color:#64748b">${ln}</td><td style="font-size:12px;color:#64748b">${op}</td></tr>`;
+  }).join('');
+  info.textContent = `${rows.length} 条` + (label ? ` · ${label}` : '');
+}
+
+function qSetLoading(msg) {
+  document.getElementById('q-result-tbody').innerHTML = `<tr><td colspan="7" style="color:var(--muted);padding:20px;text-align:center"><span class="spinner"></span>${escHtml(msg)}</td></tr>`;
+  document.getElementById('q-result-info').textContent = '';
+  _qDataCache = [];
+}
+
+function qSetError(msg) {
+  document.getElementById('q-result-tbody').innerHTML = `<tr><td colspan="7" style="color:var(--red);padding:20px;text-align:center">⚠ ${escHtml(msg)}</td></tr>`;
+  document.getElementById('q-result-info').textContent = '';
+  _qDataCache = [];
+}
+
+// ---- SN queries ----
+
+async function qSnPool() {
+  qSetLoading('查询 SN 池子...');
+  const { dateFrom, dateTo, timeFrom, timeTo } = qGetDateTimeRange();
+  const poolSns = POOL_SN;
+  if (!poolSns || poolSns.size === 0) { qRender([], 'SN池子'); return; }
+  if (!DB) { qSetError('IndexedDB 未初始化'); return; }
+  const records = await dbAll('sn_records');
+  const filtered = records.filter(r =>
+    r.result === 'PASS' && poolSns.has(r.sn) && qMatchesDateTime(r.date, r.time, dateFrom, dateTo, timeFrom, timeTo)
+  );
+  qRender(filtered, 'SN池子');
+}
+
+async function qSnLocal() {
+  qSetLoading('查询 SN 本地数据库...');
+  const { dateFrom, dateTo, timeFrom, timeTo } = qGetDateTimeRange();
+  if (!DB) { qSetError('IndexedDB 未初始化'); return; }
+  const records = await dbAll('sn_records');
+  const filtered = records.filter(r => qMatchesDateTime(r.date, r.time, dateFrom, dateTo, timeFrom, timeTo));
+  qRender(filtered, 'SN本地');
+}
+
+async function qSnBackend() {
+  qSetLoading('查询 SN 后端数据库...');
+  const { dateFrom, dateTo, timeFrom, timeTo } = qGetDateTimeRange();
+  // Build URL: ?today=1 (default 8am-now) or ?from=HH:MM&to=HH:MM
+  let url = '/sn_records?limit=1000';
+  if (timeFrom) {
+    url = `/sn_records?from=${timeFrom}${timeTo ? '&to=' + timeTo : ''}`;
+  }
+  const r = await apiFetch(url);
+  if (r.error) { qSetError(r.error); return; }
+  qRender(r, 'SN后端');
+}
+
+async function qSnMes() {
+  qSetLoading('查询 SN_MES...');
+  const { timeFrom: from, timeTo: to } = qGetDateTimeRange();
+  const mesApi = qGetMesApi();
+  try {
+    let url = `${mesApi}/aging/records`;
+    const params = [];
+    if (from) params.push(`from=${encodeURIComponent(from)}`);
+    if (to)   params.push(`to=${encodeURIComponent(to)}`);
+    if (params.length) url += '?' + params.join('&');
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) { qSetError('MES 返回 ' + res.status); return; }
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : (data.rows || data.records || data.data || []);
+    // Map to standard columns
+    const mapped = items.map(item => ({
+      sn:        item.sn || item.SN || '',
+      time:      item.time || item.timestamp || item.updated_at || '',
+      station:   item.station || item.station_code || '',
+      line_name: item.line_name || item.line || '',
+      operator:  item.operator || item.operator_name || '',
+    }));
+    qRender(mapped, 'SN_MES');
+  } catch(e) {
+    if (e.name === 'AbortError') qSetError('MES 请求超时');
+    else qSetError('MES 查询失败: ' + e.message);
+  }
+}
+
+// ---- NG queries ----
+
+async function qNgPool() {
+  qSetLoading('查询 NG 池子...');
+  const { dateFrom, dateTo, timeFrom, timeTo } = qGetDateTimeRange();
+  const poolNgs = POOL_NG;
+  if (!poolNgs || poolNgs.size === 0) { qRender([], 'NG池子'); return; }
+  if (!DB) { qSetError('IndexedDB 未初始化'); return; }
+  const records = await dbAll('ng_pool');
+  const filtered = records.filter(r => poolNgs.has(r.sn) && qMatchesDateTime(r.date, r.time, dateFrom, dateTo, timeFrom, timeTo));
+  qRender(filtered, 'NG池子');
+}
+
+async function qNgLocal() {
+  qSetLoading('查询 NG 本地数据库...');
+  const { dateFrom, dateTo, timeFrom, timeTo } = qGetDateTimeRange();
+  if (!DB) { qSetError('IndexedDB 未初始化'); return; }
+  const records = await dbAll('ng_pool');
+  const filtered = records.filter(r => qMatchesDateTime(r.date, r.time, dateFrom, dateTo, timeFrom, timeTo));
+  qRender(filtered, 'NG本地');
+}
+
+async function qNgMes() {
+  qSetLoading('查询 NG_MES...');
+  const { timeFrom: from, timeTo: to } = qGetDateTimeRange();
+  const mesApi = qGetMesApi();
+  try {
+    let url = `${mesApi}/aging/ng_registry`;
+    const params = [];
+    if (from) params.push(`from=${encodeURIComponent(from)}`);
+    if (to)   params.push(`to=${encodeURIComponent(to)}`);
+    if (params.length) url += '?' + params.join('&');
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) { qSetError('MES 返回 ' + res.status); return; }
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : (data.rows || data.records || data.data || []);
+    const mapped = items.map(item => ({
+      sn:        item.sn || item.SN || '',
+      time:      item.time || item.timestamp || item.created_at || '',
+      station:   item.station || item.station_code || '',
+      line_name: item.line_name || item.line || '',
+      operator:  item.operator || item.operator_name || '',
+    }));
+    qRender(mapped, 'NG_MES');
+  } catch(e) {
+    if (e.name === 'AbortError') qSetError('MES 请求超时');
+    else qSetError('MES 查询失败: ' + e.message);
+  }
+}
+
+// ---- CSV export ----
+
+function qExportCsv() {
+  const rows = _qDataCache;
+  if (!rows || rows.length === 0) return;
+  const header = '"SN","结果","时间","来源","工位","产线","操作员"';
+  const lines = [header];
+  rows.forEach(r => {
+    lines.push(`"${(r.sn||'').replace(/"/g,'""')}","${(r.result||'').replace(/"/g,'""')}","${(r.time||'').replace(/"/g,'""')}","${(r.source||'').replace(/"/g,'""')}","${(r.station||'').replace(/"/g,'""')}","${(r.line_name||'').replace(/"/g,'""')}","${(r.operator||'').replace(/"/g,'""')}"`);
+  });
+  const blob = new Blob(['\ufeff' + lines.join('\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'query_' + Date.now() + '.csv'; a.click();
+}
+
+// ================================================================
+// REPAIR TAB — pure JS, uses ng_pool IndexedDB store
+// ================================================================
+async function renderRepair() {
+  const list = document.getElementById('repair-list');
+  if (!DB) {
+    list.innerHTML = '<div style="color:var(--red);padding:10px">IndexedDB 未初始化</div>';
+    return;
+  }
+  try {
+    const records = await dbAll('ng_pool');
+    if (records.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted);padding:16px;text-align:center">— 暂无NG维修记录 —</div>';
+      return;
+    }
+    list.innerHTML = records.map(h => `
+      <div class="repair-item">
+        <div class="repair-sn">⚠ SN: ${escHtml(h.sn||'?')}</div>
+        <div class="repair-meta">
+          ${escHtml(h.channel||'')} | ${escHtml(h.errorcode||'')} |
+          ${escHtml(h.time||'')} | ${escHtml(h.source||'')}
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { list.innerHTML = '<div style="color:var(--red);padding:10px">加载失败: '+escHtml(String(e))+'</div>'; }
+}
+
+async function clearNgHistory() {
+  if (!confirm('清空所有NG维修记录？')) return;
+  if (DB) {
+    const tx = DB.transaction('ng_pool', 'readwrite');
+    tx.objectStore('ng_pool').clear();
+  }
+  POOL_NG.clear();
+  updateStatsUI();
+  broadcastState();
+  renderRepair();
+  appendLog('维修记录已清空');
+}
+
+// ================================================================
+// INSTRUCTIONS TAB
+// ================================================================
+const INST_SECTIONS = [
+  {key:'inst.sec1_title', content:[
+    '• 使用扫码枪扫描产品SN条码',
+    '• 系统按优先级依次执行以下检测，任一命中即阻断：','',
+    '  优先级1 🔴 NG Pool检测（内存，立即）',
+    '    - 检查当前Excel中的不良SN内存池',
+    '    - 命中 → 锁定ATE + 语音报警 + 弹窗','',
+    '  优先级2 🟡 DUP Pool检测（内存，立即）',
+    '    - 检查当前Excel中是否已有该SN',
+    '    - 命中 → 重码报警','',
+    '  优先级3 🔴 MES NG历史查询（网络，后台）',
+    '    - 查询MES ng_registry表',
+    '    - 命中 → 锁定ATE + 语音报警','',
+    '  优先级4 🟡 本地SQLite查重（磁盘，后台）',
+    '    - 检查本地数据库sn_records表',
+    '    - 命中 → 重码报警','',
+    '  优先级5 🟡 MES数据库查重（网络，后台）',
+    '    - 查询MES product表',
+    '    - 命中 → 重码报警','',
+    '• 以上全部通过后 → SN加入内存池+SQLite，状态记为PASS',
+    '• 所有检查均不阻塞扫码枪，后台检查不影响下一SN扫描',
+  ]},
+  {key:'inst.sec2_title', content:[
+    '• 当检测到NG时，系统自动执行：',
+    '    ① 禁用USB扫码枪（防止误扫）',
+    '    ② 锁定ATE设备（pssuspend暂停ATE进程）',
+    '    ③ 弹出不良品警告窗口',
+    '    ④ 播放越南语语音警报',
+    '    ⑤ 记录NG信息到本地NG池和SQLite',
+    '• 管理员需在弹窗中输入密码确认处理方式：',
+    '    - 复测：产品重新测试',
+    '    - 垃圾桶：产品报废',
+    '    - 拿去向产线：退回产线处理',
+  ]},
+  {key:'inst.sec3_title', content:[
+    '• 当检测到重复SN时，系统自动执行：',
+    '    ① 弹出重码警告窗口',
+    '    ② 播放越南语语音警报',
+    '    ③ 锁定设备',
+    '    ④ 记录重码信息',
+    '• 管理员需在弹窗中确认处理方式',
+  ]},
+  {key:'inst.sec4_title', content:[
+    '▸ 开机流程：',
+    '    ① 打开测试设备电源',
+    '    ② 启动测试软件',
+    '    ③ 确认软件连接正常，通道状态显示就绪',
+    '    ④ 打开本质量监控系统',
+    '    ⑤ 确认状态栏显示「运行中」，Excel文件路径正确','',
+    '▸ 测试操作：',
+    '    ① 将产品放入测试治具',
+    '    ② 测试软件自动运行测试',
+    '    ③ 测试完成后扫码枪扫描产品SN',
+    '    ④ 系统自动检测NG/重码，通过后记录入库',
+    '    ⑤ 通过产品放行至下一工站','',
+    '▸ 异常处理：',
+    '    - 设备锁定时，管理员通过弹窗认证后解锁',
+    '    - 扫码无反应时，检查USB扫码枪连接',
+    '    - 软件卡死时，在资源管理器重启ats231010.exe',
+    '    - 系统误报时，联系品管主管处理','',
+    '▸ 关机流程：',
+    '    ① 确认所有产品测试完成',
+    '    ② 关闭ATE质量监控系统',
+    '    ③ 关闭ATE测试软件',
+    '    ④ 关闭ATE设备电源',
+  ]},
+  {key:'inst.sec5_title', content:[
+    '  点检时间：每日开班前','',
+    '  □ 设备状态检查：',
+    '    □ ATE测试设备电源正常',
+    '    □ ats231010.exe 软件正常启动',
+    '    □ 所有测试通道状态就绪',
+    '    □ 测试治具无损坏，探针接触良好','',
+    '  □ 系统状态检查：',
+    '    □ FCT质量监控系统已启动，状态显示「运行中」',
+    '    □ Excel监控文件夹路径正确',
+    '    □ 昨日测试数据正常存档','',
+    '  □ 扫码设备检查：',
+    '    □ USB扫码枪连接正常',
+    '    □ 扫码枪指示灯正常',
+    '    □ 扫描SN能正常识别',
+    '    □ TCP端口(1003)正常监听','',
+    '  □ 报警系统检查：',
+    '    □ 音箱电源开启，音量正常',
+    '    □ 语音播报功能正常',
+    '    □ 不良品弹窗能正常弹出','',
+    '  □ 网络与数据检查：',
+    '    □ MES后端连接正常（http://192.168.18.186:8080）',
+    '    □ 本地SQLite数据库正常','',
+    '  ✅ 全部点检完成后，确认无误方可开始生产',
+  ]},
+  {key:'inst.sec6_title', content:[
+    '• 每天12:00自动重置SN池、NG池和统计数据',
+    '• 新的Excel文件自动开始监控',
+    '• Excel表头自动识别，无需手动配置数据起始行',
+  ]},
+  {key:'inst.sec7_title', content:[
+    '⚠ 确保Excel文件夹路径正确（当前路径在下方显示）',
+    '⚠ 请勿手动删除正在监控的Excel文件',
+    '⚠ 设备锁定后必须由管理员在弹窗中确认解锁',
+    '⚠ 语音提示为越南语，请确保音箱正常工作',
+    '⚠ 系统自动检测Excel数据起始行，无需修改配置文件',
+  ]},
+];
+
+function renderInstructions() {
+  const toc = document.getElementById('inst-toc');
+  toc.innerHTML = INST_SECTIONS.map((s,i) =>
+    `<button class="btn btn-sm" style="background:#16213e;color:#38bdf8" onclick="toggleInst(${i})" id="inst-btn-${i}">${t(s.key)}</button>`
+  ).join('');
+  const container = document.getElementById('inst-sections');
+  container.innerHTML = INST_SECTIONS.map((s,i) => `
+    <div class="inst-sec">
+      <div class="inst-title" onclick="toggleInst(${i})" id="inst-hd-${i}">
+        ${t(s.key)}
+        <span id="inst-arrow-${i}" style="font-size:12px">▾</span>
+      </div>
+      <div class="inst-body" id="inst-body-${i}">
+        <ul style="list-style:none;padding:0">
+          ${s.content.map(line =>
+            line === '' ? '<li style="height:6px"></li>' :
+            `<li>${line.startsWith('⚠')||line.startsWith('✅')||line.startsWith('□')||line.startsWith('▸')||line.startsWith('●')||line.startsWith('🔴')||line.startsWith('🟡')
+              ? line : '• ' + line}</li>`
+          ).join('')}
+        </ul>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleInst(i) {
+  const body = document.getElementById('inst-body-' + i);
+  const arrow = document.getElementById('inst-arrow-' + i);
+  const isOpen = body.classList.toggle('open');
+  arrow.textContent = isOpen ? '▾' : '▸';
+}
+
+// ================================================================
+// STARTUP TAB
+// ================================================================
+const STARTUP_STEPS = [
+  {title:'步骤一：测试设备通电', content:['1. 确认设备电源线连接正常','2. 打开设备总电源开关','3. 等待设备指示灯亮起（绿色）','4. 确认设备风扇运转正常']},
+  {title:'步骤二：启动测试软件', content:['1. 在桌面双击测试软件图标','2. 等待软件加载完成（约10-30秒）','3. 确认软件界面显示所有通道就绪','4. 检查各通道电压/电流读数在正常范围']},
+  {title:'步骤三：启动质量监控系统', content:['1. 双击桌面 质量监控中心 图标','2. 等待系统加载完成','3. 确认标题栏显示「运行中」状态','4. 检查底部状态栏：','   • Excel文件夹路径是否正确','   • MES连接状态是否正常','   • API端口是否监听']},
+  {title:'步骤四：扫码设备检查', content:['1. 确认USB扫码枪已插入电脑','2. 确认扫码枪红灯/蓝灯正常亮起','3. 扫描一个测试SN，检查是否正常识别','4. 确认日志区显示扫描记录','5. 检查TCP端口 1003 是否正常监听']},
+  {title:'步骤五：报警系统测试', content:['1. 确认音箱电源已开启，音量适中','2. 点击「模拟NG」按钮测试报警功能','3. 确认以下报警动作正常：','   • 越南语语音播报','   • 警笛声播放','   • 不良品弹窗弹出','   • 设备锁定','4. 管理员确认解锁后恢复正常']},
+  {title:'步骤六：MES连接确认', content:['1. 确认MES后端服务运行中','2. 检查资源查看标签页MES状态为 ON','3. 扫描一个测试SN确认MES查重正常','4. 确认数据能正确写入本地SQLite']},
+];
+const startupDone = new Set();
+
+function renderStartup() {
+  const container = document.getElementById('startup-steps');
+  container.innerHTML = STARTUP_STEPS.map((s,i) => `
+    <div class="step-item ${startupDone.has(i) ? 'done' : ''}" id="step-${i}" onclick="toggleStep(${i})">
+      <div class="step-title">
+        <span class="step-num" id="step-num-${i}">${i+1}</span>
+        ${s.title}
+        <span class="step-check" id="step-check-${i}">${startupDone.has(i) ? '✅' : ''}</span>
+      </div>
+      <div class="step-content" id="step-content-${i}" style="display:none">
+        ${s.content.join('<br>')}
+      </div>
+    </div>
+  `).join('');
+  updateStartupMsg();
+}
+
+function toggleStep(i) {
+  const el = document.getElementById('step-content-' + i);
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? 'block' : 'none';
+  if (isHidden && !startupDone.has(i)) {
+    startupDone.add(i);
+    document.getElementById('step-' + i).classList.add('done');
+    document.getElementById('step-check-' + i).textContent = '✅';
+    updateStartupMsg();
+  }
+}
+
+function updateStartupMsg() {
+  const msg = document.getElementById('startup-msg');
+  if (startupDone.size === STARTUP_STEPS.length) {
+    msg.textContent = t('startup.done');
+    msg.style.color = 'var(--green)';
+  } else {
+    msg.textContent = `☐ 已完成 ${startupDone.size}/${STARTUP_STEPS.length} 步`;
+    msg.style.color = 'var(--muted)';
+  }
+}
+
+// ================================================================
+// STATION CHAIN DISPLAY (resources tab) — pure JS
+// Hardcoded station chain for the SMT line; editable in future
+// ================================================================
+const STATION_CHAIN = [
+  { code: '01', name_zh: '测试工位' },
+  { code: 'AOI-01', name_zh: 'AOI光学检测' },
+  { code: 'SPI-01', name_zh: 'SPI锡膏检测' },
+  { code: 'ICT-01', name_zh: 'ICT测试' },
+  { code: 'PACK', name_zh: '包装' },
+];
+
+function loadStationChain() {
+  const container = document.getElementById('station-chain-display');
+  const current = STATION_CFG.station || '01';
+  const idx = STATION_CHAIN.findIndex(n => n.code === current);
+  // Read saved IPs
+  let ips = { ip_prev: '', ip_current: '', ip_next: '' };
+  try { ips = JSON.parse(localStorage.getItem('site_station_ips') || '{}'); } catch(e) {}
+  container.innerHTML = STATION_CHAIN.map((n, i) => {
+    const isCurrent = n.code === current;
+    const isPrev = i === idx - 1;
+    const isNext = i === idx + 1;
+    const color = isCurrent ? '#00d4ff' : '#475569';
+    const bg = isCurrent ? '#0f3460' : '#1e293b';
+    let ipLabel = '';
+    if (isPrev && ips.ip_prev) ipLabel = `<div style="font-size:9px;color:#94a3b8;margin-top:2px">${escHtml(ips.ip_prev)}</div>`;
+    if (isCurrent && ips.ip_current) ipLabel = `<div style="font-size:9px;color:#38bdf8;margin-top:2px">${escHtml(ips.ip_current)}</div>`;
+    if (isNext && ips.ip_next) ipLabel = `<div style="font-size:9px;color:#94a3b8;margin-top:2px">${escHtml(ips.ip_next)}</div>`;
+    return `<div style="background:${bg};border:2px solid ${color};border-radius:8px;padding:6px 14px;text-align:center;min-width:70px">
+      <div style="font-size:10px;color:${color};font-weight:bold">${escHtml(n.code)}</div>
+      <div style="font-size:9px;color:#94a3b8">${escHtml(n.name_zh||'')}</div>
+      ${ipLabel}
+      ${isCurrent ? '<div style="color:var(--green);font-size:9px">◀ 当前</div>' : ''}
+      ${isPrev ? '<div style="color:#fbbf24;font-size:9px">◀ 上游</div>' : ''}
+      ${isNext ? '<div style="color:#fbbf24;font-size:9px">下游 ▶</div>' : ''}
+    </div>`;
+  }).join('<div style="color:#475569;font-size:18px;align-self:center">→</div>');
+}
+
+// ================================================================
+// RESOURCE MANAGEMENT TAB — connects to scanner_helper HTTP API
+// ================================================================
+const API = window.location.origin;         // scanner_helper serves all resources (port 8088)
+const API_LOCAL = window.location.origin;  // same origin for local operations
+
+async function apiFetch(path, opts = {}) {
+  try {
+    const r = await fetch(API + path, {
+      method: opts.method || 'GET',
+      headers: { 'Content-Type': 'application/json', ...opts.headers },
+      body: opts.body ? JSON.stringify(opts.body) : undefined,
+    });
+    return await r.json();
+  } catch(e) {
+    return { error: '无法连接 Helper: ' + e.message };
+  }
+}
+
+function rmSetStatus(msg, isError = false) {
+  const el = document.getElementById('rm-status');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isError ? '#f87171' : '#64748b';
+}
+
+function rmFmtTime(t) {
+  return t || '—';
+}
+
+async function rmLoadAll() {
+  const [pools, snRecs, ngRecs, dupRecs, stats] = await Promise.all([
+    apiFetch('/pools'),
+    apiFetch('/sn_records?limit=500'),
+    apiFetch('/ng_pool?limit=500'),
+    apiFetch('/dup_pool?limit=500'),
+    apiFetch('/stats'),
+  ]);
+
+  if (pools.error) { rmSetStatus('⚠ ' + pools.error, true); return; }
+
+  // Stats
+  const s = stats || {};
+  document.getElementById('rm-total').textContent = s.total ?? 0;
+  document.getElementById('rm-pass').textContent  = s.pass ?? 0;
+  document.getElementById('rm-fail').textContent  = s.fail ?? 0;
+  document.getElementById('rm-dup').textContent   = s.dup ?? 0;
+  document.getElementById('rm-sn-count').textContent  = pools.sn_pool_count ?? 0;
+  document.getElementById('rm-ng-count').textContent  = pools.ng_pool_count ?? 0;
+  document.getElementById('rm-dup-count').textContent = pools.dup_pool_count ?? 0;
+
+  // SN records
+  const snBadge = document.getElementById('rm-sn-count-badge');
+  if (snBadge) snBadge.textContent = (snRecs.length || 0) + ' 条';
+  const snTbody = document.getElementById('rm-sn-tbody');
+  snTbody.innerHTML = (snRecs || []).map(r => `
+    <tr>
+      <td style="font-family:Consolas;font-size:10px;color:#38bdf8">${escHtml(r.sn||'?')}</td>
+      <td><span style="color:${r.result==='PASS'?'#4ade80':'#f87171'};font-size:10px">${r.result||'?'}</span></td>
+      <td style="font-size:10px;color:#64748b">${rmFmtTime(r.time)}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.source||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.station||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.line_name||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.operator||'')}</td>
+      <td><button class="btn btn-sm" style="padding:1px 6px;font-size:10px;background:#374151;color:#f87171" onclick="rmDelSn('${encodeURIComponent(r.sn||'')}')">✕</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="8" style="color:#64748b;text-align:center;padding:12px">— 暂无记录 —</td></tr>';
+
+  // NG pool
+  const ngBadge = document.getElementById('rm-ng-count-badge');
+  if (ngBadge) ngBadge.textContent = (ngRecs || []).length + ' 条';
+  const ngTbody = document.getElementById('rm-ng-tbody');
+  ngTbody.innerHTML = (ngRecs || []).map(r => `
+    <tr>
+      <td style="font-family:Consolas;font-size:10px;color:#f87171">${escHtml(r.sn||'?')}</td>
+      <td style="font-size:10px;color:#64748b">${rmFmtTime(r.time)}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.station||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.line_name||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.operator||'')}</td>
+      <td><button class="btn btn-sm" style="padding:1px 6px;font-size:10px;background:#374151;color:#4ade80" onclick="rmDelNg('${encodeURIComponent(r.sn||'')}')">✕</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" style="color:#64748b;text-align:center;padding:12px">— NG 池为空 —</td></tr>';
+
+  // DUP pool
+  const dupBadge = document.getElementById('rm-dup-count-badge');
+  if (dupBadge) dupBadge.textContent = (dupRecs || []).length + ' 条';
+  const dupTbody = document.getElementById('rm-dup-tbody');
+  dupTbody.innerHTML = (dupRecs || []).map(r => `
+    <tr>
+      <td style="font-family:Consolas;font-size:10px;color:#fbbf24">${escHtml(r.sn||'?')}</td>
+      <td style="font-size:10px;color:#64748b">${rmFmtTime(r.time)}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.station||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.line_name||'')}</td>
+      <td style="font-size:10px;color:#64748b">${escHtml(r.operator||'')}</td>
+      <td><button class="btn btn-sm" style="padding:1px 6px;font-size:10px;background:#374151;color:#4ade80" onclick="rmDelDup('${encodeURIComponent(r.sn||'')}')">✕</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" style="color:#64748b;text-align:center;padding:12px">— DUP 池为空 —</td></tr>';
+
+  rmSetStatus('已刷新 ' + new Date().toLocaleTimeString('zh-CN', {hour12:false}));
+}
+
+async function rmRefreshAll() {
+  rmSetStatus('刷新中...');
+  await rmLoadAll();
+}
+
+async function rmAddNg() {
+  const sn = document.getElementById('rm-ng-input').value.trim().toUpperCase();
+  if (!sn) return;
+  const r = await apiFetch('/ng_pool', { method: 'POST', body: { sn, source: 'manual' } });
+  if (r.error) { rmSetStatus('⚠ ' + r.error, true); return; }
+  document.getElementById('rm-ng-input').value = '';
+  rmSetStatus('已添加 NG: ' + sn);
+  await rmLoadAll();
+}
+
+async function rmAddDup() {
+  const sn = document.getElementById('rm-dup-input').value.trim().toUpperCase();
+  if (!sn) return;
+  const r = await apiFetch('/dup_pool', { method: 'POST', body: { sn } });
+  if (r.error) { rmSetStatus('⚠ ' + r.error, true); return; }
+  document.getElementById('rm-dup-input').value = '';
+  rmSetStatus('已添加 DUP: ' + sn);
+  await rmLoadAll();
+}
+
+async function rmDelSn(sn) {
+  if (!confirm('删除 SN 记录: ' + sn + '?')) return;
+  await apiFetch('/sn_records/' + encodeURIComponent(sn), { method: 'DELETE' });
+  rmSetStatus('已删除: ' + sn);
+  await rmLoadAll();
+}
+
+async function rmDelNg(sn) {
+  if (!confirm('从 NG 池移除: ' + sn + '?')) return;
+  await apiFetch('/ng_pool/' + encodeURIComponent(sn), { method: 'DELETE' });
+  rmSetStatus('已移除 NG: ' + decodeURIComponent(sn));
+  await rmLoadAll();
+}
+
+async function rmDelDup(sn) {
+  if (!confirm('从 DUP 池移除: ' + sn + '?')) return;
+  await apiFetch('/dup_pool/' + encodeURIComponent(sn), { method: 'DELETE' });
+  rmSetStatus('已移除 DUP: ' + decodeURIComponent(sn));
+  await rmLoadAll();
+}
+
+async function rmClearSn() {
+  if (!confirm('清空所有 SN 记录？')) return;
+  const recs = await apiFetch('/sn_records');
+  for (const r of (recs || [])) {
+    await apiFetch('/sn_records/' + encodeURIComponent(r.sn), { method: 'DELETE' });
+  }
+  rmSetStatus('已清空 SN 记录');
+  await rmLoadAll();
+}
+
+async function rmResetAll() {
+  if (!confirm('⚠ 确认清空所有池和记录？此操作不可撤销！')) return;
+  rmSetStatus('清空中...');
+  await apiFetch('/reset', { method: 'POST' });
+  rmSetStatus('已清空全部池和记录');
+  await rmLoadAll();
+}
+
+async function rmBatchAddNg() {
+  const text = document.getElementById('rm-batch-sn').value.trim();
+  if (!text) return;
+  const sns = text.split('\n').map(s => s.trim().toUpperCase()).filter(Boolean);
+  if (!sns.length) return;
+  const ops = sns.map(sn => ({ op: 'add_ng', sn, source: 'batch' }));
+  const r = await apiFetch('/batch', { method: 'POST', body: { ops } });
+  document.getElementById('rm-batch-sn').value = '';
+  const ok = (r.results || []).filter(x => x.ok).length;
+  rmSetStatus(`批量添加 NG: ${ok}/${sns.length} 成功`);
+  await rmLoadAll();
+}
+
+async function rmBatchAddDup() {
+  const text = document.getElementById('rm-batch-sn').value.trim();
+  if (!text) return;
+  const sns = text.split('\n').map(s => s.trim().toUpperCase()).filter(Boolean);
+  if (!sns.length) return;
+  const ops = sns.map(sn => ({ op: 'add_dup', sn }));
+  const r = await apiFetch('/batch', { method: 'POST', body: { ops } });
+  document.getElementById('rm-batch-sn').value = '';
+  const ok = (r.results || []).filter(x => x.ok).length;
+  rmSetStatus(`批量添加 DUP: ${ok}/${sns.length} 成功`);
+  await rmLoadAll();
+}
+
+function rmFilterSn() {
+  const q = document.getElementById('rm-sn-search').value.toUpperCase();
+  const rows = document.querySelectorAll('#rm-sn-tbody tr');
+  rows.forEach(tr => {
+    const sn = tr.cells[0]?.textContent || '';
+    tr.style.display = q && !sn.includes(q) ? 'none' : '';
+  });
+}
+
+/** Load raw SQLite table data into the resource manager tab */
+async function rmLoadSqliteTable() {
+  const sel = document.getElementById('rm-sqlite-table');
+  const table = sel.value;
+  const head = document.getElementById('rm-sqlite-head');
+  const body = document.getElementById('rm-sqlite-body');
+  const info = document.getElementById('rm-sqlite-info');
+  head.innerHTML = '';
+  body.innerHTML = '';
+  if (!table) { info.textContent = ''; return; }
+  info.textContent = '加载中...';
+  try {
+    const endpoints = {
+      sn_records:     '/sn_records?limit=200',
+      ng_pool:        '/ng_pool?limit=200',
+      dup_pool:       '/dup_pool?limit=200',
+      stats:          '/stats',
+      station_config: '/config/station',
+    };
+    const path = endpoints[table];
+    if (!path) { info.textContent = '❌ 未知表'; return; }
+    const res = await apiFetch(path);
+    if (!res || res.error) { info.textContent = '❌ ' + (res?.error || '请求失败'); return; }
+    let data;
+    if (table === 'stats' || table === 'station_config') {
+      data = Array.isArray(res) ? res : [res];
+    } else if (Array.isArray(res)) {
+      data = res;
+    } else if (res.records && Array.isArray(res.records)) {
+      data = res.records;
+    } else {
+      data = [res];
+    }
+    if (data.length === 0) {
+      head.innerHTML = '<tr><th style="color:#64748b;font-weight:normal">— 空表 —</th></tr>';
+      body.innerHTML = '';
+      info.textContent = '0 条记录';
+      return;
+    }
+    const cols = Object.keys(data[0]);
+    head.innerHTML = '<tr>' + cols.map(c => '<th>' + escHtml(c) + '</th>').join('') + '</tr>';
+    body.innerHTML = data.map(row =>
+      '<tr>' + cols.map(c => {
+        let v = row[c]; if (v === null || v === undefined) v = '—'; else v = String(v);
+        return '<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">' + escHtml(v) + '</td>';
+      }).join('') + '</tr>'
+    ).join('');
+    info.textContent = data.length + ' 条记录';
+  } catch(e) {
+    info.textContent = '❌ ' + e.message;
+    head.innerHTML = '';
+    body.innerHTML = '';
+  }
+}
+
+// ================================================================
+// DATA SOURCE VIEWER — resource viewer for MySQL/SQLite/SQL Server/Excel
+// ================================================================
+let DS_CONN_ID = null;
+let DS_TYPE = '';
+let DS_EXCEL_WB = null;
+let DS_TABLES = [];
+
+function dsOnTypeChange() {
+  const sel = document.getElementById('ds-type');
+  DS_TYPE = sel.value;
+  const panel = document.getElementById('ds-config-panel');
+  const form = document.getElementById('ds-config-form');
+  const excelSection = document.getElementById('ds-excel-section');
+  const tablesSection = document.getElementById('ds-tables-section');
+  const dataSection = document.getElementById('ds-data-section');
+
+  panel.style.display = 'none';
+  excelSection.style.display = 'none';
+  tablesSection.style.display = 'none';
+  dataSection.style.display = 'none';
+  dsDisconnectSilent();
+  if (!DS_TYPE) return;
+
+  document.getElementById('ds-config-title').textContent = {
+    mysql: 'MySQL 连接配置',
+    sqlserver: 'SQL Server 连接配置',
+    sqlite: 'SQLite 文件配置',
+    excel: 'Excel 文件'
+  }[DS_TYPE] || '连接配置';
+
+  panel.style.display = 'block';
+  if (DS_TYPE === 'sqlite' || DS_TYPE === 'excel') {
+    const isExcel = DS_TYPE === 'excel';
+    const placeholders = isExcel
+      ? { path: 'D:\\reports\\test_report.xlsx', btn: '📂 打开' }
+      : { path: 'D:\\data\\example.db', btn: '🔗 连接' };
+    document.getElementById('ds-config-title').textContent = isExcel ? 'Excel 文件路径' : 'SQLite 文件路径';
+    form.innerHTML = '<div class="ds-form-row"><label>文件路径</label>' +
+      '<input class="ds-input" id="ds-filepath" style="flex:1" placeholder="' + placeholders.path + '"></div>';
+    document.getElementById('ds-connect-btn').textContent = placeholders.btn;
+  } else {
+    const defPort = DS_TYPE === 'mysql' ? '3306' : '1433';
+    const defUser = DS_TYPE === 'mysql' ? 'root' : 'sa';
+    form.innerHTML =
+      '<div class="ds-form-row"><label>主机</label>' +
+      '<input class="ds-input" id="ds-host" style="flex:1" placeholder="localhost" value="localhost">' +
+      '<label>端口</label>' +
+      '<input class="ds-input" id="ds-port" style="width:80px" value="' + defPort + '"></div>' +
+      '<div class="ds-form-row"><label>用户</label>' +
+      '<input class="ds-input" id="ds-user" style="flex:1" value="' + defUser + '">' +
+      '<label>密码</label>' +
+      '<input class="ds-input" id="ds-password" type="password" style="flex:1" placeholder="密码"></div>' +
+      '<div class="ds-form-row"><label>数据库</label>' +
+      '<input class="ds-input" id="ds-database" style="flex:1" placeholder="数据库名"></div>';
+  }
+  document.getElementById('ds-connect-btn').style.display = '';
+  document.getElementById('ds-disconnect-btn').style.display = 'none';
+  dsSetStatus('off', '未连接');
+}
+
+function dsSetStatus(state, msg) {
+  const el = document.getElementById('ds-conn-status');
+  el.className = 'ds-conn-status ds-conn-' + state;
+  el.textContent = msg;
+}
+
+function dsBusy(show) {
+  const btn = document.getElementById('ds-connect-btn');
+  btn.disabled = show;
+  btn.textContent = show ? '⏳ 连接中...' : '🔗 连接';
+}
+
+function dsLocalFetch(path, opts = {}) {
+  const timeout = opts.timeout || 4000;
+  return fetch(API_LOCAL + path, {
+    method: opts.method || 'GET',
+    headers: { 'Content-Type': 'application/json', ...opts.headers },
+    body: opts.body ? JSON.stringify(opts.body) : undefined,
+    signal: opts.signal || AbortSignal.timeout(timeout),
+  }).then(r => r.json()).catch(e => ({ error: '请求失败: ' + e.message }));
+}
+
+function dsDisconnectSilent() {
+  if (DS_CONN_ID) { dsLocalFetch('/db/disconnect', { method: 'POST', body: { conn_id: DS_CONN_ID } }); DS_CONN_ID = null; }
+  DS_TABLES = [];
+}
+
+async function dsConnect() {
+  const type = DS_TYPE;
+  if (!type) return;
+  let config = {};
+  if (type === 'sqlite' || type === 'excel') {
+    config.filepath = document.getElementById('ds-filepath').value.trim();
+    if (!config.filepath) { dsSetStatus('err', '请输入文件路径'); return; }
+  } else {
+    config.host = document.getElementById('ds-host').value.trim() || 'localhost';
+    config.port = document.getElementById('ds-port').value.trim() || (type === 'mysql' ? '3306' : '1433');
+    config.user = document.getElementById('ds-user').value.trim() || (type === 'mysql' ? 'root' : 'sa');
+    config.password = document.getElementById('ds-password').value;
+    config.database = document.getElementById('ds-database').value.trim();
+  }
+  dsBusy(true);
+  const r = await dsLocalFetch('/db/connect', { method: 'POST', body: { type, config } });
+  dsBusy(false);
+  if (r.error) { dsSetStatus('err', '连接失败: ' + r.error); return; }
+
+  DS_CONN_ID = r.conn_id;
+  DS_TABLES = r.tables || [];
+  dsSetStatus('ok', '已连接 (' + type + ')');
+  document.getElementById('ds-connect-btn').style.display = 'none';
+  document.getElementById('ds-disconnect-btn').style.display = '';
+
+  const tablesSection = document.getElementById('ds-tables-section');
+  tablesSection.style.display = 'block';
+  const infoText = type === 'sqlite'
+    ? '📁 ' + (config.filepath || '') + ' — ' + DS_TABLES.length + ' 个表'
+    : '🗄️ ' + (config.database || '') + ' — ' + DS_TABLES.length + ' 个表';
+  document.getElementById('ds-tables-info').textContent = infoText;
+
+  const grid = document.getElementById('ds-tables-grid');
+  grid.innerHTML = DS_TABLES.map(t =>
+    '<div class="ds-table-card" onclick="dsLoadTable(\'' + escHtml(t) + '\', this)">' +
+    '<span class="ds-tbl-icon">📋</span>' + escHtml(t) + '</div>'
+  ).join('');
+}
+
+async function dsDisconnect() {
+  dsDisconnectSilent();
+  document.getElementById('ds-tables-section').style.display = 'none';
+  document.getElementById('ds-data-section').style.display = 'none';
+  document.getElementById('ds-connect-btn').style.display = '';
+  document.getElementById('ds-disconnect-btn').style.display = 'none';
+  dsSetStatus('off', '未连接');
+}
+
+async function dsLoadTable(tableName, el) {
+  if (!DS_CONN_ID) return;
+  document.querySelectorAll('.ds-table-card').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  const r = await dsLocalFetch('/db/query', { method: 'POST', body: { conn_id: DS_CONN_ID, sql: 'SELECT * FROM "' + tableName + '" LIMIT 200' } });
+  const dataSection = document.getElementById('ds-data-section');
+  dataSection.style.display = 'block';
+
+  if (r.error) { document.getElementById('ds-data-info').textContent = '⚠ ' + r.error; return; }
+  const rows = r.rows || [];
+  document.getElementById('ds-data-info').textContent = '📋 ' + escHtml(tableName);
+  document.getElementById('ds-data-count').textContent = r.count + ' 行';
+
+  if (!rows.length) {
+    document.getElementById('ds-data-thead').innerHTML = '';
+    document.getElementById('ds-data-tbody').innerHTML = '<tr><td style="color:#64748b;text-align:center;padding:24px">— 无数据 —</td></tr>';
+    return;
+  }
+  const cols = Object.keys(rows[0]);
+  document.getElementById('ds-data-thead').innerHTML = '<tr>' + cols.map(c => '<th>' + escHtml(c) + '</th>').join('') + '</tr>';
+  document.getElementById('ds-data-tbody').innerHTML = rows.map(row =>
+    '<tr>' + cols.map(c => '<td title="' + escHtml(String(row[c] ?? '')) + '">' + escHtml(String(row[c] ?? '')) + '</td>').join('') + '</tr>'
+  ).join('');
+}
+
+function dsInit() {
+  DS_CONN_ID = null; DS_TYPE = ''; DS_EXCEL_WB = null; DS_TABLES = [];
+  document.getElementById('ds-type').value = '';
+  document.getElementById('ds-config-panel').style.display = 'none';
+  document.getElementById('ds-tables-section').style.display = 'none';
+  document.getElementById('ds-data-section').style.display = 'none';
+  dsSetStatus('off', '未连接');
+}
+
+// ================================================================
+// INIT
+// ================================================================
+async function init() {
+  // Capture startup time
+  window.START_TIME = new Date();
+  displayTimes();
+
+  // Show last shutdown time from localStorage
+  const shutdownTime = localStorage.getItem('site_shutdown_time');
+  if (shutdownTime) {
+    document.getElementById('mon-shutdown-time').textContent = shutdownTime;
+  }
+
+  // Save shutdown time before page unload
+  window.addEventListener('beforeunload', function() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    localStorage.setItem('site_shutdown_time',
+      now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate()) + ' ' +
+      pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds()));
+  });
+
+  // Restore lang immediately (needed for login overlay text)
+  const savedLang = localStorage.getItem('site_lang') || 'zh';
+  LANG = savedLang;
+  setLang(savedLang);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === savedLang);
+  });
+
+  // Check if operator already logged in (from localStorage)
+  let savedOperator = '';
+  try {
+    const savedCfg = JSON.parse(localStorage.getItem('site_config') || '{}');
+    savedOperator = savedCfg.operator || '';
+    // Restore other config fields
+    ['cfg-mes-api','cfg-mes-station','cfg-mes-operator','cfg-excel-folder','cfg-station','cfg-line','cfg-operator'].forEach(id => {
+      const el = document.getElementById(id);
+      const key = id.replace('cfg-','');
+      if (el && savedCfg[key]) el.value = savedCfg[key];
+    });
+  } catch(e) {}
+
+  // Restore MES toggle
+  MES_ON = localStorage.getItem('site_mes_on') !== '0';
+  const mesBtn = document.getElementById('mes-toggle');
+  if (mesBtn) {
+    mesBtn.textContent = MES_ON ? 'ON' : 'OFF';
+    mesBtn.style.background = MES_ON ? '#16a34a' : '#dc2626';
+    mesBtn.style.color = '#fff';
+  }
+
+  // Login gate: if no operator saved, show login overlay BEFORE continuing
+  if (!savedOperator) {
+    showLogin();
+  }
+
+  // Background init (runs in parallel with login if needed)
+  const bgInit = async () => {
+    // Auto-detect device name from running directory
+    const autoCfg = await autoDetectDeviceName();
+    if (autoCfg) {
+      STATION_CFG.device_name = autoCfg.device_name;
+      document.getElementById('mon-device-name').textContent = autoCfg.device_name;
+      // Pre-fill with auto-detected values (may be overridden by backend config below)
+      if (!document.getElementById('cfg-station').value) {
+        STATION_CFG.station = autoCfg.station;
+        STATION_CFG.line_name = autoCfg.line_name;
+      }
+    }
+
+    // Load station config from backend if available
+    try {
+      const cfg = await dsLocalFetch('/config/station');
+      if (cfg && !cfg.error) {
+        // Don't overwrite operator if user already logged in via loginConfirm (race guard)
+        const alreadyLoggedIn = LOGIN_EMPLOYEE !== null && STATION_CFG.operator;
+        STATION_CFG.station = cfg.station || STATION_CFG.station;
+        STATION_CFG.line_name = cfg.line_name || STATION_CFG.line_name;
+        if (!alreadyLoggedIn) {
+          STATION_CFG.operator = cfg.operator || savedOperator || '—';
+          document.getElementById('mon-operator').textContent = STATION_CFG.operator;
+        }
+        document.getElementById('mon-station').textContent = STATION_CFG.station;
+        document.getElementById('mon-line').textContent = STATION_CFG.line_name;
+        if (cfg.station) document.getElementById('cfg-station').value = cfg.station;
+        if (cfg.line_name) document.getElementById('cfg-line').value = cfg.line_name;
+        if (cfg.operator) document.getElementById('cfg-operator').value = cfg.operator;
+        // If operator already exists from backend and not yet logged in, skip login
+        if (cfg.operator && !savedOperator && !alreadyLoggedIn) {
+          savedOperator = cfg.operator;
+          LOGIN_EMPLOYEE = { id: cfg.operator, name: cfg.operator, raw: cfg.operator };
+          hideLogin();
+        }
+        updateLogoutBtn();
+        updateIdleUI();
+      }
+    } catch(e) {}
+
+    // Load station IPs
+    try {
+      const savedIps = JSON.parse(localStorage.getItem('site_station_ips') || '{}');
+      if (savedIps.ip_prev) document.getElementById('ip-prev').value = savedIps.ip_prev;
+      if (savedIps.ip_current) document.getElementById('ip-current').value = savedIps.ip_current;
+      if (savedIps.ip_next) document.getElementById('ip-next').value = savedIps.ip_next;
+    } catch(e) {}
+    // Also try loading from backend
+    try {
+      const backendIps = await dsLocalFetch('/api/station/ips');
+      if (backendIps && !backendIps.error) {
+        if (backendIps.ip_prev) document.getElementById('ip-prev').value = backendIps.ip_prev;
+        if (backendIps.ip_current) document.getElementById('ip-current').value = backendIps.ip_current;
+        if (backendIps.ip_next) document.getElementById('ip-next').value = backendIps.ip_next;
+      }
+    } catch(e) {}
+
+    // Auto-fill prev/next from current IP if current is set but others missing
+    const ipCurrent = document.getElementById('ip-current').value;
+    const ipPrev = document.getElementById('ip-prev').value;
+    const ipNext = document.getElementById('ip-next').value;
+    if (ipCurrent && (!ipPrev || !ipNext)) {
+      const p = ipCurrent.split('.');
+      if (p.length === 4) {
+        const base = p.slice(0, 3).join('.');
+        const last = parseInt(p[3], 10);
+        if (!ipPrev) document.getElementById('ip-prev').value = base + '.' + (last - 1);
+        if (!ipNext) document.getElementById('ip-next').value = base + '.' + (last + 1);
+        await saveStationIps();
+      }
+    }
+    // Auto-detect station IP if not configured yet (also fills prev/next +1/-1)
+    if (!ipCurrent) {
+      await autoDetectStationIp();
+    }
+
+    // Sync IP config into quick IP panel
+    loadQuickIp();
+
+    // Init IndexedDB (local cache)
+    try { await initDB(); } catch(e) { appendLog('IndexedDB 初始化失败: ' + e.message); }
+
+    // Load pools from helper backend (primary source)
+    try {
+      const poolData = await apiFetch('/pools');
+      if (poolData && !poolData.error && poolData.sn_pool) {
+        poolData.sn_pool.forEach(sn => POOL_SN.add(sn));
+        poolData.ng_pool.forEach(sn => POOL_NG.add(sn));
+        poolData.dup_pool.forEach(sn => POOL_DUP.add(sn));
+      }
+    } catch(e) { appendLog('后台池加载失败: ' + (e.message || e)); }
+
+    // Supplement from IndexedDB (backfill any records the backend missed)
+    try {
+      const snRecords = await dbAll('sn_records');
+      snRecords.forEach(r => { if (r.result === 'PASS') POOL_SN.add(r.sn); });
+      const ngRecords = await dbAll('ng_pool');
+      ngRecords.forEach(r => POOL_NG.add(r.sn));
+    } catch(e) {}
+
+    // Tabs
+    renderInstructions();
+    renderStartup();
+    applyI18n();
+
+    // BroadcastChannel (replaces SSE)
+    initBroadcastChannel();
+
+    // TCP scanner WebSocket bridge (port 1003)
+    connectTcpScanner();
+
+    // Station chain
+    loadStationChain();
+    // Load saved IPs into quick bar
+    (function() {
+      let si = { ip_prev: '', ip_current: '', ip_next: '' };
+      try { si = JSON.parse(localStorage.getItem('site_station_ips') || '{}'); } catch(e) {}
+      updateQuickIpLabel(si.ip_prev, si.ip_current, si.ip_next);
+    })();
+    // Auto-start status
+    loadAutoStartStatus();
+
+    // Update UI with restored state
+    updateStatsUI();
+
+    appendLog('质量监控中心已启动（纯JS版）');
+    appendLog('MES: ' + (MES_ON ? 'ON' : 'OFF'));
+  };
+
+  // Run background init
+  bgInit();
+
+  // Heartbeat starts immediately (not inside bgInit, so it's not blocked by backend timeout)
+  startHeartbeat();
+
+  // Device status reporting
+  startDeviceStatusReport();
+
+  // If operator already exists, skip login overlay
+  if (savedOperator) {
+    LOGIN_EMPLOYEE = { id: savedOperator, name: savedOperator, raw: savedOperator };
+    updateLogoutBtn();
+    // Speak startup only for auto-login
+    setTimeout(() => {
+      const msgs = {zh:'系统正常，请扫码', vi:'He thong binh thuong, vui long quet ma', en:'System normal, please scan the code'};
+      speak(msgs[LANG], 'normal');
+    }, 1500);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

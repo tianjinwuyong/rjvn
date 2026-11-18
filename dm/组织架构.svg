@@ -1,0 +1,147 @@
+<svg width="1000" height="650" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .org-box { fill: #ffffff; stroke: #333333; stroke-width: 1; }
+      .solid-line { stroke: #333333; stroke-width: 1.5; }
+      .dashed-line { stroke: #333333; stroke-width: 1.5; stroke-dasharray: 4 2; }
+      .dept-text { font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; }
+      .small-text { font-family: Arial, sans-serif; font-size: 10px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- 公司总负责人 -->
+  <rect x="420" y="30" width="120" height="50" class="org-box"/>
+  <text x="480" y="52" class="dept-text">公司总负责人</text>
+  <text x="480" y="68" class="small-text">深圳：张先生</text>
+
+  <!-- 连线到华南工厂 -->
+  <line x1="480" y1="80" x2="480" y2="100" class="solid-line"/>
+
+  <!-- 华南工厂 -->
+  <rect x="420" y="100" width="120" height="50" class="org-box"/>
+  <text x="480" y="122" class="dept-text">华南工厂</text>
+  <text x="480" y="138" class="small-text">总负责人：赵明军</text>
+
+  <!-- 主分支连接线 -->
+  <line x1="480" y1="150" x2="120" y2="180" class="solid-line"/>
+  <line x1="480" y1="150" x2="280" y2="180" class="solid-line"/>
+  <line x1="480" y1="150" x2="440" y2="180" class="solid-line"/>
+  <line x1="480" y1="150" x2="640" y2="180" class="solid-line"/>
+  <line x1="480" y1="150" x2="800" y2="180" class="solid-line"/>
+
+  <!-- 生产部 -->
+  <rect x="60" y="180" width="120" height="50" class="org-box"/>
+  <text x="120" y="202" class="dept-text">生产部</text>
+  <text x="120" y="218" class="small-text">负责人：***(精干)</text>
+
+  <!-- 生产部下属 -->
+  <line x1="120" y1="230" x2="60" y2="260" class="solid-line"/>
+  <line x1="120" y1="230" x2="100" y2="260" class="solid-line"/>
+  <line x1="120" y1="230" x2="140" y2="260" class="solid-line"/>
+
+  <rect x="40" y="260" width="40" height="180" class="org-box"/>
+  <text x="60" y="350" class="small-text" transform="rotate(-90, 60, 350)">SMT组长1人</text>
+
+  <rect x="85" y="260" width="40" height="180" class="org-box"/>
+  <text x="105" y="350" class="small-text" transform="rotate(-90, 105, 350)">自动/线线组长1人</text>
+
+  <rect x="130" y="260" width="40" height="180" class="org-box"/>
+  <text x="150" y="350" class="small-text" transform="rotate(-90, 150, 350)">文员/考勤1人</text>
+
+  <!-- 工程部 -->
+  <rect x="220" y="180" width="120" height="50" class="org-box"/>
+  <text x="280" y="202" class="dept-text">工程部</text>
+  <text x="280" y="218" class="small-text">负责人：黎管(中干) 钟玉勤(精干)</text>
+
+  <!-- 工程部下属 -->
+  <line x1="280" y1="230" x2="200" y2="260" class="solid-line"/>
+  <line x1="280" y1="230" x2="240" y2="260" class="solid-line"/>
+  <line x1="280" y1="230" x2="280" y2="260" class="solid-line"/>
+  <line x1="280" y1="230" x2="320" y2="260" class="solid-line"/>
+  <line x1="280" y1="230" x2="360" y2="260" class="solid-line"/>
+
+  <rect x="190" y="260" width="40" height="180" class="org-box"/>
+  <text x="210" y="350" class="small-text" transform="rotate(-90, 210, 350)">PE/维修1人</text>
+
+  <rect x="235" y="260" width="40" height="180" class="org-box"/>
+  <text x="255" y="350" class="small-text" transform="rotate(-90, 255, 350)">SMT技术负责人</text>
+
+  <rect x="280" y="260" width="40" height="180" class="org-box"/>
+  <text x="300" y="350" class="small-text" transform="rotate(-90, 300, 350)">TE 1人</text>
+
+  <rect x="325" y="260" width="40" height="180" class="org-box"/>
+  <text x="345" y="350" class="small-text" transform="rotate(-90, 345, 350)">ME 2人</text>
+
+  <rect x="370" y="260" width="40" height="180" class="org-box"/>
+  <text x="390" y="350" class="small-text" transform="rotate(-90, 390, 350)">系统维护</text>
+
+  <!-- 工程部虚线到总部支援 -->
+  <line x1="255" y1="440" x2="255" y2="500" class="dashed-line"/>
+  <rect x="235" y="500" width="40" height="80" class="org-box" fill="#cce5ff"/>
+  <text x="255" y="545" class="small-text" transform="rotate(-90, 255, 545)">总部支援1人</text>
+
+  <line x1="300" y1="440" x2="300" y2="500" class="dashed-line"/>
+  <rect x="280" y="500" width="40" height="80" class="org-box" fill="#cce5ff"/>
+  <text x="300" y="545" class="small-text" transform="rotate(-90, 300, 545)">总部支援1人</text>
+
+  <line x1="345" y1="440" x2="345" y2="500" class="dashed-line"/>
+  <rect x="325" y="500" width="40" height="80" class="org-box" fill="#cce5ff"/>
+  <text x="345" y="545" class="small-text" transform="rotate(-90, 345, 545)">总部支援1人</text>
+
+  <!-- 品质部 -->
+  <rect x="380" y="180" width="120" height="50" class="org-box"/>
+  <text x="440" y="202" class="dept-text">品质部</text>
+  <text x="440" y="218" class="small-text">负责人：***(中干) ***（精干）</text>
+
+  <!-- 品质部下属 -->
+  <line x1="440" y1="230" x2="400" y2="260" class="solid-line"/>
+  <line x1="440" y1="230" x2="430" y2="260" class="solid-line"/>
+  <line x1="440" y1="230" x2="460" y2="260" class="solid-line"/>
+  <line x1="440" y1="230" x2="490" y2="260" class="solid-line"/>
+  <line x1="440" y1="230" x2="520" y2="260" class="solid-line"/>
+  <line x1="440" y1="230" x2="550" y2="260" class="solid-line"/>
+
+  <rect x="390" y="260" width="30" height="180" class="org-box"/>
+  <text x="405" y="350" class="small-text" transform="rotate(-90, 405, 350)">IQC 2人</text>
+
+  <rect x="425" y="260" width="30" height="180" class="org-box"/>
+  <text x="440" y="350" class="small-text" transform="rotate(-90, 440, 350)">IPQC 1人</text>
+
+  <rect x="460" y="260" width="30" height="180" class="org-box"/>
+  <text x="475" y="350" class="small-text" transform="rotate(-90, 475, 350)">OQC 2人</text>
+
+  <rect x="495" y="260" width="30" height="180" class="org-box"/>
+  <text x="510" y="350" class="small-text" transform="rotate(-90, 510, 350)">PQC 1人</text>
+
+  <rect x="530" y="260" width="30" height="180" class="org-box"/>
+  <text x="545" y="350" class="small-text" transform="rotate(-90, 545, 350)">体系管理</text>
+
+  <!-- 供应货部 -->
+  <rect x="580" y="180" width="120" height="50" class="org-box"/>
+  <text x="640" y="202" class="dept-text">供应货部</text>
+  <text x="640" y="218" class="small-text">负责人：Tina(越南)</text>
+
+  <!-- 供应货部下属 -->
+  <line x1="640" y1="230" x2="610" y2="260" class="solid-line"/>
+  <line x1="640" y1="230" x2="650" y2="260" class="solid-line"/>
+  <line x1="640" y1="230" x2="690" y2="260" class="solid-line"/>
+
+  <rect x="600" y="260" width="30" height="180" class="org-box"/>
+  <text x="615" y="350" class="small-text" transform="rotate(-90, 615, 350)">PC/MC 1人</text>
+
+  <rect x="640" y="260" width="30" height="180" class="org-box"/>
+  <text x="655" y="350" class="small-text" transform="rotate(-90, 655, 350)">材料仓管员1人</text>
+
+  <rect x="680" y="260" width="30" height="180" class="org-box"/>
+  <text x="695" y="350" class="small-text" transform="rotate(-90, 695, 350)">成品仓管员1人</text>
+
+  <!-- 财务部 -->
+  <rect x="760" y="180" width="120" height="50" class="org-box"/>
+  <text x="820" y="202" class="dept-text">财务部</text>
+  <text x="820" y="218" class="small-text">负责人：</text>
+
+  <!-- 财务部下属 -->
+  <line x1="820" y1="230" x2="820" y2="260" class="solid-line"/>
+  <rect x="800" y="260" width="40" height="180" class="org-box"/>
+  <text x="820" y="350" class="small-text" transform="rotate(-90, 820, 350)">会计/出纳</text>
+</svg>

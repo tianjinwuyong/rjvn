@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "shared": ["foundation.identity","foundation.mes-connection","operations.health","operations.diagnostics","input.scanner","ui.language","security.authorization","production.product-gate","quality.alarm","quality.andon-escalation","quality.ng-closed-loop","quality.pickup-announcement","quality.repair","quality.retest","quality.policy-compliance","quality.scrap","operations.maintenance"],
+  "profiles": {
+    "pda": {"extra": []},
+    "aoi": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "ict": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "fct": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "depanel": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "shell-binding": {"extra": ["equipment.binding-adapter"]},
+    "assembly-ate": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "supersonic": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "aging": {"extra": ["production.result-ingestion","equipment.aging-adapter"]},
+    "hivolt-ate": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "package-ate": {"extra": ["production.result-ingestion","equipment.test-adapter"]},
+    "case-binding": {"extra": ["equipment.binding-adapter"]},
+    "pallet-binding": {"extra": ["equipment.binding-adapter"]},
+    "repair-station": {"extra": ["quality.repair-workbench","production.result-ingestion"]},
+    "incoming-inspection": {"extra": ["quality.incoming-inspection","production.result-ingestion"]}
+  },
+  "lines": {
+    "MANUAL": ["manu_pda:pda","manu_aio:aoi","manu_ict:ict","manu_fct:fct","manu_depanel:depanel","manu_shellbinding:shell-binding","manu_assem_ate:assembly-ate","manu_supersonic:supersonic","manu_agingcab:aging","manu_hivolt_ate:hivolt-ate","manu_package_ate:package-ate","manu_case_binding:case-binding","manu_pallet_binding:pallet-binding"],
+    "AUTO": ["auto_pda:pda","auto_aio:aoi","auto_ict:ict","auto_fct:fct","auto_depanel:depanel","auto_shellbinding:shell-binding","auto_assem_ate:assembly-ate","auto_supersonic:supersonic","auto_agingcab:aging","auto_hivolt_ate:hivolt-ate","auto_package_ate_left:package-ate","auto_package_ate_right:package-ate","auto_case_binding:case-binding","auto_pallet_binding:pallet-binding"],
+    "SHARED_SERVICE": ["repair_station:repair-station","incoming_inspection:incoming-inspection"]
+  }
+}

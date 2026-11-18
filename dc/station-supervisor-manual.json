@@ -1,0 +1,18 @@
+{
+  "policy": {"singleInstance": true, "restartLimit": 5, "restartWindowSeconds": 600, "maxBackoffSeconds": 60},
+  "stations": [
+    {"code":"pda_load","ip":"192.168.6.90","agent":"(01)PDA扫码上料/dist/pda_heartbeat_agent.exe","task":"RuijingPDASupervisor"},
+    {"code":"manu_aoi","ip":"192.168.6.90","agent":"(02)AOI质量工位/dist/aoi_heartbeat_agent.exe","task":"RuijingAOISupervisor"},
+    {"code":"manu_ict","ip":"192.168.6.91","agent":"(03)ICT/dist/ICT_Agent.exe","task":"RuijingICTSupervisor"},
+    {"code":"manu_fct","ip":"192.168.6.92","agent":"(04)FCT/dist/fct_agent.exe","task":"RuijingFCTSupervisor"},
+    {"code":"manu_depanel","ip":"192.168.6.93","agent":"(05)PCBA分板工位/dist/depanel.exe","task":"RuijingDepanelSupervisor"},
+    {"code":"manu_shellbinding","ip":"192.168.6.94","agent":"(06)PCBA外壳绑码/dist/qrbinding.exe","task":"RuijingShellBindingSupervisor"},
+    {"code":"manu_assem_ate","ip":"192.168.6.95","agent":"(07)组装ATE/dist/assembly_ate_agent.exe","task":"RuijingAssemblyATESupervisor"},
+    {"code":"manu_supersonic","ip":"192.168.6.96","agent":"(08)超声/dist/supersonic_agent.exe","task":"RuijingSupersonicSupervisor"},
+    {"code":"manu_agingcab","ip":"192.168.6.97","agent":"(09)成品老化/dist/aging_cab_agent.exe","task":"RuijingAgingSupervisor"},
+    {"code":"manu_hivolt_ate","ip":"192.168.6.98","agent":"(10)高压ATE/dist/hivolt_ate_agent.exe","task":"RuijingHighVoltATESupervisor"},
+    {"code":"manu_package_ate","ip":"192.168.6.99","agent":"(11)包装ATE/dist/packing_ate_agent.exe","task":"RuijingPackingATESupervisor"},
+    {"code":"manu_case_binding","ip":"192.168.6.100","agent":"(12)外箱绑码/dist/outer_box_binding_2d_agent.exe","task":"RuijingOuterBoxSupervisor"},
+    {"code":"manu_pallet_binding","ip":"192.168.6.161","agent":"(13)栈板绑码/dist/pallet_binding_2d_agent.exe","task":"RuijingPalletSupervisor"}
+  ]
+}

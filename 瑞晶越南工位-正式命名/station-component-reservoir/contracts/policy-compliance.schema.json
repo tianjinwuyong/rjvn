@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ruijing.local/contracts/policy-compliance-v1.schema.json",
+  "title": "Station policy compliance report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eventType", "eventId", "observedAtMs", "complianceState", "compliant", "violations", "domain", "lineCode", "stationCode", "hostIp", "agentVersion", "componentVersions"],
+  "properties": {
+    "eventType": {"const": "STATION_POLICY_COMPLIANCE"},
+    "eventId": {"type": "string", "minLength": 1},
+    "observedAtMs": {"type": "integer", "minimum": 1},
+    "complianceState": {"enum": ["COMPLIANT", "NON_COMPLIANT", "OFFLINE"]},
+    "compliant": {"type": "boolean"},
+    "violations": {"type": "array", "items": {"type": "string"}},
+    "domain": {"type": "string", "minLength": 1},
+    "lineCode": {"type": "string", "minLength": 1},
+    "stationCode": {"type": "string", "minLength": 1},
+    "hostIp": {"type": ["string", "null"]},
+    "agentVersion": {"type": ["string", "null"]},
+    "componentVersions": {"type": "object", "additionalProperties": {"type": "string"}},
+    "policyVersion": {"type": ["integer", "string", "null"]},
+    "routeRevision": {"type": ["integer", "string", "null"]}
+  }
+}

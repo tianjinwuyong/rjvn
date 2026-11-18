@@ -1,0 +1,137 @@
+﻿[
+    {
+        "spec":  "ICT_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(03)ICT\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(03)ICT\\dist\\Auto_ICT_Agent.exe",
+        "sha256":  "B00F79AD978666FC6378CA2A7F366E6F579DB7F7B35BC58DB8420742F5183240",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(03)ICT\\dist\\Auto_ICT_Agent.exe.20260807T062320Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "FCT_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(04)FCT\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(04)FCT\\dist\\Auto_FCT_Agent.exe",
+        "sha256":  "BB078094F719D85B048C70E2C1A20759A3E4A52B8DEC1A8C97BF02C0AA16F1A7",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(04)FCT\\dist\\Auto_FCT_Agent.exe.20260807T062419Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Depanel_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(05)PCBA分板工位\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(05)PCBA分板工位\\dist\\Auto_Depanel_Agent.exe",
+        "sha256":  "24A9C13E8E6FA5FD6B9484E715F5F644DA2C28118E5399C56AF18BA2FF77526A",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(05)PCBA分板工位\\dist\\Auto_Depanel_Agent.exe.20260807T062533Z.bak",
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(05)PCBA分板工位\\dist\\Camera_QR_To_Depanel.exe.20260807T062533Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "qrbinding_2d_win10.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(06)PCBA外壳绑码\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(06)PCBA外壳绑码\\dist\\qrbinding_2d_win10.exe",
+        "sha256":  "2E31479132006DBE398FFF4234DCD78B7F99AC7E5CB2B8831BAF8F1042FEBADC",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(06)PCBA外壳绑码\\dist\\qrbinding.exe.20260807T062650Z.bak",
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(06)PCBA外壳绑码\\dist\\qrbinding_2d_win10.exe.20260807T062650Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Auto_Assembly_ATE_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(07)组装ATE\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(07)组装ATE\\dist\\Auto_Assembly_ATE_Agent.exe",
+        "sha256":  "7528E010E162969A81C9C133010964DEE1DABC0922BCF9ED7E9451F71DE33A08",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(07)组装ATE\\dist\\Auto_Assembly_ATE_Agent.exe.20260807T062743Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Auto_Supersonic_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(08)超声\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(08)超声\\dist\\Auto_Supersonic_Agent.exe",
+        "sha256":  "809EEF35A3EB817D3E2102340589E0A4287D06AA580C555387AB00014BD0AA6D",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(08)超声\\dist\\Auto_Supersonic_Agent.exe.20260807T062855Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Auto_Aging_Cab_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(09)成品老化\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(09)成品老化\\dist\\Auto_Aging_Cab_Agent.exe",
+        "sha256":  "22ACE3096866F5B5EA77A956CDCBB5FB8FB7A42C19371F7D0A557689A66ADCEE",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(09)成品老化\\dist\\Auto_Aging_Cab_3D_Agent.exe.20260807T062946Z.bak",
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(09)成品老化\\dist\\Auto_Aging_Cab_Agent.exe.20260807T062946Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Auto_HighVolt_ATE_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(10)高压ATE\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(10)高压ATE\\dist\\Auto_HighVolt_ATE_Agent.exe",
+        "sha256":  "03BFFD2777BAECF76C9895107C0985FE085A984B8CABA6A5D02B9B3B88078CF8",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(10)高压ATE\\dist\\Auto_HighVolt_ATE_Agent.exe.20260807T062955Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Auto_Packing_ATE_Left_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(11)包装ATE左\\dist",
+        "exe":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(11)包装ATE左\\dist\\Auto_Packing_ATE_Left_Agent.exe",
+        "sha256":  "E2C7198C864C2BDEDBB9CC5A292E119BCD392EAB5C0E61A19D8143F4DF8DF11D",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(11)包装ATE左\\dist\\Auto_Packing_ATE_Left_Agent.exe.20260807T063109Z.bak"
+                   ],
+        "error":  null
+    },
+    {
+        "spec":  "Auto_Packing_ATE_Right_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(11)包装ATE右\\dist",
+        "exe":  "瑞晶越南工位-正式命名\\002-自动线\\(11)包装ATE右\\dist\\Auto_Packing_ATE_Right_Agent.exe",
+        "sha256":  "1A41D500EFDADA3B93075865BD40EFD8DC43652D1961B92AB81464E170251014",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(11)包装ATE右\\dist\\Auto_Packing_ATE_Right_Agent.exe.20260807T063221Z.bak"
+                   ],
+        "error":  ""
+    },
+    {
+        "spec":  "Auto_QRBinding_Agent.spec",
+        "status":  "SKIPPED",
+        "dist":  null,
+        "exe":  null,
+        "sha256":  null,
+        "backup":  [
+
+                   ],
+        "error":  "Spec not present: Auto_QRBinding_Agent.spec"
+    },
+    {
+        "spec":  "Auto_Pallet_Binding_Agent.spec",
+        "status":  "BUILT",
+        "dist":  "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(13)栈板绑码\\dist",
+        "exe":  "瑞晶越南工位-正式命名\\002-自动线\\(13)栈板绑码\\dist\\Auto_Pallet_Binding_Agent.exe",
+        "sha256":  "5D5AD80E1BCF3CFA17EC3B82954651FC040F4CD77ECA6A75A90DE1A892B57506",
+        "backup":  [
+                       "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\瑞晶越南工位-正式命名\\002-自动线\\(13)栈板绑码\\dist\\Auto_Pallet_Binding_Agent.exe.20260807T063340Z.bak"
+                   ],
+        "error":  ""
+    }
+]

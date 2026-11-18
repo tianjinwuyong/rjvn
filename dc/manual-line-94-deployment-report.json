@@ -1,0 +1,18 @@
+{
+  "ip": "192.168.6.94",
+  "station": "manu_shellbinding",
+  "agent": "qrbinding.exe",
+  "status": "DEPLOYED",
+  "remotePath": "D:\\stations\\qrbinding.exe",
+  "sha256": "DE50605CA919EE81F628318C61934F680505A2AD79B5E2EFFD748BE7AD26E736",
+  "scheduledTask": "RuijingShellBindingSupervisor",
+  "taskState": "Running",
+  "processId": 9232,
+  "localApiPort": 8089,
+  "localApiListening": true,
+  "mesPreflight": {
+    "api8080": true,
+    "web5178": true
+  },
+  "verifiedAt": "2026-08-05"
+}

@@ -1,0 +1,60 @@
+{
+  "$meta": {
+    "version": 1,
+    "updatedAt": "2026-08-26T12:24:25.569Z",
+    "source": "onboard"
+  },
+  "database": {
+    "mode": "embedded-postgres",
+    "embeddedPostgresDataDir": "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\agent-tools\\paperclip\\.paperclip-ruijing\\instances\\default\\db",
+    "embeddedPostgresPort": 54329,
+    "backup": {
+      "enabled": true,
+      "intervalMinutes": 60,
+      "retentionDays": 30,
+      "dir": "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\agent-tools\\paperclip\\.paperclip-ruijing\\instances\\default\\data\\backups"
+    }
+  },
+  "logging": {
+    "mode": "file",
+    "logDir": "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\agent-tools\\paperclip\\.paperclip-ruijing\\instances\\default\\logs"
+  },
+  "server": {
+    "deploymentMode": "local_trusted",
+    "exposure": "private",
+    "bind": "loopback",
+    "host": "127.0.0.1",
+    "port": 3100,
+    "allowedHostnames": [],
+    "serveUi": true
+  },
+  "telemetry": {
+    "enabled": true
+  },
+  "updates": {
+    "checkEnabled": true
+  },
+  "auth": {
+    "baseUrlMode": "auto",
+    "disableSignUp": false
+  },
+  "storage": {
+    "provider": "local_disk",
+    "localDisk": {
+      "baseDir": "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\agent-tools\\paperclip\\.paperclip-ruijing\\instances\\default\\data\\storage"
+    },
+    "s3": {
+      "bucket": "paperclip",
+      "region": "us-east-1",
+      "prefix": "",
+      "forcePathStyle": false
+    }
+  },
+  "secrets": {
+    "provider": "local_encrypted",
+    "strictMode": false,
+    "localEncrypted": {
+      "keyFilePath": "C:\\Users\\tianj\\Desktop\\越南工厂瑞晶\\agent-tools\\paperclip\\.paperclip-ruijing\\instances\\default\\secrets\\master.key"
+    }
+  }
+}

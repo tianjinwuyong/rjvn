@@ -1,0 +1,27 @@
+{
+  "apiVersion": "v1",
+  "domain": "AUTO_LINE",
+  "domainLabel": "auto",
+  "lineCode": "L002",
+  "baselineStandard": "MANUAL_LINE_BASIC_FUNCTIONALITY",
+  "changePropagationRule": "Changes in the Manual baseline must be applied here before Auto builds or deployment.",
+  "dailyCheckRule": {"required": true, "mesVisible": true, "localAuditRequired": true},
+  "documentLanguages": ["zh-CN", "en-US", "vi-VN"],
+  "baselineRule": "Auto stations inherit all Manual-line basic functionality; only equipment/process domain differs.",
+  "readOnly": true,
+  "sqliteEvidenceRequired": true,
+  "pushNewDataToMes": true,
+  "mesMayQueryLocalHistory": true,
+  "portRange": [12101, 12113],
+  "endpoints": [
+    "/health",
+    "/api/station/local-info",
+    "/api/station/scans",
+    "/api/station/ng",
+    "/api/station/test-results",
+    "/api/station/resources",
+    "/api/station/outbox",
+    "/api/station/agent-messages",
+    "/api/station/reports"
+  ]
+}

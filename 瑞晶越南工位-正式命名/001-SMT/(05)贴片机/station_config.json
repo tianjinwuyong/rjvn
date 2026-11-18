@@ -1,0 +1,7 @@
+{
+  "domain": "smt", "lineCode": "L001", "stationCode": "smt_placement",
+  "stationIp": null, "sequence": 5,
+  "nameZh": "贴片机", "nameEn": "Pick and Place", "nameVi": "Máy gắn linh kiện",
+  "sourceType": "machine", "heartbeatSeconds": 10,
+  "source": {"status": "pending", "path": "", "patterns": ["*.csv", "*.json"]}
+}

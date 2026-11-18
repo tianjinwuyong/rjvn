@@ -1,0 +1,11 @@
+﻿station,spec,result
+(01)PDA扫码上料,pda_heartbeat_agent.spec,PASS
+(02)AOI质量工位,aoi_heartbeat_agent.spec,PASS
+(03)ICT,ICT_Agent.spec,FAIL
+(04)FCT,FCT_Agent_onedir.spec,FAIL
+(05)PCBA分板工位,depanel_fast_onedir.spec,FAIL
+(06)PCBA外壳绑码,pcbshellbinding_slim.spec,FAIL
+(07)组装ATE,assembly_ate_agent.spec,PASS
+(08)超声,supersonic_agent_win7.spec,FAIL
+(09)成品老化,aging_cab_agent.spec,PASS
+(10)高压ATE,hivolt_ate_agent.spec,PASS

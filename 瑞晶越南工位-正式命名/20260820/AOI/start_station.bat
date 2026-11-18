@@ -1,0 +1,1 @@
+@echo off`r`nsetlocal`r`ncd /d "%~dp0"`r`nfor /r "%~dp0" %%E in (*.exe) do (`r`n  start "RJ Station" "%%~fE"`r`n  exit /b 0`r`n)`r`necho No station EXE found under %CD%`r`npause`r`n

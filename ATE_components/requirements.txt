@@ -1,0 +1,5 @@
+openpyxl
+watchdog
+pynput
+pywin32
+pyinstaller==6.21.0

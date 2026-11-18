@@ -1,0 +1,11 @@
+{
+  "station_code": "mod_manu_depanel",
+  "ict_source": "MES / local ICT SQLite",
+  "fct_source": "MES / local FCT SQLite",
+  "scanner_port": 1003,
+  "mes_url": "http://192.168.6.155:8080/api/pda/events",
+  "local_sqlite": "depanel_sn.db",
+  "ng_aggregation": "ICT + FCT",
+  "release_gate": "BLOCK_IF_UPSTREAM_NG",
+  "heartbeat_seconds": 5
+}

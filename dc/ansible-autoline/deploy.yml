@@ -1,0 +1,129 @@
+---
+- name: Deploy Ruijing automatic-line station agents
+  hosts: auto_line
+  gather_facts: false
+  serial: 1
+  any_errors_fatal: false
+
+  pre_tasks:
+    - name: Require a station password supplied outside inventory
+      ansible.builtin.assert:
+        that:
+          - ansible_password | length > 0
+        fail_msg: "Set the AUTO_<last IP octet>_PASSWORD environment variable on the Ansible controller."
+      no_log: true
+
+    - name: Confirm D drive and MES connectivity
+      ansible.windows.win_powershell:
+        script: |
+          $Ansible.Changed = $false
+          $api = Test-NetConnection -ComputerName '{{ mes_host }}' -Port 8080 -InformationLevel Quiet
+          $web = Test-NetConnection -ComputerName '{{ mes_host }}' -Port 5178 -InformationLevel Quiet
+          if (-not (Test-Path -LiteralPath 'D:\')) { throw 'D: drive is unavailable' }
+          if (-not $api) { throw 'MES API 8080 is unreachable' }
+          if (-not $web) { throw 'MES web 5178 is unreachable' }
+          $Ansible.Result = @{ mesApi = $api; mesWeb = $web }
+
+  tasks:
+    - name: Ensure station directory exists
+      ansible.windows.win_file:
+        path: "{{ station_dir }}"
+        state: directory
+
+    - name: Stop only the matching scheduled task
+      ansible.windows.win_scheduled_task:
+        name: "{{ task_name }}"
+        state: present
+        enabled: true
+      register: existing_task
+      failed_when: false
+
+    - name: Stop only processes running from the deployment target
+      ansible.windows.win_powershell:
+        script: |
+          $Ansible.Changed = $false
+          $target = '{{ station_dir }}\{{ artifact }}'
+          $processes = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
+            Where-Object { $_.ExecutablePath -and $_.ExecutablePath.Equals($target,[StringComparison]::OrdinalIgnoreCase) }
+          foreach ($process in $processes) {
+            Stop-Process -Id $process.ProcessId -Force
+            $Ansible.Changed = $true
+          }
+          Stop-ScheduledTask -TaskName '{{ task_name }}' -ErrorAction SilentlyContinue
+
+    - name: Back up the currently installed executable
+      ansible.windows.win_powershell:
+        script: |
+          $Ansible.Changed = $false
+          $target = '{{ station_dir }}\{{ artifact }}'
+          if (Test-Path -LiteralPath $target) {
+            $stamp = (Get-Date).ToUniversalTime().ToString('yyyyMMddTHHmmssZ')
+            Copy-Item -LiteralPath $target -Destination "$target.$stamp.bak" -Force
+            $Ansible.Changed = $true
+            $Ansible.Result = "$target.$stamp.bak"
+          }
+      register: backup_result
+
+    - name: Copy the release artifact from the Ansible controller
+      ansible.windows.win_copy:
+        src: "artifacts/{{ artifact }}"
+        dest: "{{ station_dir }}\\{{ artifact }}.incoming"
+        force: true
+
+    - name: Atomically replace the station executable
+      ansible.windows.win_powershell:
+        script: |
+          $incoming = '{{ station_dir }}\{{ artifact }}.incoming'
+          $target = '{{ station_dir }}\{{ artifact }}'
+          if (-not (Test-Path -LiteralPath $incoming)) { throw 'Downloaded artifact is missing' }
+          Move-Item -LiteralPath $incoming -Destination $target -Force
+          $Ansible.Changed = $true
+
+    - name: Register interactive startup task
+      ansible.windows.win_scheduled_task:
+        name: "{{ task_name }}"
+        description: "Ruijing automatic-line station agent"
+        actions:
+          - path: "{{ station_dir }}\\{{ artifact }}"
+            working_directory: "{{ station_dir }}"
+        triggers:
+          - type: logon
+        username: "{{ ansible_user }}"
+        logon_type: interactive_token
+        run_level: highest
+        enabled: true
+        state: present
+
+    - name: Start station agent
+      ansible.windows.win_powershell:
+        script: |
+          Start-ScheduledTask -TaskName '{{ task_name }}'
+          Start-Sleep -Seconds 8
+          $Ansible.Changed = $true
+
+    - name: Verify task, process path, and executable hash
+      ansible.windows.win_powershell:
+        script: |
+          $Ansible.Changed = $false
+          $target = '{{ station_dir }}\{{ artifact }}'
+          $task = Get-ScheduledTask -TaskName '{{ task_name }}' -ErrorAction Stop
+          $process = Get-CimInstance Win32_Process -ErrorAction SilentlyContinue |
+            Where-Object { $_.ExecutablePath -and $_.ExecutablePath.Equals($target,[StringComparison]::OrdinalIgnoreCase) } |
+            Select-Object -First 1
+          if (-not $process) { throw 'Agent process is not running from the expected path' }
+          $Ansible.Result = @{
+            taskState = $task.State.ToString()
+            processId = $process.ProcessId
+            processPath = $process.ExecutablePath
+            sha256 = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
+          }
+      register: verification
+
+  post_tasks:
+    - name: Deployment verification summary
+      ansible.builtin.debug:
+        msg:
+          station: "{{ inventory_hostname }}"
+          ip: "{{ ansible_host }}"
+          executable: "{{ artifact }}"
+          verification: "{{ verification.result }}"

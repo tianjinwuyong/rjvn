@@ -1,0 +1,11 @@
+﻿"IP","Remote","Computer","MES8080","MES5178","RustDesk","Processes"
+"192.168.6.91","PASS","DESKTOP-1NDRCPN","True","True","True","MicrosoftEdgeUpdate,RustDesk"
+"192.168.6.92","PASS","PC-20260103VBHI","True","True","True","fct_agent,MicrosoftEdgeUpdate,RustDesk,ssh-agent"
+"192.168.6.93","PASS","DESKTOP-GJMDFE5","True","True","True","depanel,RustDesk"
+"192.168.6.94","FAIL","","","","","连接到远程服务器 192.168.6.94 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
+"192.168.6.95","FAIL","","","","","连接到远程服务器 192.168.6.95 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
+"192.168.6.96","FAIL","","","","","连接到远程服务器 192.168.6.96 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
+"192.168.6.97","FAIL","","","","","连接到远程服务器 192.168.6.97 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
+"192.168.6.98","FAIL","","","","","连接到远程服务器 192.168.6.98 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
+"192.168.6.99","FAIL","","","","","连接到远程服务器 192.168.6.99 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
+"192.168.6.100","FAIL","","","","","连接到远程服务器 192.168.6.100 失败，并显示以下错误消息: WinRM 无法处理请求。使用协商身份验证时，出现以下错误，错误代码为 0x8009030e: A specified logon session does not exist. It may already have been terminated.  "
