@@ -1,107 +1,140 @@
 # RuiJing Vietnam factory — source-only repository
 #
-# This repo tracks source. Build artifacts, dependency trees, model weights
-# and generated files are excluded so that `git ls-files --others` stays
+# Tracks source. Build artifacts, dependency trees, station-machine build
+# output and model weights are excluded so `git ls-files --others` stays
 # small enough for tools (T3 Code, IDEs) to enumerate.
 #
-# Symptom this fixes:
-#   T3 Code hung on every turn with "GitVcsDriver.review.listUntracked:
-#   Git output exceeded 16777216 bytes and was truncated." — the untracked
-#   file list was ~29 MB (172k files), over T3's 16 MB output cap, so every
-#   status poll failed and the agent spun forever.
+# The failure this fixes:
+#   T3 Code hung on every turn ("Working 11m" on "hello"). The server trace
+#   showed, repeatedly:
+#     GitVcsDriver.review.listUntracked: Git command failed:
+#     Git output exceeded 16777216 bytes and was truncated.
+#   The untracked file list was 29 MB / 172,618 files. T3 caps git output at
+#   16 MB, so every status poll failed and the agent never made progress.
+#   After this .gitignore the same list is a fraction of that.
+#
+# The big offenders, by file count:
+#   瑞晶越南工位-正式命名/manualine20260823   41,535  station build output
+#   瑞晶越南工位-正式命名/20260819manaline     5,714
+#   统一PDA管理/unifiedpda/.gradle-home        (Gradle wrapper dists)
 
 # ---------------------------------------------------------------------------
 # Dependencies
 # ---------------------------------------------------------------------------
 node_modules/
-**/node_modules/
 bower_components/
-**/bower_components/
 .venv/
-**/.venv/
 venv/
-**/venv/
-__pypcache__/
 __pycache__/
-**/__pycache__/
 *.pyc
 *.pyo
-*.pyd
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .venv-*/
-uv.lock.bak
 
 # ---------------------------------------------------------------------------
 # Build output
 # ---------------------------------------------------------------------------
 build/
-**/build/
 dist/
-**/dist/
 out/
-**/out/
 target/
-**/target/
 .next/
 .nuxt/
 .turbo/
 .cache/
-**/.cache/
 *.tsbuildinfo
+*.egg-info/
+
+# ---------------------------------------------------------------------------
+# Station / ATE build output
+# ---------------------------------------------------------------------------
+# Tcl timezone+locale data bundled into every station executable.
+_tcl_data/
+tzdata/
+# Station executable + scratch trees produced on the factory floor.
+*_dist_*/
+*_work_*/
+*_exe_dist_*/
+*_exe_work_*/
+# Packaged installers and their payloads.
+*.msg
+*.enc
+*.msi
+*.apk
+*.aab
+*.ipa
+*.7z
+*.iso
+*.img
+# ATE runtime scratch.
+_internal/_logs/
+_internal/logs/
+*.log
+
+# ---------------------------------------------------------------------------
+# Android / Gradle
+# ---------------------------------------------------------------------------
+.gradle/
+.gradle-home/
+**/.gradle/
+**/.gradle-home/
+local.properties
+*.apk
+*.aab
 
 # ---------------------------------------------------------------------------
 # Model weights and large binaries
 # ---------------------------------------------------------------------------
 *.gguf
 *.ggml
-*.bin
 *.safetensors
 *.ckpt
 *.pth
 *.onnx
 *.pt
-*.pth.tar
 *.npz
 *.npy
 *.h5
 *.msgpack
 *.pack
 *.model
+*.dictionary
 models/
-**/models/
-**/Models/
-*.apk
-*.aab
-*.ipa
 *.exe
 *.dll
 *.so
 *.dylib
-*.msi
-*.deb
-*.rpm
+
+# ---------------------------------------------------------------------------
+# Archives and dumps
+# ---------------------------------------------------------------------------
 *.zip
 *.tar
 *.tar.gz
 *.tgz
-*.7z
 *.rar
-*.iso
-*.img
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite-*
+*.sql
+*.dump
+*.bak
+dump.rdb
 
 # ---------------------------------------------------------------------------
 # Runtime state and logs
 # ---------------------------------------------------------------------------
-*.log
 *.pid
 *.lock
 !package-lock.json
 !pnpm-lock.yaml
 !yarn.lock
 logs/
-**/logs/
 runtime-logs/
 tmp/
 temp/
@@ -121,21 +154,6 @@ secrets.json
 credentials.json
 
 # ---------------------------------------------------------------------------
-# Databases and dumps
-# ---------------------------------------------------------------------------
-*.db
-*.db-journal
-*.db-wal
-*.db-shm
-*.sqlite
-*.sqlite-*
-*.sql
-*.dump
-*.bak
-**/dump.rdb
-**/redis.log
-
-# ---------------------------------------------------------------------------
 # Editor / OS noise
 # ---------------------------------------------------------------------------
 .vscode/
@@ -147,10 +165,10 @@ desktop.ini
 *.swo
 
 # ---------------------------------------------------------------------------
-# Generated documentation and reports
+# Generated reports
 # ---------------------------------------------------------------------------
-**/coverage/
-**/playwright-report/
-**/test-results/
-**/.playwright/
+coverage/
+playwright-report/
+test-results/
+.playwright/
 *.lcov
