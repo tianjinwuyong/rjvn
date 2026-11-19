@@ -1,0 +1,29 @@
+ERROR: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'dotenv' imported from C:\Users\tianj\.codeden\wt\rjvn\aa782a58\smt-factory-system\services\api\agv-api.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:701:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:721:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:759:56)
+    at #resolve (node:internal/modules/esm/loader:683:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:163:33)
+ERROR: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'dotenv' imported from C:\Users\tianj\.codeden\wt\rjvn\aa782a58\smt-factory-system\services\api\agv-api.js
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:859:18)
+    at defaultResolve (node:internal/modules/esm/resolve:992:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:701:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:721:38)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:759:56)
+    at #resolve (node:internal/modules/esm/loader:683:17)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:603:35)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:163:33)
+imported agv-api.js
+allowed-origin GET /health      : 200 {"acao":"http://localhost:5178","acac":"true"}
+allowed-origin(2) GET /health   : 200 {"acao":"http://127.0.0.1:5178","acac":"true"}
+evil-origin GET /health         : 200 {"acao":null,"acac":"true"}
+evil-origin OPTIONS /agv/fleet  : 204 {"acao":null,"acac":"true"}
+allowed-origin OPTIONS /agv/fleet: 204 {"acao":"http://localhost:5178","acac":"true"}
+DONE
