@@ -38,7 +38,15 @@ const log = (level, msg, meta = {}) => {
 };
 
 // ── Middleware ────────────────────────────────────────────────────────────────
-app.use(cors());
+// CORS: allow only known origins (the web app dev servers). AGV devices use
+// Bearer-token auth (see requireAgvAuth), so credentials are only safe with an
+// explicit origin list — browsers forbid Access-Control-Allow-Credentials on a
+// wildcard origin, so '*' is never used here.
+const CORS_ORIGINS = [
+  'http://localhost:5178',
+  'http://127.0.0.1:5178',
+];
+app.use(cors({ origin: CORS_ORIGINS, credentials: true }));
 app.use(express.json());
 
 // Request logger
