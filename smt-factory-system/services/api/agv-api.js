@@ -22,7 +22,11 @@ const app = express();
 
 // ── Config ──────────────────────────────────────────────────────────────────
 const PORT        = Number(process.env.AGV_API_PORT ?? 8081);
-const JWT_SECRET  = process.env.JWT_SECRET ?? 'smt-factory-secret-2026';
+const JWT_SECRET  = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('[AGV-API] FATAL: JWT_SECRET is not set. Set the JWT_SECRET environment variable before starting the API.');
+  process.exit(1);
+}
 const JWT_EXPIRY  = process.env.JWT_EXPIRY ?? '24h';
 const PGHOST      = process.env.PGHOST ?? '127.0.0.1';
 const PGPORT      = Number(process.env.PGPORT ?? 5432);
@@ -510,7 +514,7 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, () => {
   console.log(`[AGV-API] listening on http://0.0.0.0:${PORT}`);
   console.log(`[AGV-API] PostgreSQL: ${PGHOST}:${PGPORT}/${PGDATABASE}`);
-  console.log(`[AGV-API] JWT secret: ${JWT_SECRET.slice(0, 8)}...`);
+  console.log('[AGV-API] JWT secret: set');
 });
 
 export { app, pgPool };
