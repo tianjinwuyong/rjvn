@@ -51,7 +51,11 @@ app.use((req, _res, next) => {
 // AGV device auth: POST /auth/token { device_code, device_secret }
 // Returns JWT that AGV includes as Authorization: Bearer <token>
 
-const AGV_DEVICE_SECRET = process.env.AGV_DEVICE_SECRET ?? 'agv-device-secret-2026';
+const AGV_DEVICE_SECRET = process.env.AGV_DEVICE_SECRET;
+if (!AGV_DEVICE_SECRET) {
+  log('ERROR', 'AGV_DEVICE_SECRET is not set in environment — refusing to start agv-api.js');
+  process.exit(1);
+}
 
 app.post('/auth/token', async (req, res) => {
   const { device_code, device_secret } = req.body ?? {};
