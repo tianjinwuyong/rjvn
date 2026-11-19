@@ -6,8 +6,21 @@ import path from "node:path";
 import net from "node:net";
 import XLSX from "xlsx";
 
+// Station-data MySQL (192.168.6.50:3306, pcb_detection). Credentials come from the
+// environment; startup fails fast if the vars are missing (repo convention:
+// MYSQL_USER / MYSQL_PASSWORD, same as services/api/src/mysql.js).
+function getMysqlCreds() {
+  const user = process.env.MYSQL_USER;
+  const password = process.env.MYSQL_PASSWORD;
+  if (!user || !password) {
+    throw new Error("station-data.js: MYSQL_USER/MYSQL_PASSWORD env vars are not set");
+  }
+  return { user, password };
+}
+const MYSQL_CREDS = getMysqlCreds();
+
 export const STATION_DATA_SOURCES = {
-  manu_aio:           { type: "mysql",     label: "AOI",         host: "192.168.6.50",  port: 3306,  user: "root",     password: "root1234",  database: "pcb_detection" },
+  manu_aio:           { type: "mysql",     label: "AOI",         host: "192.168.6.50",  port: 3306,  user: MYSQL_CREDS.user,  password: MYSQL_CREDS.password,  database: "pcb_detection" },
   manu_ict:           { type: "dir",       label: "ICT",         path: "\\\\192.168.6.91\\D$\\SRC" },
   manu_fct:           { type: "dir",       label: "FCT",         path: "\\\\192.168.6.92\\D$\\ATS\\测试报表" },
   manu_depanel:       { type: "dir",       label: "分板机",       path: "\\\\192.168.6.93\\D$\\ATS\\测试报表" },
@@ -216,8 +229,8 @@ export async function queryAoiKpi(cfg) {
 export async function queryImportKpi(cfg, sourceFilter) {
   const mysql = (await import('mysql2/promise')).default;
   const conn = await mysql.createConnection({
-    host: '192.168.6.50', port: 3306, user: 'root',
-    password: 'root1234', database: 'pcb_detection', connectTimeout: 5000,
+    host: '192.168.6.50', port: 3306, user: MYSQL_CREDS.user,
+    password: MYSQL_CREDS.password, database: 'pcb_detection', connectTimeout: 5000,
   });
   try {
     const [statRows] = await conn.query(`
